@@ -1,0 +1,504 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row mb-5 g-5">
+    <div class="col-md-2" id="holding"></div>
+    @if (Model.ClinicVenue != null)
+    {
+        <div class="col-md-5"><h1>@Model.ClinicVenue.NAME</h1></div>
+    }
+    @if (Model.StaffMember != null)
+    {
+        <div class="col-md-5"><h1>@Model.StaffMember.NAME</h1></div>
+    }
+</div>
+
+
+<form id="ClinicSelect">
+    <div class="row mb-5 g-5" >
+        <div class="col-md-2" align="right">
+            <label>Week Commencing:</label>
+        </div>
+        <div class="col-md-4">
+            <input type="button" value="&laquo;" id="wcBack" /><input id="wcDate" name="wcDt" type="date" value=@Model.wcDateString /><input type="button" id="wcNext" value="&raquo;" />
+        </div>
+    </div>
+    @* for measuring div placement
+    <div class="row mb-5 g-5">
+        <div class="col-md-1">1</div>
+        <div class="col-md-1">2</div>
+        <div class="col-md-1">3</div>
+        <div class="col-md-1">4</div>
+        <div class="col-md-1">5</div>
+        <div class="col-md-1">6</div>
+        <div class="col-md-1">7</div>
+        <div class="col-md-1">8</div>
+        <div class="col-md-1">9</div>
+        <div class="col-md-1">10</div>
+        <div class="col-md-1">11</div>
+        <div class="col-md-1">12</div>
+    </div>*@
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-1" align="right">
+            <label>Clinician:</label>
+        </div>
+        <div class="col-md-2">
+            <select id="ddlClinician" onchange="SetClinician(value)">
+                @if (Model.StaffMember != null)
+                {
+                    <option value="@Model.StaffMember" selected>@Model.StaffMember.NAME</option>
+                }
+                else
+                {
+                    <option value="" selected></option>
+                }
+                @if (Model.StaffMembers != null)
+                {
+                    @foreach (var item in Model.StaffMembers)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2" align="right">
+            <label>Clinic:</label>
+        </div>
+        <div class="col-md-2">
+            <select id="ddlClinic" onchange="SetClinic(value)">
+                @if (Model.ClinicVenue != null)
+                {
+                    <option value="@Model.ClinicVenue" selected>@Model.ClinicVenue.NAME</option>
+                }
+                else
+                {
+                    <option value="" selected></option>
+                }
+                @if (Model.ClinicVenues != null)
+                {
+                    @foreach (var item in Model.ClinicVenues)
+                    {
+                        <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-1" align="right">
+            <input class="btn-success" type="submit" value="Select" />
+        </div>
+        <div class="col-md-1" align="right">
+            <input class="btn-success" type="button" id="btnClear" value="Clear" />
+        </div>
+
+    </div>
+    @*This is necessary because the dropdown lists don't seem to want to retain their value on Get*@
+    <div id="metadata1">
+        <input id="txtClinician" name="strClinician" type="text" value=@Model.sClinician />
+        <input id="txtClinic" name="strClinic" type="text" value=@Model.sClinic />
+    </div>
+</form>
+
+
+<div class="row">
+    <div class="col-md-2">
+        <div class="row mb-5 g-5">
+            <h2>Waiting List</h2>
+        </div>
+        <div class="row mb-5 g-5">
+            <p>Double-click to modify waiting list entry</p>
+        </div>
+        <div class="row mb-5 g-5">
+            <input class="btn-success" type="button" id="btnAddWL" value="Add Patient to WL" />
+        </div>
+        @if (Model.WaitingLists != null)
+        {
+            @foreach (var item in Model.WaitingLists)
+            {                
+                <div class="row" id=@item.MPI style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.MPI, '@item.ClinicID', '@item.ClinicianID')">
+                    <div>@item.FIRSTNAME @item.LASTNAME</div>
+                    <div>@item.CGU_No</div>
+                    <div>@item.ClinicianID</div>
+                    <div>@item.ClinicID</div>
+                    @if (item.Duration != null)
+                    {
+                        <div>@item.Duration mins</div>
+                    }
+                </div>
+            }
+        }
+
+    </div>
+
+    <div class="col-md-10">
+        <form id="ClinicForm" method="post">
+            <table id="ClinicMatrix" class="table table-bordered">
+                <thead>
+                    <th>Time:</th>
+                    <th>Monday @Model.DateArray[0].ToString("dd/MM/yyyy")</th>
+                    <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
+                    <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
+                    <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
+                    <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.TimeArray)
+                    {
+                        <tr id=@item.ToString("HH:mm")>
+                            <th scope="row">@item.ToString("HH:mm")</th>                            
+                            <td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                            <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                            <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                            <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                            <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                        </tr>
+                    }                
+                </tbody>
+            </table>
+            @*Again, the metadata is needed to be able to push the parameters to the C#*@
+            <div id="metadata2">
+                <input id="txtAppClinician" name="strAppClinician" type="text"  />
+                <input id="txtAppClinic" name="strAppClinic" type="text"  />
+                <input id="txtAppDate" name="strAppDate" type="text"  />
+                <input id="txtAppTime" name="strAppTime" type="text" />
+                <input id="txtIntID" name="strIntID" type="text" />
+
+            </div>
+        </form>       
+    </div>
+
+    
+
+
+</div>
+
+<script>
+
+    document.getElementById("wcBack").addEventListener("click", GoBack);
+    document.getElementById("wcNext").addEventListener("click", GoNext);
+    document.getElementById("btnClear").addEventListener("click", Clear);
+    document.getElementById("btnAddWL").addEventListener("click", AddToWL);
+    document.onload(LoadClinics());
+    
+    function AddToWL()
+    {   
+        window.open("AddToWL");
+    }
+
+    function GoBack()
+    {        
+        var date = new Date(document.getElementById("wcDate").value);
+        date.setDate(date.getDate() - 7);
+        document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
+        document.getElementById("ClinicSelect").submit();
+    }
+
+    function GoNext()
+    {   
+        var date = new Date(document.getElementById("wcDate").value);
+        date.setDate(date.getDate() + 7);        
+        document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
+        document.getElementById("ClinicSelect").submit();        
+    }
+
+    function Clear()
+    {
+        document.getElementById("txtClinician").value = ""
+        document.getElementById("txtClinic").value = ""
+        document.getElementById("ddlClinician").value = ""
+        document.getElementById("ddlClinic").value = ""
+    }
+
+    function SetClinician(stClinician)
+    {
+        document.getElementById("txtClinician").value = stClinician
+    }
+
+    function SetClinic(stClinic) 
+    {
+        document.getElementById("txtClinic").value = stClinic
+    }
+
+    function OnDragStart(ev)
+    {  
+        ev.dataTransfer.setData("text", ev.target.id);
+        ev.currentTarget.style.backgroundColor = "yellow";
+        ev.currentTarget.style.color = "black";
+    }
+    
+    function OnDragEnd(iIntID, ev)
+    {
+        //window.alert(String(iIntID));
+        ev.currentTarget.style.backgroundColor = "darkcyan";
+        ev.currentTarget.style.color = "ivory";
+    }
+
+    function OnDrop(ev)
+    {
+        ev.preventDefault();
+        const id = ev.dataTransfer.getData("text");
+        const draggableElement = document.getElementById(id);
+        const dropzone = ev.target;
+        //dropzone.appendChild(draggableElement);
+        //ev.dataTransfer.clearData();
+        if(ev.target.innerHTML.includes("Free"))
+        {
+            //substrings, substrings, and more substrings...
+            const apDate = ev.target.id.slice(0,10);
+            const apTime = ev.target.id.slice(11, 16);
+            const apDur = ev.target.innerHTML.slice(7,9);
+            const apClin = ev.target.innerHTML.slice(18, 22);
+            const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.length);
+            //window.alert(ev.target.id + " - " + ev.target.innerHTML + " - " + draggableElement.id);
+            const MPI = draggableElement.id;
+            //this is necessary to make sure SQL doesn't render it into American
+            const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
+
+            //document.getElementById("txtIntID").value = intID;
+            //document.getElementById("txtAppClinician").value = apClin;
+            //document.getElementById("txtAppClinic").value = apVen;
+            //document.getElementById("txtAppDate").value = apDateProper;
+            //document.getElementById("txtAppTime").value = apTime;            
+
+            //document.getElementById("ClinicForm").submit();            
+            window.open("AppConfirm?sMPI=" + MPI + "&sClin=" + apClin + "&sVen=" + apVen + "&sDat=" + apDateProper + "&sTim=" + apTime + "&sDur=" + apDur);
+            document.getElementById("ClinicForm").submit();
+        }        
+    }
+
+    function OnDragOver(ev)
+    {
+       ev.preventDefault();
+       
+        if (ev.currentTarget.innerHTML.includes("Free")) 
+        {
+            ev.currentTarget.style.backgroundColor = "yellow";
+            ev.currentTarget.style.color = "black";
+        }       
+    }
+
+    function OnDragLeave(ev)
+    {
+        ev.preventDefault();
+
+       if (ev.currentTarget.innerHTML.includes("Free")) 
+       {
+            ev.currentTarget.style.backgroundColor = "green";
+            ev.currentTarget.style.color = "white";
+       }       
+    }
+
+    function OnDoubleClickWL(MPI, clinicID, clinicianID)
+    {
+        window.open("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
+    }
+
+    function OnDoubleClickAP(id)
+    {
+        if (document.getElementById(id).innerHTML.includes("Booked"))
+        {
+            const str = document.getElementById(id).innerHTML;
+            const sRID = str.slice(str.indexOf('R:') + 2);
+            //window.alert(sRID);
+            
+            window.open("AppModify?sRefID=" + sRID);
+        }
+        else if (document.getElementById(id).innerHTML.includes("Free"))
+        {
+            window.open("WIP");
+        }
+        else if (document.getElementById(id).innerHTML.includes("PAST")) 
+        {
+            window.alert("This is in the past, you cannot edit this.");
+        }
+    }
+
+
+    function LoadClinics()
+    {        
+        document.getElementById("metadata1").hidden = true;
+        document.getElementById("metadata2").hidden = true;
+        var cMatrix = document.getElementById("ClinicMatrix");
+        var timeArray = [];
+        var dateArray = [];
+        var durationArray = [];
+        var clinicArray = [];
+        var clinicianArray = [];
+        var statusArray = [];
+        var apptDateArray = [];
+        var apptTimeArray = [];
+        var apptDurationArray = [];
+        var apptClinicArray = [];
+        var apptClinicianArray = [];
+        var apptOutcomeArray = [];
+        var apptRefIDArray = [];
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        @if (Model.ClinicSlots != null)
+        {
+            @foreach (var item in Model.ClinicSlots)
+            {
+                @:dateArray.push("@item.SlotDate");
+                @:timeArray.push("@item.SlotTime");   
+                @:durationArray.push("@item.duration");
+                @:clinicArray.push("@item.ClinicID");
+                @:clinicianArray.push("@item.ClinicianID");   
+                @:statusArray.push("@item.SlotStatus");
+                //we need to create the arrays like this because we can't access the data otherwise
+            }
+        }
+
+        @if (Model.Appointments != null)
+        {
+            @foreach (var item in Model.Appointments)
+            {
+                @:apptDateArray.push("@item.BOOKED_DATE");
+                @:apptTimeArray.push("@item.BOOKED_TIME");
+                @:apptDurationArray.push("@item.EST_DURATION_MINS");
+                @:apptClinicArray.push("@item.FACILITY");
+                @:apptClinicianArray.push("@item.STAFF_CODE_1");
+                @:apptOutcomeArray.push("@item.COUNSELED");
+                @:apptRefIDArray.push("@item.RefID");
+            }
+        }
+
+
+        if(dateArray.length == 0 && timeArray.length == 0)
+        {
+            return;
+        }
+        else
+        {            
+            //used to check if appointment is before today, later on
+            for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+            {
+                //loop through all rows to check times
+                if (i > 0) 
+                {
+                    for (var j = 0, col; col = row.cells[j]; j++)
+                    {
+                        //loop through all columns to check dates
+                        if (j > 0) 
+                        {
+                            var theDate = col.id.substring(0, 10);
+                            var theTime = col.id.substring(11, col.id.length);
+                            const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
+                        
+                            for (var k = 0; k < dateArray.length; k++)
+                            {
+                                const myDate = new Date(dateArray[k].substring(6, 10) + "-" + dateArray[k].substring(3, 5) + "-" + dateArray[k].substring(0, 2) + "T00:00:00");
+                                //because JS has a weird way of storing dates, we need to get the two dates in the right format so we can compare
+                                if(myDate.valueOf() == colDate.valueOf())
+                                {
+                                
+                                    for (var l = 0; l < timeArray.length; l++)
+                                    {                                        
+                                        const myTime = timeArray[k].substring(11, 16);
+                                        if (myTime == theTime) 
+                                        {
+                                            if (colDate < today) //for clinic slots in the past
+                                            {
+                                                document.getElementById(col.id).style.backgroundColor = "firebrick";
+                                                document.getElementById(col.id).innerHTML = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                            }
+                                            else
+                                            {
+                                                if (statusArray[k] == "Open") //for available slots
+                                                {
+                                                    document.getElementById(col.id).style.backgroundColor = "green";
+                                                    document.getElementById(col.id).innerHTML = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                }
+                                                else //for unavailable/reserved slots
+                                                {
+                                                    document.getElementById(col.id).style.backgroundColor = "firebrick";
+                                                    document.getElementById(col.id).innerHTML = statusArray[k] + " - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                }
+                                            }
+                                        }                                    
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        //now do the same but with the appointment data
+        if (apptDateArray.length != 0 && apptTimeArray.length != 0) 
+        {
+            for (var i = 0, row; row = cMatrix.rows[i]; i++) {
+                if (i > 0) {
+                    for (var j = 0, col; col = row.cells[j]; j++) {
+                        if (j > 0) {
+                            var theDate = col.id.substring(0, 10);
+                            var theTime = col.id.substring(11, col.id.length);
+                            const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
+
+                            for (var k = 0; k < apptDateArray.length; k++) {
+                                const myDate = new Date(apptDateArray[k].substring(6, 10) + "-" + apptDateArray[k].substring(3, 5) + "-" + apptDateArray[k].substring(0, 2) + "T00:00:00");
+
+                                if (myDate.valueOf() == colDate.valueOf()) {
+
+                                    for (var l = 0; l < apptTimeArray.length; l++) {
+                                        const myTime = apptTimeArray[k].substring(11, 16);
+                                        if (myTime == theTime) {
+                                            if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
+                                            {
+                                                //we have to do this here, because the C# throws a fit if we get nulls
+                                                if (colDate < today)  //past appointments
+                                                {
+                                                    document.getElementById(col.id).style.backgroundColor = "purple";
+                                                    document.getElementById(col.id).innerHTML = "PAST</br>" + apptDurationArray[k].toString() + " mins</br> " + apptClinicianArray[k] + "</br> " + apptClinicArray[k] + "</br>" + apptOutcomeArray[k] + "</br>R:" + apptRefIDArray[k].toString();
+                                                }
+                                                else //current/future appointments
+                                                {
+                                                    document.getElementById(col.id).style.backgroundColor = "blue";
+                                                    document.getElementById(col.id).innerHTML = "Booked - " + apptDurationArray[k].toString() + " mins</br> " + apptClinicianArray[k] + "</br> " + apptClinicArray[k] + "</br>" + apptOutcomeArray[k] + "</br>R:" + apptRefIDArray[k].toString();
+                                                }
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //window.alert("done appts");
+        }
+        //finally, hide all empty rows
+        //window.alert("hide rows");
+        for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+        {
+            var colcount = 0
+            if (i > 0) 
+            {
+                for (var j = 0, col; col = row.cells[j]; j++) 
+                {
+                    if (j > 0) 
+                    {
+                        if(col.innerHTML == "")
+                        {
+                            colcount ++;
+                        }
+                    }
+                }
+                if(colcount>=5)
+                {
+                    row.hidden = true;
+                }
+            }
+        }        
+    }
+    
+
+
+</script>

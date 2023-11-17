@@ -1,0 +1,68 @@
+﻿@page
+@model CPTest.Pages.AppModifyModel
+@{
+}
+
+<h1 style="text-align:center">Modify appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
+
+<div class="row mb-5 g-5">
+    <h2>@Model.StaffMember.NAME, @Model.ClinicVenue.NAME, @Model.Appointment.BOOKED_DATE, @Model.Appointment.BOOKED_TIME</h2>
+</div>
+
+<div class="row mb-5 g-5">
+    <div class="col-md-2"></div>
+    <div class="col-md-3">
+        <select id="ddlClinician" >
+            <option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>
+            @foreach (var item in Model.StaffMembers)
+            {
+                <option value=@item.STAFF_CODE>@item.NAME</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-3">
+        <select id="ddlClinic">
+            <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
+            @foreach (var item in Model.ClinicVenues)
+            {
+                <option value=@item.FACILITY>@item.NAME</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row mb-5 g-5">
+    <div class="col-md-4"></div>
+    <div class="col-md-2">
+        <button id="btnConfirm" class="btn btn-success">Confirm</button>
+    </div>
+    <div class="col-md-2">
+        <button id="btnCancel" class="btn btn-success">Cancel</button>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+
+<script>
+
+    document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm()
+    {
+        window.alert("Okay!");
+    }
+
+    function GoBack()
+    {
+        window.close();
+    }
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+ 
+</script>
