@@ -3,43 +3,46 @@
 @{
 }
 
-<div class="row mb-5 g-5">
-    <h1 style="text-align:center">Modify Waiting List Entry for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
-</div>
+<div class="container">
 
-<div class="row mb-5 g-5">
-    <div class="col-md-2"></div>
-    <div class="col-md-3">
-        <select id="ddlClinician" >
-            <option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>            
-            @foreach (var item in Model.StaffMembers)
-            {
-                <option value=@item.STAFF_CODE>@item.NAME</option>
-            }
-        </select>
+    <div class="row mb-5 g-5">
+        <h1 style="text-align:center">Modify Waiting List Entry for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
     </div>
-    <div class="col-md-2"></div>
-    <div class="col-md-3">
-        <select id="ddlClinic">
-            <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
-            @foreach (var item in Model.ClinicVenues)
-            {
-                <option value=@item.FACILITY>@item.NAME</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-2"></div>
-</div>
 
-<div class="row mb-5 g-5">
-    <div class="col-md-4"></div>
-    <div class="col-md-2">
-        <button id="btnConfirm" class="btn btn-success">Confirm</button>
+    <div class="row mb-5 g-5">
+        <div class="col-md-2"></div>
+        <div class="col-md-3">
+            <select id="ddlClinician" >
+                <option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>            
+                @foreach (var item in Model.StaffMembers)
+                {
+                    <option value=@item.STAFF_CODE>@item.NAME</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-3">
+            <select id="ddlClinic">
+                <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
+                @foreach (var item in Model.ClinicVenues)
+                {
+                    <option value=@item.FACILITY>@item.NAME</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2"></div>
     </div>
-    <div class="col-md-2">
-        <button id="btnCancel" class="btn btn-success">Cancel</button>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-4"></div>
+        <div class="col-md-2">
+            <button id="btnConfirm" class="btn btn-success">Confirm</button>
+        </div>
+        <div class="col-md-2">
+            <button id="btnCancel" class="btn btn-success">Cancel</button>
+        </div>
+        <div class="col-md-4"></div>
     </div>
-    <div class="col-md-4"></div>
 </div>
 
 <script>

@@ -4,73 +4,74 @@
     ViewData["Title"] = "Add To Waiting List";
 }
 
-<h1 style="text-align:center">Add Patient to Waiting List</h1>
+<div class="container">
 
+    <h1 style="text-align:center">Add Patient to Waiting List</h1>
 
-<form id="ApptForm" method="post">
-    <div class="row mb-5 g-5">
-        <div class="col-md-2" style="text-align:right">
-            <label>CGU Number (including point):</label>
-        </div>
-        <div class="col-md-2" style="text-align:right">
-            <input type="text" id="txtCGUNo" name="sCGU" />
-        </div>
-        <div class="col-md-2" style="text-align:right">
-            <label>Clinician:</label>
-        </div>
-        <div class="col-md-2" style="text-align:right">
-            <select id="ddlClin" name="sClin" />                
-                <option value="" selected></option>                
-                @if (Model.StaffMembers != null)
-                {
-                    @foreach (var item in Model.StaffMembers)
-                    {
-                        <option value=@item.STAFF_CODE>@item.NAME</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-2" style="text-align:right">
-            <label>Clinic:</label>
-        </div>
-        <div class="col-md-2" style="text-align:right">
-            <select id="ddlVen" name="sVen" />                
-                <option value="" selected></option>                
-                @if (Model.ClinicVenues != null)
-                {
-                    @foreach (var item in Model.ClinicVenues)
-                    {
-                        <option value=@item.FACILITY>@item.NAME</option>
-                    }
-                }
-            </select>
-        </div>
-    </div>
-
-    @if(@Model.Patient != null)
-    {
+    <form id="ApptForm" method="post">
         <div class="row mb-5 g-5">
-            <div class="col-md-2">
-                <p>@Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</p>
+            <div class="col-md-2" style="text-align:right">
+                <label>CGU Number (including point):</label>
             </div>
-            <div class="col-md-2">
-                <p>@Model.Patient.CGU_No</p>
+            <div class="col-md-2" style="text-align:right">
+                <input type="text" id="txtCGUNo" name="sCGU" />
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                <label>Clinician:</label>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                <select id="ddlClin" name="sClin" />                
+                    <option value="" selected></option>                
+                    @if (Model.StaffMembers != null)
+                    {
+                        @foreach (var item in Model.StaffMembers)
+                        {
+                            <option value=@item.STAFF_CODE>@item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                <label>Clinic:</label>
+            </div>
+            <div class="col-md-2" style="text-align:right">
+                <select id="ddlVen" name="sVen" />                
+                    <option value="" selected></option>                
+                    @if (Model.ClinicVenues != null)
+                    {
+                        @foreach (var item in Model.ClinicVenues)
+                        {
+                            <option value=@item.FACILITY>@item.NAME</option>
+                        }
+                    }
+                </select>
             </div>
         </div>
-    }
 
-    <div class="row mb-5 g-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
-            <button id="btnConfirm" class="btn btn-success">Confirm</button>
-        </div>
-        <div class="col-md-2">
-            <button id="btnCancel" class="btn btn-success">Cancel</button>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-    
-</form>
+        @if(@Model.Patient != null)
+        {
+            <div class="row mb-5 g-5">
+                <div class="col-md-2">
+                    <p>@Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</p>
+                </div>
+                <div class="col-md-2">
+                    <p>@Model.Patient.CGU_No</p>
+                </div>
+            </div>
+        }
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
+        </div>    
+    </form>
+</div>
 
 <script>
 

@@ -4,176 +4,192 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="row mb-5 g-5">
-    <div class="col-md-2" id="holding"></div>
-    @if (Model.ClinicVenue != null)
-    {
-        <div class="col-md-5"><h1>@Model.ClinicVenue.NAME</h1></div>
-    }
-    @if (Model.StaffMember != null)
-    {
-        <div class="col-md-5"><h1>@Model.StaffMember.NAME</h1></div>
-    }
-</div>
-
-
-<form id="ClinicSelect">
-    <div class="row mb-5 g-5" >
-        <div class="col-md-2" align="right">
-            <label>Week Commencing:</label>
-        </div>
-        <div class="col-md-4">
-            <input type="button" value="&laquo;" id="wcBack" /><input id="wcDate" name="wcDt" type="date" value=@Model.wcDateString /><input type="button" id="wcNext" value="&raquo;" />
-        </div>
-    </div>
-    @* for measuring div placement
-    <div class="row mb-5 g-5">
-        <div class="col-md-1">1</div>
-        <div class="col-md-1">2</div>
-        <div class="col-md-1">3</div>
-        <div class="col-md-1">4</div>
-        <div class="col-md-1">5</div>
-        <div class="col-md-1">6</div>
-        <div class="col-md-1">7</div>
-        <div class="col-md-1">8</div>
-        <div class="col-md-1">9</div>
-        <div class="col-md-1">10</div>
-        <div class="col-md-1">11</div>
-        <div class="col-md-1">12</div>
-    </div>*@
+<div class="container">
 
     <div class="row mb-5 g-5">
-        <div class="col-md-1" align="right">
-            <label>Clinician:</label>
-        </div>
-        <div class="col-md-2">
-            <select id="ddlClinician" onchange="SetClinician(value)">
-                @if (Model.StaffMember != null)
-                {
-                    <option value="@Model.StaffMember" selected>@Model.StaffMember.NAME</option>
-                }
-                else
-                {
-                    <option value="" selected></option>
-                }
-                @if (Model.StaffMembers != null)
-                {
-                    @foreach (var item in Model.StaffMembers)
-                    {
-                        <option value=@item.STAFF_CODE>@item.NAME</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-2" align="right">
-            <label>Clinic:</label>
-        </div>
-        <div class="col-md-2">
-            <select id="ddlClinic" onchange="SetClinic(value)">
-                @if (Model.ClinicVenue != null)
-                {
-                    <option value="@Model.ClinicVenue" selected>@Model.ClinicVenue.NAME</option>
-                }
-                else
-                {
-                    <option value="" selected></option>
-                }
-                @if (Model.ClinicVenues != null)
-                {
-                    @foreach (var item in Model.ClinicVenues)
-                    {
-                        <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-3"></div>
-        <div class="col-md-1" align="right">
-            <input class="btn-success" type="submit" value="Select" />
-        </div>
-        <div class="col-md-1" align="right">
-            <input class="btn-success" type="button" id="btnClear" value="Clear" />
-        </div>
-
-    </div>
-    @*This is necessary because the dropdown lists don't seem to want to retain their value on Get*@
-    <div id="metadata1">
-        <input id="txtClinician" name="strClinician" type="text" value=@Model.sClinician />
-        <input id="txtClinic" name="strClinic" type="text" value=@Model.sClinic />
-    </div>
-</form>
-
-
-<div class="row">
-    <div class="col-md-2">
-        <div class="row mb-5 g-5">
-            <h2>Waiting List</h2>
-        </div>
-        <div class="row mb-5 g-5">
-            <p>Double-click to modify waiting list entry</p>
-        </div>
-        <div class="row mb-5 g-5">
-            <input class="btn-success" type="button" id="btnAddWL" value="Add Patient to WL" />
-        </div>
-        @if (Model.WaitingLists != null)
+        <div class="col-md-2" id="holding"></div>
+        @if (Model.ClinicVenue != null)
         {
-            @foreach (var item in Model.WaitingLists)
-            {                
-                <div class="row" id=@item.MPI style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.MPI, '@item.ClinicID', '@item.ClinicianID')">
-                    <div>@item.FIRSTNAME @item.LASTNAME</div>
-                    <div>@item.CGU_No</div>
-                    <div>@item.ClinicianID</div>
-                    <div>@item.ClinicID</div>
-                    @if (item.Duration != null)
-                    {
-                        <div>@item.Duration mins</div>
-                    }
-                </div>
-            }
+            <div class="col-md-5"><h1>@Model.ClinicVenue.NAME</h1></div>
         }
-
+        @if (Model.StaffMember != null)
+        {
+            <div class="col-md-5"><h1>@Model.StaffMember.NAME</h1></div>
+        }
     </div>
 
-    <div class="col-md-10">
-        <form id="ClinicForm" method="post">
-            <table id="ClinicMatrix" class="table table-bordered">
-                <thead>
-                    <th>Time:</th>
-                    <th>Monday @Model.DateArray[0].ToString("dd/MM/yyyy")</th>
-                    <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
-                    <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
-                    <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
-                    <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.TimeArray)
-                    {
-                        <tr id=@item.ToString("HH:mm")>
-                            <th scope="row">@item.ToString("HH:mm")</th>                            
-                            <td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                            <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                            <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                            <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                            <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                        </tr>
-                    }                
-                </tbody>
-            </table>
-            @*Again, the metadata is needed to be able to push the parameters to the C#*@
-            <div id="metadata2">
-                <input id="txtAppClinician" name="strAppClinician" type="text"  />
-                <input id="txtAppClinic" name="strAppClinic" type="text"  />
-                <input id="txtAppDate" name="strAppDate" type="text"  />
-                <input id="txtAppTime" name="strAppTime" type="text" />
-                <input id="txtIntID" name="strIntID" type="text" />
 
+    <form id="ClinicSelect">
+        <div class="row mb-5 g-5" >
+            <div class="col-md-2" align="right">
+                <label>Week Commencing:</label>
             </div>
-        </form>       
-    </div>
+            <div class="col-md-4">
+                <input type="button" value="&laquo;" id="wcBack" /><input id="wcDate" name="wcDt" type="date" value=@Model.wcDateString /><input type="button" id="wcNext" value="&raquo;" />
+            </div>
+        </div>
+        @* for measuring div placement
+        <div class="row mb-5 g-5">
+            <div class="col-md-1">1</div>
+            <div class="col-md-1">2</div>
+            <div class="col-md-1">3</div>
+            <div class="col-md-1">4</div>
+            <div class="col-md-1">5</div>
+            <div class="col-md-1">6</div>
+            <div class="col-md-1">7</div>
+            <div class="col-md-1">8</div>
+            <div class="col-md-1">9</div>
+            <div class="col-md-1">10</div>
+            <div class="col-md-1">11</div>
+            <div class="col-md-1">12</div>
+        </div>*@
 
+        <div class="row mb-5 g-5">
+            <div class="col-md-1" align="right">
+                <label>Clinician:</label>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlClinician" onchange="SetClinician(value)">
+                    @if (Model.StaffMember != null)
+                    {
+                        <option value="@Model.StaffMember" selected>@Model.StaffMember.NAME</option>
+                    }
+                    else
+                    {
+                        <option value="" selected></option>
+                    }
+                    @if (Model.StaffMembers != null)
+                    {
+                        @foreach (var item in Model.StaffMembers)
+                        {
+                            <option value=@item.STAFF_CODE>@item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2" align="right">
+                <label>Clinic:</label>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlClinic" onchange="SetClinic(value)">
+                    @if (Model.ClinicVenue != null)
+                    {
+                        <option value="@Model.ClinicVenue" selected>@Model.ClinicVenue.NAME</option>
+                    }
+                    else
+                    {
+                        <option value="" selected></option>
+                    }
+                    @if (Model.ClinicVenues != null)
+                    {
+                        @foreach (var item in Model.ClinicVenues)
+                        {
+                            <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+            <div class="col-md-1" align="right">
+                <input class="btn-success" type="submit" value="Select" />
+            </div>
+            <div class="col-md-1" align="right">
+                <input class="btn-success" type="button" id="btnClear" value="Clear" />
+            </div>
+
+        </div>
+        @*This is necessary because the dropdown lists don't seem to want to retain their value on Get*@
+        <div id="metadata1">
+            <input id="txtClinician" name="strClinician" type="text" value=@Model.sClinician />
+            <input id="txtClinic" name="strClinic" type="text" value=@Model.sClinic />
+        </div>
+    </form>
+
+
+    <div class="row">
     
+        <div class="col-md-2">
+            <form id="WaitingListForm" method="post">
+                <div class="row mb-5 g-5">
+                    <h2>Waiting List</h2>
+                </div>
 
-
+                <div class="row mb-2 g-2">
+                    <p>Search by CGU Number:</p>
+                    <div class="col-6">
+                        <input class="w-100" name="sSearchTerm" />
+                    </div>
+                    <div class="col-6">
+                        <button class="btn-success w-50 h-100" type="button" id="btnSearchWL">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <br /><br /><br />
+                <div class="row mb-5 g-5">
+                    <p>Double-click to modify waiting list entry</p>
+                </div>
+            
+                <div class="row mb-5 g-5">
+                    <input class="btn-success" type="button" id="btnAddWL" value="Add Patient to WL" />
+                </div>
+                @if (Model.WaitingLists != null)
+                {
+                    @foreach (var item in Model.WaitingLists)
+                    {                
+                        <div class="row" id=@item.MPI style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.MPI, '@item.ClinicID', '@item.ClinicianID')">
+                            <div>@item.FIRSTNAME @item.LASTNAME</div>
+                            <div>@item.CGU_No</div>
+                            <div>@item.ClinicianID</div>
+                            <div>@item.ClinicID</div>
+                            @if (item.Duration != null)
+                            {
+                                <div>@item.Duration mins</div>
+                            }
+                        </div>
+                    }
+                }
+            </form>
+        </div>
+    
+        <div class="col-md-10">
+            <form id="ClinicForm" method="post">
+                <table id="ClinicMatrix" class="table table-bordered">
+                    <thead>
+                        <th>Time:</th>
+                        <th>Monday @Model.DateArray[0].ToString("dd/MM/yyyy")</th>
+                        <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
+                        <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
+                        <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
+                        <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TimeArray)
+                        {
+                            <tr id=@item.ToString("HH:mm")>
+                                <th scope="row">@item.ToString("HH:mm")</th>                            
+                                <td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                            </tr>
+                        }                
+                    </tbody>
+                </table>
+                @*Again, the metadata is needed to be able to push the parameters to the C#*@
+                    <div id="metadata2">
+                    <input id="txtAppClinician" name="strAppClinician" type="text"  />
+                    <input id="txtAppClinic" name="strAppClinic" type="text"  />
+                    <input id="txtAppDate" name="strAppDate" type="text"  />
+                    <input id="txtAppTime" name="strAppTime" type="text" />
+                    <input id="txtIntID" name="strIntID" type="text" />
+                </div>
+            </form>       
+        </div>
+    </div>
 </div>
 
 <script>
@@ -182,6 +198,7 @@
     document.getElementById("wcNext").addEventListener("click", GoNext);
     document.getElementById("btnClear").addEventListener("click", Clear);
     document.getElementById("btnAddWL").addEventListener("click", AddToWL);
+    document.getElementById("btnSearchWL").addEventListener("click", WaitingListSearch);
     document.onload(LoadClinics());
     
     function AddToWL()
@@ -315,6 +332,11 @@
         {
             window.alert("This is in the past, you cannot edit this.");
         }
+    }
+
+    function WaitingListSearch() 
+    { 
+        document.getElementById("WaitingListForm").submit();
     }
 
 

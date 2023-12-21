@@ -30,9 +30,9 @@ namespace CPTest.Models
         public string? ClinicianID { get; set; }
         public string? ClinicID { get; set; }
         //public DateTime? AddedDate { get; set; }
-        public string CGU_No { get; set; }
-        public string FIRSTNAME { get; set; }
-        public string LASTNAME { get; set; }
+        public string? CGU_No { get; set; }
+        public string? FIRSTNAME { get; set; }
+        public string? LASTNAME { get; set; }
         public DateTime? AddedDate { get; set; }
         public int? Duration { get; set; }
     }

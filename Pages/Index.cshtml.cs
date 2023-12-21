@@ -35,17 +35,17 @@ namespace CPTest.Pages
         public string sClinic = new string("");
 
 
-        public void OnGet(DateTime wcDt, string strClinician, string strClinic)
+        public void OnGet(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
         {
-            ClinicFormSetup(wcDt, strClinician, strClinic);
+            ClinicFormSetup(wcDt, strClinician, strClinic, sSearchTerm);
         }
 
-        public void OnPost(DateTime wcDt, string strClinician, string strClinic)
+        public void OnPost(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
         {
-            ClinicFormSetup(wcDt, strClinician, strClinic);
+            ClinicFormSetup(wcDt, strClinician, strClinic, sSearchTerm);
         }
 
-        private void ClinicFormSetup(DateTime wcDt, string strClinician, string strClinic)
+        private void ClinicFormSetup(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
         {
             ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
             StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
@@ -122,7 +122,10 @@ namespace CPTest.Pages
                 }
             }
 
-
+            if(sSearchTerm != null)
+            {
+                WaitingLists = _context.WaitingLists.Where(w => w.CGU_No.Contains(sSearchTerm));
+            }
 
             //ClinicSlots = _context.ClinicSlots.Where(l => l.ClinicID == strClinic & l.SlotDate >= DateArray[0] & l.SlotDate <= DateArray[4]).ToList().OrderBy(l => l.SlotDate);
             

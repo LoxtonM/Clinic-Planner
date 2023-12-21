@@ -3,47 +3,51 @@
 @{
 }
 
-@if (Model.Patient != null)
-{
-    <h1 style="text-align:center">Confirm appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
-}
-else
-{
-    <h1 style="text-align:center">This patient does not exist.</h1>
-}
+<div class="container">
 
-<form id="ApptForm" method="post">
-    <div class="row mb-5 g-5">
-        @if(@Model.StaffMember != null)
-        {
-            <h2 style ="text-align:center">To see @Model.StaffMember.NAME at @Model.ClinicVenue.NAME</h2>
-            <h2 style="text-align:center">on the @Model.AppDate.ToString("dd/MM/yyyy") at @Model.AppTime.ToString("hh:mm")</h2>
-            <h2 style="text-align:center">for @Model.AppDur minutes</h2>
-        }
-    </div>
+    @if (Model.Patient != null)
+    {
+        <h1 style="text-align:center">Confirm appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
+    }
+    else
+    {
+        <h1 style="text-align:center">This patient does not exist.</h1>
+    }
 
-    <div class="row mb-5 g-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
-            <button id="btnConfirm" class="btn btn-success">Confirm</button>
+    <form id="ApptForm" method="post">
+        <div class="row mb-5 g-5">
+            @if(@Model.StaffMember != null)
+            {
+                <h2 style ="text-align:center">To see @Model.StaffMember.NAME at @Model.ClinicVenue.NAME</h2>
+                <h2 style="text-align:center">on the @Model.AppDate.ToString("dd/MM/yyyy") at @Model.AppTime.ToString("hh:mm")</h2>
+                <h2 style="text-align:center">for @Model.AppDur minutes</h2>
+            }
         </div>
-        <div class="col-md-2">
-            <button id="btnCancel" class="btn btn-success">Cancel</button>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
         </div>
-        <div class="col-md-4"></div>
-    </div>
-    <div id="metadata">
-        @if(@Model.StaffMember != null)
-        {
-            <input id="txtMPI" name="iMPI" value=@Model.Patient.MPI />
-            <input id="txtClin" name="sClin" value=@Model.StaffMember.STAFF_CODE />
-            <input id="txtVen" name="sVen" value=@Model.ClinicVenue.FACILITY />
-            <input id="txtDat" name="dDat" value=@Model.AppDate.ToString("yyyy-MM-dd") />
-            <input id="txtTim" name="sTim" value=@Model.AppTime.ToString("hh:mm:ss") />
-            <input id="txtDur" name="iDur" value=@Model.AppDur />
-        }
-    </div>
-</form>
+        <div id="metadata">
+            @if(@Model.StaffMember != null)
+            {
+                <input id="txtMPI" name="iMPI" value=@Model.Patient.MPI />
+                <input id="txtClin" name="sClin" value=@Model.StaffMember.STAFF_CODE />
+                <input id="txtVen" name="sVen" value=@Model.ClinicVenue.FACILITY />
+                <input id="txtDat" name="dDat" value=@Model.AppDate.ToString("yyyy-MM-dd") />
+                <input id="txtTim" name="sTim" value=@Model.AppTime.ToString("hh:mm:ss") />
+                <input id="txtDur" name="iDur" value=@Model.AppDur />
+            }
+        </div>
+    </form>
+
+</div>
 
 <script>
 
