@@ -1,6 +1,5 @@
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
@@ -21,7 +20,14 @@ namespace CPTest.Pages
         
         public void OnGet(string sRefID)
         {
-
+            try
+            {
+                //do stuff
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }        
     }
 }

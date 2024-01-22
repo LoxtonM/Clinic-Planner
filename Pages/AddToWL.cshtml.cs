@@ -19,18 +19,32 @@ namespace CPTest.Pages
         
         public void OnGet(string sCGU)
         {
-            ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
-            StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);  
-            
-            if(sCGU != null)
+            try
             {
-                Patient = _context.Patients.FirstOrDefault(p => p.CGU_No == sCGU);
+                ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
+                StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
+
+                if (sCGU != null)
+                {
+                    Patient = _context.Patients.FirstOrDefault(p => p.CGU_No == sCGU);
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
             }
         }
 
         public void OnPost()
         {
-            
+            try
+            {
+                //do stuff
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }
     }
 }

@@ -23,7 +23,10 @@
         <div class="col-md-2"></div>
         <div class="col-md-3">
             <select id="ddlClinic">
-                <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
+                @if (Model.ClinicVenue != null)
+                {
+                    <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
+                }
                 @foreach (var item in Model.ClinicVenues)
                 {
                     <option value=@item.FACILITY>@item.NAME</option>

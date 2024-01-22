@@ -23,24 +23,31 @@ namespace CPTest.Pages
         
         public void OnGet(int iMPI, string sClinicID, string sClinicianID)
         {
-            if(sClinicianID != null)
+            try
             {
-                StaffMember = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sClinicianID);
-            }
+                if (sClinicianID != null)
+                {
+                    StaffMember = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sClinicianID);
+                }
 
-            if(sClinicID != null)
+                if (sClinicID != null)
+                {
+                    ClinicVenue = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == sClinicID);
+                }
+
+                if (iMPI != null)
+                {
+                    Patient = _context.Patients.FirstOrDefault(p => p.MPI == iMPI);
+                }
+
+                StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).ToList();
+
+                ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).ToList();
+            }
+            catch (Exception ex)
             {
-                ClinicVenue = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == sClinicID);
+                Response.Redirect("Error?sError=" + ex.Message);
             }
-
-            if(iMPI != null)
-            {
-                Patient = _context.Patients.FirstOrDefault(p => p.MPI == iMPI);
-            }
-
-            StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).ToList();
-
-            ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).ToList();
         }        
     }
 }

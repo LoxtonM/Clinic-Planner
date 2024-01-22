@@ -67,6 +67,7 @@ namespace CPTest.Models
     {
         [Key]
         public string STAFF_CODE { get; set; }
+        public string? EMPLOYEE_NUMBER { get; set; }
         public string? NAME { get; set; }
         public string CLINIC_SCHEDULER_GROUPS { get; set; }
         public bool InPost { get; set; }
@@ -86,7 +87,23 @@ namespace CPTest.Models
         public string? FACILITY { get; set; }
         public Int16? EST_DURATION_MINS { get; set; }
         public string? COUNSELED { get; set; }
+        public string? TYPE { get; set; }
     }
+
+    [Table("ViewPatientReferralDetails", Schema = "dbo")]
+    public class Referral
+    {
+        [Key]
+        public int RefID { get; set; }
+        public int MPI { get; set; }
+        public string? RefType { get; set; }
+        public DateTime RefDate { get; set; }
+        public string? COMPLETE { get; set; }
+        public string? ReferringClinician {  get; set; }
+        public string? ReferringFacility { get; set; }
+        public bool logicaldelete { get; set; }
+    }
+
 
     [Table("MasterPatientTable", Schema = "dbo")]
     public class Patient
@@ -97,5 +114,15 @@ namespace CPTest.Models
         public string? FIRSTNAME { get; set; }
         public string? LASTNAME { get; set; }
         public string? CGU_No { get; set; }
+    }
+
+    [Table("APPTYPE", Schema = "dbo")]
+    public class AppType
+    {
+        [Key]
+        public string APP_TYPE { get; set; }
+        public bool ISREFERRAL { get; set; }
+        public bool ISAPPT { get; set; }
+        public Int16 NON_ACTIVE { get; set; }
     }
 }

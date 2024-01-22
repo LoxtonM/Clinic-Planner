@@ -19,9 +19,10 @@ namespace CPTest.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public void OnGet(string sError)
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            sError = sError;
         }
     }
 }

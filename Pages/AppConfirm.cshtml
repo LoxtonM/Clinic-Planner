@@ -16,13 +16,66 @@
 
     <form id="ApptForm" method="post">
         <div class="row mb-5 g-5">
-            @if(@Model.StaffMember != null)
+            @if(@Model.staffMember != null)
             {
-                <h2 style ="text-align:center">To see @Model.StaffMember.NAME at @Model.ClinicVenue.NAME</h2>
-                <h2 style="text-align:center">on the @Model.AppDate.ToString("dd/MM/yyyy") at @Model.AppTime.ToString("hh:mm")</h2>
-                <h2 style="text-align:center">for @Model.AppDur minutes</h2>
+                <h2 style ="text-align:center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME</h2>
+                <h2 style="text-align:center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("hh:mm")</h2>
+                <h2 style="text-align:center">for @Model.appDur minutes</h2>
             }
         </div>
+        <div class="row mb-5 g-5">
+            @if (Model.linkedRefs.Count > 0)
+            {
+                <div class="col-md-2">
+                    <label>Linked Referral:</label>
+                </div>
+                <div class="col-md-8">                
+                    <select name="iRefID">
+                        @foreach (var r in Model.linkedRefs)
+                        {
+                            <option value=@r.RefID>@r.RefType - @r.RefDate.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
+                        }
+                    </select>                
+                </div>
+            }
+            else
+            {
+                <h3>There are no active referrals. Please create one, or re-activate an old one, before continuing.</h3>
+            }
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Appointment Type:</label>
+            </div>
+            <div class="col-md-4">
+                <select name="sType" asp-for=@Model.appTypeDef>
+                    @foreach(var t in Model.appTypes)
+                    {
+                        <option value=@t.APP_TYPE>@t.APP_TYPE</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>Duration: (minutes)</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iDur" asp-for=@Model.appDur />
+            </div>
+            <div class="col-md-3">
+                
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Special Instructions:</label>
+            </div>
+            <div class="col-md-10">
+                <textarea rows="10" cols="100" name="sInstructions"></textarea>
+            </div>
+        </div>
+
 
         <div class="row mb-5 g-5">
             <div class="col-md-4"></div>
@@ -30,19 +83,19 @@
                 <button id="btnConfirm" class="btn btn-success">Confirm</button>
             </div>
             <div class="col-md-2">
-                <button id="btnCancel" class="btn btn-success">Cancel</button>
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
             </div>
             <div class="col-md-4"></div>
         </div>
         <div id="metadata">
-            @if(@Model.StaffMember != null)
+            @if(@Model.staffMember != null)
             {
                 <input id="txtMPI" name="iMPI" value=@Model.Patient.MPI />
-                <input id="txtClin" name="sClin" value=@Model.StaffMember.STAFF_CODE />
-                <input id="txtVen" name="sVen" value=@Model.ClinicVenue.FACILITY />
-                <input id="txtDat" name="dDat" value=@Model.AppDate.ToString("yyyy-MM-dd") />
-                <input id="txtTim" name="sTim" value=@Model.AppTime.ToString("hh:mm:ss") />
-                <input id="txtDur" name="iDur" value=@Model.AppDur />
+                <input id="txtClin" name="sClin" value=@Model.staffMember.STAFF_CODE />
+                <input id="txtVen" name="sVen" value=@Model.clinicVenue.FACILITY />
+                <input id="txtDat" name="dDat" value=@Model.appDate.ToString("yyyy-MM-dd") />
+                <input id="txtTim" name="sTim" value=@Model.appTime.ToString("hh:mm:ss") />
+                <input id="txtDur" name="iDur" value=@Model.appDur />
             }
         </div>
     </form>
@@ -62,13 +115,23 @@
 
     function GoBack()
     {
-        window.close();
+        //window.close();
+        window.location.replace("Index");
     }
 
     function HideMenu()
     {
         document.getElementById("TopMenu").hidden = true;
         document.getElementById("metadata").hidden = true;
+        if(@Model.linkedRefs.Count == 0)
+        {
+            HideConfirmButton();
+        }
+    }
+
+    function HideConfirmButton()
+    {
+        document.getElementById("btnConfirm").hidden = true;
     }
  
 </script>

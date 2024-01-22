@@ -1,50 +1,98 @@
+using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Data.SqlClient;
 
 namespace CPTest.Pages
 {
     public class AppConfirmModel : PageModel
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _config; 
+        DataConnections dc;
+        SqlServices ss;
 
-        public AppConfirmModel(DataContext context)
+        public AppConfirmModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
+            dc = new DataConnections(_context);
+            ss = new SqlServices(_config);            
         }
+
         public Patient? Patient { get; set; }
-        public StaffMember? StaffMember { get; set; }
+        public StaffMember? staffMember { get; set; }
+        public ClinicVenue? clinicVenue { get; set; }
+        public List<Referral> linkedRefs { get; set; }
+        public List<AppType> appTypes { get; set; }
 
-        public ClinicVenue? ClinicVenue { get; set; }
-
-        public DateTime AppDate;
-        public DateTime AppTime;
-        public int AppDur;
-        public string? AppDateString;
-        public string? AppTimeString;
-        public void OnGet(string sMPI, string sClin, string sVen, string sDat, string sTim, string sDur)
+        public DateTime appDate;
+        public DateTime appTime;
+        public int appDur;
+        public string? appDateString;
+        public string? appTimeString;
+        public string? appTypeDef;
+        
+        public void OnGet(string sMPI, string sClin, string sVen, string sDat, string sTim, string sDur, string sInstructions)
         {
-            int iMPI = Int32.Parse(sMPI);
+            try
+            {
+                int iMPI = Int32.Parse(sMPI);
 
-            Patient = _context.Patients.FirstOrDefault(p => p.MPI == iMPI);
+                Patient = dc.GetPatientDetails(iMPI);
+                appTypes = dc.GetAppTypeList();
+                staffMember = dc.GetStaffDetails(sClin);
 
-            StaffMember = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sClin);
+                clinicVenue = dc.GetVenueDetails(sVen);
 
-            ClinicVenue = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == sVen);
+                linkedRefs = dc.GetReferralsList(iMPI);
 
-            AppDateString = sDat;
-            AppTimeString = sTim;
+                appDateString = sDat;
+                appTimeString = sTim;
 
-            AppDate = DateTime.Parse(sDat);
-            AppTime = DateTime.Parse("1899-12-30 " + sTim);
-            AppDur = Int32.Parse(sDur);
+                appDate = DateTime.Parse(sDat);
+                appTime = DateTime.Parse("1899-12-30 " + sTim);
+                appDur = Int32.Parse(sDur);
+
+                if (staffMember.CLINIC_SCHEDULER_GROUPS == "GC")
+                {
+                    appTypeDef = "GC Only Appt";
+                }
+                else
+                {
+                    appTypeDef = "Cons. Appt";
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }
 
-        public void OnPost(int iMPI, string sClin, string sVen, DateTime dDat, string sTim, int iDur)
+        public void OnPost(int iMPI, int iRefID, string sClin, string sVen, DateTime dDat, string sTim, int iDur, string sInstructions, string sType)
         {
-            //placeholder
-           Response.Redirect("Finished"); 
+            try
+            {
+                string sUser;
+
+                Patient = dc.GetPatientDetails(iMPI);
+                appTypes = dc.GetAppTypeList();
+                staffMember = dc.GetStaffDetails(sClin);
+                sUser = dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
+                
+                clinicVenue = dc.GetVenueDetails(sVen);
+
+                linkedRefs = dc.GetReferralsList(iMPI);
+
+                ss.CreateAppointment(dDat, sTim, sClin, null, null, sVen, iRefID, iMPI, sType, iDur, sUser, sInstructions);
+                
+                Response.Redirect("Index");
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }
     }
 }
