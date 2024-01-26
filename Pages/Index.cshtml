@@ -25,7 +25,7 @@
                 <label>Week Commencing:</label> @*used to set the week view*@
             </div>
             <div class="col-md-4">
-                <input type="button" value="&laquo;" id="wcBack" /><input id="wcDate" name="wcDt" type="date" asp-for=@Model.wcDate /><input type="button" id="wcNext" value="&raquo;" />
+                <input type="button" value="&laquo;" id="wcBack" onclick="GoBack()"/><input id="wcDate" name="wcDt" type="date" asp-for=@Model.wcDate /><input type="button" id="wcNext" value="&raquo;" onclick="GoNext()" />
             </div>
         </div>
         
@@ -34,7 +34,7 @@
                 <label>Clinician:</label>
             </div>
             <div class="col-md-2"> @*Clinician select*@
-                <select id="ddlClinician" name="strClinician" asp-for=@Model.sClinician>
+                <select id="ddlClinician" name="strClinician" asp-for=@Model.sClinician onchange="RefreshForm()">
                     @if (Model.StaffMember != null)
                     {
                         <option value="@Model.StaffMember" selected>@Model.StaffMember.NAME</option>
@@ -56,7 +56,7 @@
                 <label>Clinic:</label>
             </div>
             <div class="col-md-2"> @*Clinic select*@
-                <select id="ddlClinic" name="strClinic" asp-for=@Model.sClinic>
+                <select id="ddlClinic" name="strClinic" asp-for=@Model.sClinic onchange="RefreshForm()">
                     @if (Model.ClinicVenue != null)
                     {
                         <option value="@Model.ClinicVenue" selected>@Model.ClinicVenue.NAME</option>
@@ -76,10 +76,10 @@
             </div>
             <div class="col-md-3"></div>
             <div class="col-md-1" align="right">
-                <input class="btn-success" type="submit" value="Select" />
+                @*<input class="btn-success" type="submit" value="Select" />*@
             </div>
             <div class="col-md-1" align="right">
-                <input class="btn-success" type="button" id="btnClear" value="Clear" />
+                <input class="btn-success" type="button" id="btnClear" value="Clear" onclick="Clear()" />
             </div>
         </div>
     </form>
@@ -99,7 +99,7 @@
                         <input class="w-100" name="sSearchTerm" />
                     </div>
                     <div class="col-6">
-                        <button class="btn-success w-50 h-100" type="button" id="btnSearchWL">
+                        <button class="btn-success w-50 h-100" type="button" id="btnSearchWL" onclick="WaitingListSearch()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                             </svg>
@@ -112,7 +112,7 @@
                 </div>
             
                 <div class="row mb-5 g-5">
-                    <input class="btn-success" type="button" id="btnAddWL" value="Add Patient to WL" />
+                    <input class="btn-success" type="button" id="btnAddWL" value="Add Patient to WL" onclick="AddToWL()"/>
                 </div>
                 @if (Model.waitingList != null)
                 {
@@ -164,12 +164,7 @@
 </div>
 
 <script>
-
-    document.getElementById("wcBack").addEventListener("click", GoBack);
-    document.getElementById("wcNext").addEventListener("click", GoNext);
-    document.getElementById("btnClear").addEventListener("click", Clear);
-    document.getElementById("btnAddWL").addEventListener("click", AddToWL);
-    document.getElementById("btnSearchWL").addEventListener("click", WaitingListSearch);
+    
     document.onload(LoadClinics());
     
     function AddToWL()
@@ -177,44 +172,37 @@
         window.open("AddToWL");
     }
 
-    @*Handles Next and Back buttons for the date selector*@
-    function GoBack() 
+    //Handles Next and Back buttons for the date selector
+    function GoBack() //called by wcBack
     {        
         var date = new Date(document.getElementById("wcDate").value);
         date.setDate(date.getDate() - 7);
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
-        document.getElementById("ClinicSelect").submit();
+        RefreshForm()
     }
 
-    function GoNext()
+    function GoNext() //called by wcNext
     {   
         var date = new Date(document.getElementById("wcDate").value);
         date.setDate(date.getDate() + 7);        
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
-        document.getElementById("ClinicSelect").submit();        
+        RefreshForm()
     }
 
-    @*Clear/reset the select menus*@
-    function Clear()
-    {
-        //document.getElementById("txtClinician").value = ""
-        //document.getElementById("txtClinic").value = ""
+    //Clear/reset the select menus
+    function Clear() //called by btnClear
+    {        
         document.getElementById("ddlClinician").value = ""
         document.getElementById("ddlClinic").value = ""
-    }
-    @*
-    function SetClinician(stClinician)
-    {
-        document.getElementById("txtClinician").value = stClinician
+        RefreshForm()
     }
 
-    function SetClinic(stClinic) 
-    {
-        document.getElementById("txtClinic").value = stClinic
+    function RefreshForm() 
+    { 
+        document.getElementById("ClinicSelect").submit();
     }
-    *@
-
-    @*Drag-and-drop functionality*@
+    
+    //Drag-and-drop functionality
     function OnDragStart(ev)
     {  
         ev.dataTransfer.setData("text", ev.target.id);
@@ -224,7 +212,6 @@
     
     function OnDragEnd(iIntID, ev)
     {
-        //window.alert(String(iIntID));
         ev.currentTarget.style.backgroundColor = "darkcyan";
         ev.currentTarget.style.color = "ivory";
     }
@@ -235,8 +222,7 @@
         const id = ev.dataTransfer.getData("text");
         const draggableElement = document.getElementById(id);
         const dropzone = ev.target;
-        //dropzone.appendChild(draggableElement);
-        //ev.dataTransfer.clearData();
+        
         if(ev.target.innerHTML.includes("Free"))
         {
             //substrings, substrings, and more substrings...
@@ -245,17 +231,16 @@
             const apDur = ev.target.innerHTML.slice(7,9);
             const apClin = ev.target.innerHTML.slice(18, 22);
             const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.length);
-            //window.alert(ev.target.id + " - " + ev.target.innerHTML + " - " + draggableElement.id);
+           
             const MPI = draggableElement.id;
             //this is necessary to make sure SQL doesn't render it into American
             const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
                  
-            //window.open("AppConfirm?sMPI=" + MPI + "&sClin=" + apClin + "&sVen=" + apVen + "&sDat=" + apDateProper + "&sTim=" + apTime + "&sDur=" + apDur);
             window.location.replace ("AppConfirm?sMPI=" + MPI + "&sClin=" + apClin + "&sVen=" + apVen + "&sDat=" + apDateProper + "&sTim=" + apTime + "&sDur=" + apDur);
             //document.getElementById("ClinicForm").submit();
         }        
     }
-    @*Sets highlight colours for drag/drop*@
+    //Sets highlight colours for drag/drop
     function OnDragOver(ev)
     {
        ev.preventDefault();
@@ -278,6 +263,7 @@
        }       
     }
 
+    //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     function OnDoubleClickWL(MPI, clinicID, clinicianID)
     {
         window.open("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
@@ -288,9 +274,7 @@
         if (document.getElementById(id).innerHTML.includes("Booked"))
         {
             const str = document.getElementById(id).innerHTML;
-            const sRID = str.slice(str.indexOf('R:') + 2);
-            //window.alert(str);
-            //window.alert(sRID);
+            const sRID = str.slice(str.indexOf('R:') + 2);            
             
             window.open("AppModify?sRefID=" + sRID);
         }
@@ -309,7 +293,7 @@
         document.getElementById("WaitingListForm").submit();
     }
 
-    @*Called at the start - sets the clinic matrix view*@
+    //Called at the start - sets the clinic matrix view
     function LoadClinics()
     {      
         var cMatrix = document.getElementById("ClinicMatrix");
@@ -326,10 +310,11 @@
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
+        var CGUNoArray = [];
         
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         @if (Model.clinicSlots != null) //set up all the clinic slots first
         {
             @foreach (var item in Model.clinicSlots)
@@ -350,11 +335,12 @@
             {
                 @:apptDateArray.push("@item.BOOKED_DATE");
                 @:apptTimeArray.push("@item.BOOKED_TIME");
-                @:apptDurationArray.push("@item.EST_DURATION_MINS");
-                @:apptClinicArray.push("@item.FACILITY");
-                @:apptClinicianArray.push("@item.STAFF_CODE_1");
-                @:apptOutcomeArray.push("@item.COUNSELED");
-                @:apptRefIDArray.push("@item.RefID");
+                @:apptDurationArray.push("@item.Duration");
+                @:apptClinicArray.push("@item.Clinic");
+                @:apptClinicianArray.push("@item.Clinician");
+                @:CGUNoArray.push("@item.CGU_No");
+                @:apptOutcomeArray.push("@item.Attendance");
+                @:apptRefIDArray.push("@item.RefID");                
             }
         }
 
@@ -390,26 +376,28 @@
                                     for (var l = 0; l < timeArray.length; l++)
                                     {                                        
                                         const myTime = timeArray[k].substring(11, 16);
+                                        var strSlotDetail;
                                         if (myTime == theTime) 
                                         {
                                             if (colDate < today) //for clinic slots in the past
                                             {
                                                 document.getElementById(col.id).style.backgroundColor = "firebrick";
-                                                document.getElementById(col.id).innerHTML = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                             }
                                             else
                                             {
                                                 if (statusArray[k] == "Open") //for available slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "green";
-                                                    document.getElementById(col.id).innerHTML = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                                 }
                                                 else //for unavailable/reserved slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "firebrick";
-                                                    document.getElementById(col.id).innerHTML = statusArray[k] + " - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                    strSlotDetail = statusArray[k] + " - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                                 }
                                             }
+                                            document.getElementById(col.id).innerHTML = strSlotDetail;
                                         }                                    
                                     }
                                 }
@@ -438,21 +426,33 @@
 
                                     for (var l = 0; l < apptTimeArray.length; l++) {
                                         const myTime = apptTimeArray[k].substring(11, 16);
-                                        if (myTime == theTime) {
+                                        var strApptDetail;
+                                        if (myTime == theTime) 
+                                        {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
                                             {
                                                 //we have to do this here, because the C# throws a fit if we get nulls
                                                 if (colDate < today)  //past appointments
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "purple";
-                                                    document.getElementById(col.id).innerHTML = "PAST</br>" + apptDurationArray[k].toString() + " mins</br> " + apptClinicianArray[k] + "</br> " + apptClinicArray[k] + "</br>" + apptOutcomeArray[k] + "</br>R:" + apptRefIDArray[k].toString();
+                                                    strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                    apptClinicianArray[k] + "</br> " + 
+                                                    apptClinicArray[k] + "</br>" + 
+                                                    //apptOutcomeArray[k] + "</br>R:" +
+                                                    CGUNoArray[k] + "</br>R:" +
+                                                    apptRefIDArray[k].toString();
                                                 }
                                                 else //current/future appointments
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "blue";
-                                                    document.getElementById(col.id).innerHTML = "Booked - " + apptDurationArray[k].toString() + " mins</br> " + apptClinicianArray[k] + "</br> " + apptClinicArray[k] + "</br>" + apptOutcomeArray[k] + "</br>R:" + apptRefIDArray[k].toString();
+                                                    strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                    apptClinicianArray[k] + "</br> " + 
+                                                    apptClinicArray[k] + "</br>" + 
+                                                    //apptOutcomeArray[k] + "</br>R:" +
+                                                    CGUNoArray[k] + "</br>R:" +
+                                                    apptRefIDArray[k].toString();
                                                 }
-                                                
+                                                document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }
                                     }

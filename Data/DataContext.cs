@@ -16,5 +16,6 @@ namespace CPTest.Data
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Referral> Referrals { get; set; }
         public DbSet<AppType> AppType { get; set; }
+        public DbSet<CliniciansClinics> CliniciansClinics { get; set; }
     }
 }

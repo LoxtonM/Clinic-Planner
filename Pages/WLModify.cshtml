@@ -8,55 +8,59 @@
     <div class="row mb-5 g-5">
         <h1 style="text-align:center">Modify Waiting List Entry for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
     </div>
-
-    <div class="row mb-5 g-5">
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
-            <select id="ddlClinician" >
-                <option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>            
-                @foreach (var item in Model.StaffMembers)
-                {
-                    <option value=@item.STAFF_CODE>@item.NAME</option>
-                }
-            </select>
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>New Clinician:</label>
+            </div>
+            <div class="col-md-3">
+                <select id="ddlClinician" name="sClinicianID" asp-for=@Model.StaffMember.STAFF_CODE>                
+                    @foreach (var item in Model.StaffMembers)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>New clinic:</label>
+            </div>
+            <div class="col-md-3">
+                <select id="ddlClinic" name="sClinicID" asp-for=@Model.ClinicVenue.FACILITY>
+                    @*@if (Model.ClinicVenue != null)
+                    {
+                        <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
+                    }*@
+                    @foreach (var item in Model.ClinicVenues)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"></div>
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
-            <select id="ddlClinic">
-                @if (Model.ClinicVenue != null)
-                {
-                    <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
-                }
-                @foreach (var item in Model.ClinicVenues)
-                {
-                    <option value=@item.FACILITY>@item.NAME</option>
-                }
-            </select>
+            
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button type="submit" id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>  
+            <div class="col-md-2">
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
         </div>
-        <div class="col-md-2"></div>
-    </div>
-
-    <div class="row mb-5 g-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
-            <button id="btnConfirm" class="btn btn-success">Confirm</button>
-        </div>
-        <div class="col-md-2">
-            <button id="btnCancel" class="btn btn-success">Cancel</button>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
+    </form>
 </div>
 
 <script>
 
-    document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
     document.getElementById("btnCancel").addEventListener("click", GoBack);
     document.onload(HideMenu());
 
     function Confirm()
     {
-        window.alert("Okay!");
+        //window.alert("Okay!");
     }
 
     function GoBack()

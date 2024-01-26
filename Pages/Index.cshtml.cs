@@ -100,6 +100,10 @@ namespace CPTest.Pages
                 if (!strClinician.IsNullOrEmpty()) //if a clinician is selected as well
                 {
                     StaffMember = dc.GetStaffDetails(strClinician);
+                    var Clinics = new List<CliniciansClinics>();
+                    Clinics = dc.GetCliniciansClinics(strClinician);
+
+                    ClinicVenues = ClinicVenues.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");

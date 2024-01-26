@@ -5,56 +5,119 @@
 <div class="container">
     <h1 style="text-align:center">Modify appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
 
-    <div class="row mb-5 g-5">
-        <h2>@Model.StaffMember.NAME, @Model.ClinicVenue.NAME, @Model.Appointment.BOOKED_DATE, @Model.Appointment.BOOKED_TIME</h2>
+    <div class="row mb-5 g-5" style="text-align:center">
+        <h2>@Model.StaffMember.NAME, @Model.ClinicVenue.NAME, @Model.Appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.Appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
     </div>
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Modify appointment location/clinician:</label>
+            </div>
+            <div class="col-md-3">
+                <select name="AppWith1" id="ddlClinician" asp-for=@Model.StaffMember.STAFF_CODE>
+                   @*<option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>*@
+                    @foreach (var item in Model.StaffMembers)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-3">
+                <select name="AppLocation" id="ddlClinic" asp-for=@Model.ClinicVenue.FACILITY>
+                    @*<option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>*@
+                    @foreach (var item in Model.ClinicVenues)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">Additional Clinicians:</div>
+            <div class="col-md-2">
+                <div class="row">
+                    <select name="appWith2" asp-for=@Model.Appointment.STAFF_CODE_2>
+                        <option selected value=""></option>
+                        @foreach(var s in Model.StaffMembers)
+                        {
+                            <option value=@s.STAFF_CODE>@s.NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="row">
+                    <select name="appWith3" asp-for=@Model.Appointment.STAFF_CODE_3>
+                        <option selected value=""></option>
+                        @foreach (var s in Model.StaffMembers)
+                        {
+                            <option value=@s.STAFF_CODE>@s.NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-2">
+                <select name="appType" asp-for=@Model.Appointment.AppType>
+                    @foreach (var t in Model.AppTypes)
+                    {
+                        <option value=@t.APP_TYPE>@t.APP_TYPE</option>
+                    }
+                </select>
+            </div>           
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Change date/time:</label>
+            </div>
+            <div class="col-md-5">
+                <input type="date" name="dNewDate" asp-for=@Model.Appointment.BOOKED_DATE />
+            </div>
+            <div class="col-md-5">
+                <input type="time" name="dNewTime" asp-for=@Model.Appointment.BOOKED_TIME />
+            </div>
+        </div>
 
-    <div class="row mb-5 g-5">
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
-            <select id="ddlClinician" >
-                <option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>
-                @foreach (var item in Model.StaffMembers)
-                {
-                    <option value=@item.STAFF_CODE>@item.NAME</option>
-                }
-            </select>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Cancel appointment:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="checkbox" class="form-check-input" id="chkCancelAppt" onclick="ShowCancelMenu()" />
+            </div>
+            <div class="col-md-6">
+                <select id="ddlCancelAppt" name="sCancel" hidden=true>
+                    <option selected value=""></option>
+                    @foreach(var o in Model.Outcomes)
+                    {
+                        <option value=@o.CLINIC_OUTCOME>@o.CLINIC_OUTCOME</option>
+                    }
+                </select>
+            </div>
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-3">
-            <select id="ddlClinic">
-                <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
-                @foreach (var item in Model.ClinicVenues)
-                {
-                    <option value=@item.FACILITY>@item.NAME</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-2"></div>
-    </div>
 
-    <div class="row mb-5 g-5">
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
-            <button id="btnConfirm" class="btn btn-success">Confirm</button>
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button type="submit" id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
         </div>
-        <div class="col-md-2">
-            <button id="btnCancel" class="btn btn-success">Cancel</button>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
+    </form>
 </div>
 
 <script>
 
-    document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
     document.getElementById("btnCancel").addEventListener("click", GoBack);
     document.onload(HideMenu());
 
     function Confirm()
     {
-        window.alert("Okay!");
+        
     }
 
     function GoBack()
@@ -65,6 +128,19 @@
     function HideMenu()
     {
         document.getElementById("TopMenu").hidden = true;
+    }
+
+    function ShowCancelMenu() 
+    { 
+
+        if (document.getElementById("chkCancelAppt").checked) 
+        {
+            document.getElementById("ddlCancelAppt").hidden = false;
+        }
+        else 
+        {
+            document.getElementById("ddlCancelAppt").hidden = true;
+        }
     }
  
 </script>

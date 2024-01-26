@@ -19,7 +19,7 @@
             @if(@Model.staffMember != null)
             {
                 <h2 style ="text-align:center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME</h2>
-                <h2 style="text-align:center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("hh:mm")</h2>
+                <h2 style="text-align:center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("HH:mm")</h2>
                 <h2 style="text-align:center">for @Model.appDur minutes</h2>
             }
         </div>
@@ -94,7 +94,7 @@
                 <input id="txtClin" name="sClin" value=@Model.staffMember.STAFF_CODE />
                 <input id="txtVen" name="sVen" value=@Model.clinicVenue.FACILITY />
                 <input id="txtDat" name="dDat" value=@Model.appDate.ToString("yyyy-MM-dd") />
-                <input id="txtTim" name="sTim" value=@Model.appTime.ToString("hh:mm:ss") />
+                <input id="txtTim" name="sTim" value=@Model.appTime.ToString("HH:mm:ss") />
                 <input id="txtDur" name="iDur" value=@Model.appDur />
             }
         </div>

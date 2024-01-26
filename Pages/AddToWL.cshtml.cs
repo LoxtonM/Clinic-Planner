@@ -21,7 +21,8 @@ namespace CPTest.Pages
         {
             try
             {
-                ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
+                //ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
+                ClinicVenues = _context.ClinicVenues.OrderBy(v => v.NAME);
                 StaffMembers = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
 
                 if (sCGU != null)

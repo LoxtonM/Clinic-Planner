@@ -68,9 +68,26 @@ namespace CPTest.Connections
             return at;
         }
 
+        public List<Outcome> GetOutcomeList() 
+        {
+            var oc = _context.Outcomes.Where(o => o.DEFAULT_CLINIC_STATUS == "Active").ToList();
+
+            return oc;
+        }
+
+        public Appointment GetAppointmentDetails(int iRefID)
+        {
+            var appt = _context.Appointments.FirstOrDefault(a => a.RefID == iRefID);
+
+            return appt;
+        }
+
         public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? strClinician, string? strClinic)
         {
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & a.BOOKED_DATE <= dTo & a.COUNSELED != "Declined" & a.COUNSELED != "Cancelled by professional" & a.COUNSELED != "Cancelled by patient").ToList();
+            var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" & a.Attendance != "Cancelled by patient").ToList();
+
+           
+
 
             if (strClinician != null)
             {
@@ -121,6 +138,13 @@ namespace CPTest.Connections
             }
 
             return slots;
+        }
+
+        public List<CliniciansClinics> GetCliniciansClinics(string strClinician)
+        {
+            var clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == strClinician).ToList();
+
+            return clinics;
         }
 
         public IEnumerable<ClinicSlot> GetOpenSlots(IEnumerable<ClinicSlot> clinicSlots)

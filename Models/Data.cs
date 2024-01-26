@@ -62,6 +62,15 @@ namespace CPTest.Models
         public Int16 NON_ACTIVE { get; set; }
     }
 
+    [Table("ViewCliniciansClinics", Schema = "dbo")]
+    public class CliniciansClinics
+    {
+        [Key]
+        public string FACILITY { get; set; }
+        public string? NAME { get; set; }
+        public string? STAFF_CODE { get; set; }
+    }
+
     [Table("STAFF", Schema = "dbo")]
     public class  StaffMember
     {
@@ -75,19 +84,28 @@ namespace CPTest.Models
 
     }
 
-    [Table("MasterActivityTable", Schema = "dbo")]
+    //[Table("MasterActivityTable", Schema = "dbo")]
+    [Table("ViewPatientAppointmentDetails", Schema = "dbo")]
     public class Appointment
     {
         [Key]
         public int RefID { get; set; }
         public int MPI { get; set; }
+        public string? CGU_No { get; set; }
         public DateTime? BOOKED_DATE { get; set; }
         public DateTime? BOOKED_TIME { get; set; }
         public string? STAFF_CODE_1 { get; set; }
+        public string? STAFF_CODE_2 { get; set; }
+        public string? STAFF_CODE_3 { get; set; }
         public string? FACILITY { get; set; }
-        public Int16? EST_DURATION_MINS { get; set; }
-        public string? COUNSELED { get; set; }
-        public string? TYPE { get; set; }
+        //public Int16? EST_DURATION_MINS { get; set; }
+        public Int16? Duration { get; set; }
+        //public string? COUNSELED { get; set; }
+        public string? Attendance { get; set; }
+        //public string? TYPE { get; set; }
+        public string? AppType { get; set; }
+        public string? Clinician { get; set; }
+        public string? Clinic {  get; set; }
     }
 
     [Table("ViewPatientReferralDetails", Schema = "dbo")]

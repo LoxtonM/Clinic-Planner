@@ -9,6 +9,7 @@ namespace CPTest.Pages
     public class ErrorModel : PageModel
     {
         public string? RequestId { get; set; }
+        public string? sErrorMessage;
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
@@ -22,7 +23,7 @@ namespace CPTest.Pages
         public void OnGet(string sError)
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-            sError = sError;
+            sErrorMessage = sError;
         }
     }
 }
