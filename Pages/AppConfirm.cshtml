@@ -24,14 +24,14 @@
             }
         </div>
         <div class="row mb-5 g-5">
-            @if (Model.linkedRefs.Count > 0)
+            @if (Model.linkedRefList.Count > 0)
             {
                 <div class="col-md-2">
                     <label>Linked Referral:</label>
                 </div>
                 <div class="col-md-8">                
                     <select name="iRefID">
-                        @foreach (var r in Model.linkedRefs)
+                        @foreach (var r in Model.linkedRefList)
                         {
                             <option value=@r.RefID>@r.RefType - @r.RefDate.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
                         }
@@ -50,7 +50,7 @@
             </div>
             <div class="col-md-4">
                 <select name="sType" asp-for=@Model.appTypeDef>
-                    @foreach(var t in Model.appTypes)
+                    @foreach(var t in Model.appTypeList)
                     {
                         <option value=@t.APP_TYPE>@t.APP_TYPE</option>
                     }
@@ -123,7 +123,7 @@
     {
         document.getElementById("TopMenu").hidden = true;
         document.getElementById("metadata").hidden = true;
-        if(@Model.linkedRefs.Count == 0)
+        if (@Model.linkedRefList.Count == 0) 
         {
             HideConfirmButton();
         }

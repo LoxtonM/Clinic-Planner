@@ -13,9 +13,9 @@ namespace CPTest.Pages
         {
             _context = context;
         }
-        public List<StaffMember> StaffMembers { get; set; }
-        public ClinicVenue ClinicVenue { get; set; }
-        public List<ClinicVenue> ClinicVenues { get; set; }
+        public List<StaffMember> staffMemberList { get; set; }
+        public ClinicVenue clinicVenue { get; set; }
+        public List<ClinicVenue> clinicVenueList { get; set; }
 
         
         public void OnGet(string sRefID)

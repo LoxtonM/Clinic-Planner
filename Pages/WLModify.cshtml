@@ -6,7 +6,7 @@
 <div class="container">
 
     <div class="row mb-5 g-5">
-        <h1 style="text-align:center">Modify Waiting List Entry for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
+        <h1 style="text-align:center">Modify Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
     </div>
     <form method="post">
         <div class="row mb-5 g-5">
@@ -14,8 +14,8 @@
                 <label>New Clinician:</label>
             </div>
             <div class="col-md-3">
-                <select id="ddlClinician" name="sClinicianID" asp-for=@Model.StaffMember.STAFF_CODE>                
-                    @foreach (var item in Model.StaffMembers)
+                <select id="ddlClinician" name="sClinicianID" asp-for=@Model.staffMember.STAFF_CODE>
+                    @foreach (var item in Model.staffMemberList)
                     {
                         <option value=@item.STAFF_CODE>@item.NAME</option>
                     }
@@ -25,12 +25,12 @@
                 <label>New clinic:</label>
             </div>
             <div class="col-md-3">
-                <select id="ddlClinic" name="sClinicID" asp-for=@Model.ClinicVenue.FACILITY>
+                <select id="ddlClinic" name="sClinicID" asp-for=@Model.clinicVenue.FACILITY>
                     @*@if (Model.ClinicVenue != null)
                     {
                         <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
                     }*@
-                    @foreach (var item in Model.ClinicVenues)
+                    @foreach (var item in Model.clinicVenueList)
                     {
                         <option value=@item.FACILITY>@item.NAME</option>
                     }

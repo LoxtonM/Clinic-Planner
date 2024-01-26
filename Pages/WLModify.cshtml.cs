@@ -18,11 +18,11 @@ namespace CPTest.Pages
             dc = new DataConnections(_context);
         }
 
-        public Patient Patient { get; set; }
-        public StaffMember StaffMember { get; set; }
-        public List<StaffMember> StaffMembers { get; set; }
-        public ClinicVenue ClinicVenue { get; set; }
-        public List<ClinicVenue> ClinicVenues { get; set; }        
+        public Patient patient { get; set; }
+        public StaffMember staffMember { get; set; }
+        public List<StaffMember> staffMemberList { get; set; }
+        public ClinicVenue clinicVenue { get; set; }
+        public List<ClinicVenue> clinicVenueList { get; set; }        
 
         
         public void OnGet(int iMPI, string sClinicID, string sClinicianID)
@@ -31,22 +31,22 @@ namespace CPTest.Pages
             {
                 if (sClinicianID != null)
                 {
-                    StaffMember = dc.GetStaffDetails(sClinicianID);
+                    staffMember = dc.GetStaffDetails(sClinicianID);
                 }
 
                 if (sClinicID != null)
                 {
-                    ClinicVenue = dc.GetVenueDetails(sClinicID);
+                    clinicVenue = dc.GetVenueDetails(sClinicID);
                 }
 
                 if (iMPI != null)
                 {
-                    Patient = dc.GetPatientDetails(iMPI);
+                    patient = dc.GetPatientDetails(iMPI);
                 }
 
-                StaffMembers = dc.GetStaffMemberList();
+                staffMemberList = dc.GetStaffMemberList();
 
-                ClinicVenues = dc.GetVenueList();
+                clinicVenueList = dc.GetVenueList();
             }
             catch (Exception ex)
             {
@@ -60,22 +60,22 @@ namespace CPTest.Pages
             {
                 if (sClinicianID != null)
                 {
-                    StaffMember = dc.GetStaffDetails(sClinicianID);
+                    staffMember = dc.GetStaffDetails(sClinicianID);
                 }
 
                 if (sClinicID != null)
                 {
-                    ClinicVenue = dc.GetVenueDetails(sClinicID);
+                    clinicVenue = dc.GetVenueDetails(sClinicID);
                 }
 
                 if (iMPI != null)
                 {
-                    Patient = dc.GetPatientDetails(iMPI);
+                    patient = dc.GetPatientDetails(iMPI);
                 }
 
-                StaffMembers = dc.GetStaffMemberList();
+                staffMemberList = dc.GetStaffMemberList();
 
-                ClinicVenues = dc.GetVenueList();
+                clinicVenueList = dc.GetVenueList();
             }
             catch (Exception ex)
             {

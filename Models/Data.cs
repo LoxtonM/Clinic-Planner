@@ -12,16 +12,7 @@ namespace CPTest.Models
         public string DEFAULT_CLINIC_STATUS { get; set; }
     }
 
-    //[Table("Clinicians_WaitingList", Schema = "dbo")]
-    //[Keyless]
-    //public class WaitingList
-    //{
-    //    public int IntID { get; set; }
-    //    public string? ClinicianID { get; set; }
-    //    public string? ClinicID { get; set; }
-    //    public DateTime? AddedDate { get; set; }
-    //}
-
+    //Views rather than tables are used so we can have useful data available in the front end
     [Table("ViewPatientWaitingListDetails", Schema = "dbo")]
     [Keyless]
     public class WaitingList
@@ -62,6 +53,7 @@ namespace CPTest.Models
         public Int16 NON_ACTIVE { get; set; }
     }
 
+    //This view only exists so that the Clinics menu can filter by Clinician.
     [Table("ViewCliniciansClinics", Schema = "dbo")]
     public class CliniciansClinics
     {
@@ -84,7 +76,7 @@ namespace CPTest.Models
 
     }
 
-    //[Table("MasterActivityTable", Schema = "dbo")]
+    //Again, view used here so we can have CGU_No in the front end
     [Table("ViewPatientAppointmentDetails", Schema = "dbo")]
     public class Appointment
     {
@@ -134,6 +126,7 @@ namespace CPTest.Models
         public string? CGU_No { get; set; }
     }
 
+    //For the "list of appointment types" menu
     [Table("APPTYPE", Schema = "dbo")]
     public class AppType
     {

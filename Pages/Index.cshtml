@@ -8,13 +8,13 @@
 
     <div class="row mb-5 g-5"> @*Header only - appears if clinician and/or clinic selected*@
         <div class="col-md-2" id="holding"></div>
-        @if (Model.ClinicVenue != null)
+        @if (Model.clinicVenue != null)
         {
-            <div class="col-md-5"><h1>@Model.ClinicVenue.NAME</h1></div>
+            <div class="col-md-5"><h1>@Model.clinicVenue.NAME</h1></div>
         }
-        @if (Model.StaffMember != null)
+        @if (Model.staffMember != null)
         {
-            <div class="col-md-5"><h1>@Model.StaffMember.NAME</h1></div>
+            <div class="col-md-5"><h1>@Model.staffMember.NAME</h1></div>
         }
     </div>
 
@@ -35,17 +35,17 @@
             </div>
             <div class="col-md-2"> @*Clinician select*@
                 <select id="ddlClinician" name="strClinician" asp-for=@Model.sClinician onchange="RefreshForm()">
-                    @if (Model.StaffMember != null)
+                    @if (Model.staffMember != null)
                     {
-                        <option value="@Model.StaffMember" selected>@Model.StaffMember.NAME</option>
+                        <option value="@Model.staffMember" selected>@Model.staffMember.NAME</option>
                     }
                     else
                     {
                         <option value="" selected></option>
                     }
-                    @if (Model.StaffMembers != null)
+                    @if (Model.staffMemberList != null)
                     {
-                        @foreach (var item in Model.StaffMembers)
+                        @foreach (var item in Model.staffMemberList)
                         {
                             <option value=@item.STAFF_CODE>@item.NAME</option>
                         }
@@ -57,17 +57,17 @@
             </div>
             <div class="col-md-2"> @*Clinic select*@
                 <select id="ddlClinic" name="strClinic" asp-for=@Model.sClinic onchange="RefreshForm()">
-                    @if (Model.ClinicVenue != null)
+                    @if (Model.clinicVenue != null)
                     {
-                        <option value="@Model.ClinicVenue" selected>@Model.ClinicVenue.NAME</option>
+                        <option value="@Model.clinicVenue" selected>@Model.clinicVenue.NAME</option>
                     }
                     else
                     {
                         <option value="" selected></option>
                     }
-                    @if (Model.ClinicVenues != null)
+                    @if (Model.clinicVenueList != null)
                     {
-                        @foreach (var item in Model.ClinicVenues)
+                        @foreach (var item in Model.clinicVenueList)
                         {
                             <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
                         }
@@ -315,9 +315,9 @@
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        @if (Model.clinicSlots != null) //set up all the clinic slots first
+        @if (Model.clinicSlotList != null) //set up all the clinic slots first
         {
-            @foreach (var item in Model.clinicSlots)
+            @foreach (var item in Model.clinicSlotList)
             {
                 @:dateArray.push("@item.SlotDate");
                 @:timeArray.push("@item.SlotTime");   
@@ -329,9 +329,9 @@
             }
         }
                 
-        @if (Model.Appointments != null) //then set up all the appointments
+        @if (Model.appointmentList != null) //then set up all the appointments
         {
-            @foreach (var item in Model.Appointments)
+        @foreach (var item in Model.appointmentList)
             {
                 @:apptDateArray.push("@item.BOOKED_DATE");
                 @:apptTimeArray.push("@item.BOOKED_TIME");

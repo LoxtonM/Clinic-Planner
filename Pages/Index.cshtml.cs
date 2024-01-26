@@ -17,16 +17,16 @@ namespace CPTest.Pages
             _context = context;
             dc = new DataConnections(_context);
         }
-        public IEnumerable<Outcome> Outcomes { get; set; }
+        public IEnumerable<Outcome> outcomes { get; set; }
         public IEnumerable<WaitingList> waitingList { get; set; }
-        public ClinicVenue? ClinicVenue { get; set; }
-        public List<ClinicVenue> ClinicVenues { get; set; }
-        public StaffMember? StaffMember { get; set; }
-        public List<StaffMember> StaffMembers { get; set; }
-        public IEnumerable<ClinicSlot> clinicSlots { get; set; }
-        public IEnumerable<ClinicSlot> openSlots { get; set; }
-        public IEnumerable<Patient> Patients { get; set; }
-        public IEnumerable<Appointment?> Appointments { get; set; }
+        public ClinicVenue? clinicVenue { get; set; }
+        public List<ClinicVenue> clinicVenueList { get; set; }
+        public StaffMember? staffMember { get; set; }
+        public List<StaffMember> staffMemberList { get; set; }
+        public IEnumerable<ClinicSlot> clinicSlotList { get; set; }
+        public IEnumerable<ClinicSlot> openSlotList { get; set; }
+        public IEnumerable<Patient> patientList { get; set; }
+        public IEnumerable<Appointment?> appointmentList { get; set; }
 
         public DateTime[] DateArray = new DateTime[5];
         public DateTime[] TimeArray = new DateTime[120];
@@ -51,8 +51,8 @@ namespace CPTest.Pages
         {
             try
             {                
-                StaffMembers = dc.GetStaffMemberList();
-                ClinicVenues = dc.GetVenueList();
+                staffMemberList = dc.GetStaffMemberList();
+                clinicVenueList = dc.GetVenueList();
 
 
                 if (wcDt.ToString() != "01/01/0001 00:00:00")
@@ -80,8 +80,8 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
                                 
-                Appointments = dc.GetAppointments(DateArray[0], DateArray[4], strClinician, strClinic);                
-                clinicSlots = dc.GetClinicSlots(DateArray[0], DateArray[4], strClinician, strClinic);
+                appointmentList = dc.GetAppointments(DateArray[0], DateArray[4], strClinician, strClinic);                
+                clinicSlotList = dc.GetClinicSlots(DateArray[0], DateArray[4], strClinician, strClinic);
 
                 if (sSearchTerm != null) //to search the waiting list for a CGU number
                 {                    
@@ -94,20 +94,20 @@ namespace CPTest.Pages
 
                 if (!strClinic.IsNullOrEmpty())
                 {
-                    ClinicVenue = dc.GetVenueDetails(strClinic);
+                    clinicVenue = dc.GetVenueDetails(strClinic);
                 }
 
                 if (!strClinician.IsNullOrEmpty()) //if a clinician is selected as well
                 {
-                    StaffMember = dc.GetStaffDetails(strClinician);
+                    staffMember = dc.GetStaffDetails(strClinician);
                     var Clinics = new List<CliniciansClinics>();
                     Clinics = dc.GetCliniciansClinics(strClinician);
 
-                    ClinicVenues = ClinicVenues.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
+                    clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                openSlots = dc.GetOpenSlots(clinicSlots);
+                openSlotList = dc.GetOpenSlots(clinicSlotList);
             }
             catch (Exception ex) 
             {

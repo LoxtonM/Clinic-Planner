@@ -3,10 +3,10 @@
 @{
 }
 <div class="container">
-    <h1 style="text-align:center">Modify appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
+    <h1 style="text-align:center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
 
     <div class="row mb-5 g-5" style="text-align:center">
-        <h2>@Model.StaffMember.NAME, @Model.ClinicVenue.NAME, @Model.Appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.Appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+        <h2>@Model.staffMember.NAME, @Model.clinicVenue.NAME, @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
     </div>
     <form method="post">
         <div class="row mb-5 g-5">
@@ -14,9 +14,9 @@
                 <label>Modify appointment location/clinician:</label>
             </div>
             <div class="col-md-3">
-                <select name="AppWith1" id="ddlClinician" asp-for=@Model.StaffMember.STAFF_CODE>
+                <select name="AppWith1" id="ddlClinician" asp-for=@Model.staffMember.STAFF_CODE>
                    @*<option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>*@
-                    @foreach (var item in Model.StaffMembers)
+                    @foreach (var item in Model.staffMemberList)
                     {
                         <option value=@item.STAFF_CODE>@item.NAME</option>
                     }
@@ -24,9 +24,9 @@
             </div>
             <div class="col-md-2"></div>
             <div class="col-md-3">
-                <select name="AppLocation" id="ddlClinic" asp-for=@Model.ClinicVenue.FACILITY>
+                <select name="AppLocation" id="ddlClinic" asp-for=@Model.clinicVenue.FACILITY>
                     @*<option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>*@
-                    @foreach (var item in Model.ClinicVenues)
+                    @foreach (var item in Model.clinicVenueList)
                     {
                         <option value=@item.FACILITY>@item.NAME</option>
                     }
@@ -38,18 +38,18 @@
             <div class="col-md-2">Additional Clinicians:</div>
             <div class="col-md-2">
                 <div class="row">
-                    <select name="appWith2" asp-for=@Model.Appointment.STAFF_CODE_2>
+                    <select name="appWith2" asp-for=@Model.appointment.STAFF_CODE_2>
                         <option selected value=""></option>
-                        @foreach(var s in Model.StaffMembers)
+                        @foreach (var s in Model.staffMemberList)
                         {
                             <option value=@s.STAFF_CODE>@s.NAME</option>
                         }
                     </select>
                 </div>
                 <div class="row">
-                    <select name="appWith3" asp-for=@Model.Appointment.STAFF_CODE_3>
+                    <select name="appWith3" asp-for=@Model.appointment.STAFF_CODE_3>
                         <option selected value=""></option>
-                        @foreach (var s in Model.StaffMembers)
+                        @foreach (var s in Model.staffMemberList)
                         {
                             <option value=@s.STAFF_CODE>@s.NAME</option>
                         }
@@ -58,8 +58,8 @@
             </div>
             <div class="col-md-6"></div>
             <div class="col-md-2">
-                <select name="appType" asp-for=@Model.Appointment.AppType>
-                    @foreach (var t in Model.AppTypes)
+                <select name="appType" asp-for=@Model.appointment.AppType>
+                    @foreach (var t in Model.appTypeList)
                     {
                         <option value=@t.APP_TYPE>@t.APP_TYPE</option>
                     }
@@ -71,10 +71,10 @@
                 <label>Change date/time:</label>
             </div>
             <div class="col-md-5">
-                <input type="date" name="dNewDate" asp-for=@Model.Appointment.BOOKED_DATE />
+                <input type="date" name="dNewDate" asp-for=@Model.appointment.BOOKED_DATE />
             </div>
             <div class="col-md-5">
-                <input type="time" name="dNewTime" asp-for=@Model.Appointment.BOOKED_TIME />
+                <input type="time" name="dNewTime" asp-for=@Model.appointment.BOOKED_TIME />
             </div>
         </div>
 
@@ -88,7 +88,7 @@
             <div class="col-md-6">
                 <select id="ddlCancelAppt" name="sCancel" hidden=true>
                     <option selected value=""></option>
-                    @foreach(var o in Model.Outcomes)
+                    @foreach (var o in Model.outcomeList)
                     {
                         <option value=@o.CLINIC_OUTCOME>@o.CLINIC_OUTCOME</option>
                     }

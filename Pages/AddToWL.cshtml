@@ -21,10 +21,10 @@
             </div>
             <div class="col-md-2" style="text-align:right">
                 <select id="ddlClin" name="sClin" />                
-                    <option value="" selected></option>                
-                    @if (Model.StaffMembers != null)
+                    <option value="" selected></option>
+                    @if (Model.staffMemberList != null)
                     {
-                        @foreach (var item in Model.StaffMembers)
+                        @foreach (var item in Model.staffMemberList)
                         {
                             <option value=@item.STAFF_CODE>@item.NAME</option>
                         }
@@ -37,9 +37,9 @@
             <div class="col-md-2" style="text-align:right">
                 <select id="ddlVen" name="sVen" />                
                     <option value="" selected></option>                
-                    @if (Model.ClinicVenues != null)
+                    @if (Model.clinicVenueList != null)
                     {
-                        @foreach (var item in Model.ClinicVenues)
+                        @foreach (var item in Model.clinicVenueList)
                         {
                             <option value=@item.FACILITY>@item.NAME</option>
                         }

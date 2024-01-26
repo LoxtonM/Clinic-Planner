@@ -24,8 +24,8 @@ namespace CPTest.Pages
         public Patient? Patient { get; set; }
         public StaffMember? staffMember { get; set; }
         public ClinicVenue? clinicVenue { get; set; }
-        public List<Referral> linkedRefs { get; set; }
-        public List<AppType> appTypes { get; set; }
+        public List<Referral> linkedRefList { get; set; }
+        public List<AppType> appTypeList { get; set; }
 
         public DateTime appDate;
         public DateTime appTime;
@@ -41,12 +41,12 @@ namespace CPTest.Pages
                 int iMPI = Int32.Parse(sMPI);
 
                 Patient = dc.GetPatientDetails(iMPI);
-                appTypes = dc.GetAppTypeList();
+                appTypeList = dc.GetAppTypeList();
                 staffMember = dc.GetStaffDetails(sClin);
 
                 clinicVenue = dc.GetVenueDetails(sVen);
 
-                linkedRefs = dc.GetReferralsList(iMPI);
+                linkedRefList = dc.GetReferralsList(iMPI);
 
                 appDateString = sDat;
                 appTimeString = sTim;
@@ -77,13 +77,13 @@ namespace CPTest.Pages
                 string sUser;
 
                 Patient = dc.GetPatientDetails(iMPI);
-                appTypes = dc.GetAppTypeList();
+                appTypeList = dc.GetAppTypeList();
                 staffMember = dc.GetStaffDetails(sClin);
                 sUser = dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
                 
                 clinicVenue = dc.GetVenueDetails(sVen);
 
-                linkedRefs = dc.GetReferralsList(iMPI);
+                linkedRefList = dc.GetReferralsList(iMPI);
 
                 ss.CreateAppointment(dDat, sTim, sClin, null, null, sVen, iRefID, iMPI, sType, iDur, sUser, sInstructions);
                 
