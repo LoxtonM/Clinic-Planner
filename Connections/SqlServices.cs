@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
 namespace CPTest.Connections
@@ -12,8 +10,7 @@ namespace CPTest.Connections
         {
             _config = config;
         }
-        private string strSQL;
-
+        
         public void CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation, 
             int iLinkedRef, int iMPI, string appType, int iDuration, string sUsername, string sInstructions)
         {

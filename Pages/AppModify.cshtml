@@ -68,13 +68,16 @@
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-2">
-                <label>Change date/time:</label>
+                <label>Change date/time/duration:</label>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <input type="date" name="dNewDate" asp-for=@Model.appointment.BOOKED_DATE />
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <input type="time" name="dNewTime" asp-for=@Model.appointment.BOOKED_TIME />
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="w-50" name="iDuration" asp-for=@Model.appointment.Duration/>
             </div>
         </div>
 

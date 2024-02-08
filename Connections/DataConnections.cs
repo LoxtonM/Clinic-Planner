@@ -1,6 +1,5 @@
 ﻿using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CPTest.Connections
 {
@@ -15,79 +14,66 @@ namespace CPTest.Connections
         public Patient GetPatientDetails(int iMPI)
         {
             var pt = _context.Patients.FirstOrDefault(p => p.MPI == iMPI);
-
             return pt;
         }
 
         public StaffMember GetStaffDetails(string sClin)
         {
             var staff = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sClin);
-
             return staff;
         }
 
         public StaffMember GetStaffDetailsByUsername(string sUsername)
         {
             var staff = _context.StaffMembers.FirstOrDefault(s => s.EMPLOYEE_NUMBER == sUsername);
-
             return staff;
         }
 
         public List<StaffMember> GetStaffMemberList() 
         {            
             var stafflist = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
-
             return stafflist.ToList();
         }
 
         public ClinicVenue GetVenueDetails(string sVen)
         {
             var clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == sVen);
-
             return clin;
         }
 
         public List<ClinicVenue> GetVenueList() 
         {
             var venuelist = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
-
             return venuelist.ToList();
         }
 
         public List<Referral> GetReferralsList(int iMPI) 
         {
             var refs = _context.Referrals.Where(r => r.MPI == iMPI & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate).ToList();
-
             return refs;
         }
 
         public List<AppType> GetAppTypeList()
         {
             var at = _context.AppType.Where(t => t.NON_ACTIVE == 0 & t.ISAPPT == true).ToList();
-
             return at;
         }
 
         public List<Outcome> GetOutcomeList() 
         {
             var oc = _context.Outcomes.Where(o => o.DEFAULT_CLINIC_STATUS == "Active").ToList();
-
             return oc;
         }
 
         public Appointment GetAppointmentDetails(int iRefID)
         {
             var appt = _context.Appointments.FirstOrDefault(a => a.RefID == iRefID);
-
             return appt;
         }
 
         public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? strClinician, string? strClinic)
         {
             var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" & a.Attendance != "Cancelled by patient").ToList();
-
-           
-
 
             if (strClinician != null)
             {
@@ -120,7 +106,6 @@ namespace CPTest.Connections
         public IEnumerable<WaitingList> GetWaitingListByCGUNo(string sSearchTerm)
         {
             var wl = _context.WaitingList.Where(w => w.CGU_No.Contains(sSearchTerm));                       
-
             return wl.OrderBy(l => l.AddedDate);
         }
 
@@ -143,14 +128,12 @@ namespace CPTest.Connections
         public List<CliniciansClinics> GetCliniciansClinics(string strClinician)
         {
             var clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == strClinician).ToList();
-
             return clinics;
         }
 
         public IEnumerable<ClinicSlot> GetOpenSlots(IEnumerable<ClinicSlot> clinicSlots)
         {
             var os  = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-
             return os;
         }
     }
