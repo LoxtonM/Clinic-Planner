@@ -38,7 +38,20 @@
             </div>
             <div class="col-md-2"></div>
         </div>
-            
+        <div class="row mb-5 g-5">
+            <div class="col-md-4">
+                <label>Remove from Waiting List</label>
+            </div>
+            <div class="col-md-2">
+                <input type="checkbox" class="form-check-input" id="chkIsWLRemoval" value="false" onclick="SetWLRemovalCheckBox()" />
+            </div>
+            <div class="col-md-6">
+                <input type="text" id="txtIsWLRemoval" name="isRemoval" />
+                <input type="text" name="sOldClinicianID" asp-for=@Model.staffMember.STAFF_CODE />
+                <input type="text" name="sOldClinicID" asp-for=@Model.clinicVenue.FACILITY />
+            </div>
+        </div>
+        
         <div class="row mb-5 g-5">
             <div class="col-md-4"></div>
             <div class="col-md-2">
@@ -65,12 +78,19 @@
 
     function GoBack()
     {
-        window.close();
+        //window.close();
+        window.location.replace("Index");
     }
 
     function HideMenu()
     {
         document.getElementById("TopMenu").hidden = true;
+    }
+
+    function SetWLRemovalCheckBox() 
+    { 
+        //because it cannot simply pass the state of the checkbox to the C#, for some reason!!!
+        document.getElementById("txtIsWLRemoval").value = document.getElementById("chkIsWLRemoval").checked;
     }
  
 </script>

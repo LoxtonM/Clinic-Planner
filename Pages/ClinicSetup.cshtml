@@ -3,20 +3,416 @@
 @{
 }
 <div class="container">
-    <h1 style="text-align:center">Create clinic patterns</h1>
 
-    <h2>Here be dragons... (it's a WIP)</h2>
+    @if (Model.Message != null)
+    {
+        @if (!Model.isSuccess)
+        {
+            <div class="alert alert-danger" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success" style="text-align:center">
+                @Model.Message
+            </div>
+        }
+    }
+
+    <h1 style="text-align:center">Create Clinic Schedules</h1>
+    
+    <div class="row mb-5 g-5">
+        <div class="col-md-4">
+            <select id="ddlClinicSelect" onchange="ShowClinicSetupForm()">
+                <option value="" selected>Select...</option>
+                <option value="CreateStandard">Create New Standard Clinic</option>
+                <option value="ModifyStandard">Modify Standard Clinic</option>
+                <option value="CreateAdHoc">Create New Ad-Hoc Clinic</option>
+                <option value="ModifyAdHoc">Modify Ad-Hoc Clinic</option>
+            </select>
+        </div>        
+    </div>
+
+    <form id="frmCreateStandardPattern" method="Post" hidden="true">        
+        <div class="row mb-5 g-5">
+            <h2>Standard clinic pattern:</h2><input type="text" id="txtNewStandard" name="isNewStandard" hidden="true" />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label><strong>Clinician:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicianID" id="ddlClinician">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.staffMemberList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label><strong>Clinic:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicID" id="ddlClinic">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.clinicVenueList)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        @*start and end date*@        
+        <div class="row mb-5 g-5">
+            <div class="col-md-3">
+                <label><strong>Start Date:</strong> (leave blank for today)</label>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="dStartDate" />
+            </div>            
+            <div class="col-md-3">
+                <label><strong>End Date:</strong> (leave blank for none)</label>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="dEndDate" />
+            </div>
+        </div>        
+        <div class="row mb-5 g-5">
+            <div class="col md-2">
+                <strong>Start time and duration:</strong>
+            </div>
+            <div class="col-md-1">
+                <label>Hour:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iStartHr" />
+            </div>
+            <div class="col-md-1">
+                <label>Minute:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iStartMin" />
+            </div>
+            <div class="col-md-1">
+                <label>Duration:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iDuration" />
+            </div>
+            <div class="col md-1">
+                <label>Slots:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iNumSlots" />
+            </div>
+            <div class="col md-2"></div>
+        </div>
+        @*Frequency*@
+        
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <strong>Frequency:</strong>
+            </div>
+            <div class="col-md-2">
+                <label>Day: (Monday = 1 etc)</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iDayNum" />
+            </div>
+            <div class="col-md-1">
+                <label>Week:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iWeekNum" />
+            </div>
+            <div class="col-md-5">
+                <div class="row">
+                    Months used in schedule (leave blank to use all)
+                </div>
+                <div class="row">
+                    <div class="col-1">Jan:</div><div class="col-1"><input type="checkbox" id="m1" /></div>
+                    <div class="col-1">Feb:</div><div class="col-1"><input type="checkbox" id="m2" /></div>
+                    <div class="col-1">Mar:</div><div class="col-1"><input type="checkbox" id="m3" /></div>
+                    <div class="col-1">Apr:</div><div class="col-1"><input type="checkbox" id="m4" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-1">May:</div><div class="col-1"><input type="checkbox" id="m5" /></div>
+                    <div class="col-1">Jun:</div><div class="col-1"><input type="checkbox" id="m6" /></div>
+                    <div class="col-1">Jul:</div><div class="col-1"><input type="checkbox" id="m7" /></div>
+                    <div class="col-1">Aug:</div><div class="col-1"><input type="checkbox" id="m8" /></div>
+                </div>
+                <div class="row">
+                    <div class="col-1">Sep:</div><div class="col-1"><input type="checkbox" id="m9" /></div>
+                    <div class="col-1">Oct:</div><div class="col-1"><input type="checkbox" id="m10" /></div>
+                    <div class="col-1">Nov:</div><div class="col-1"><input type="checkbox" id="m11" /></div>
+                    <div class="col-1">Dec:</div><div class="col-1"><input type="checkbox" id="m12" /></div>
+                </div>
+
+            </div>
+            <div class="row" hidden="true">
+                <input type="text" id="txtMonthString" name="sMonthString" />
+            </div>
+            
+        </div>
+
+        <div class="row mb-5 g-5">            
+            <div class="col-md-2">
+                <button type="button" id="btnConfirmNewStandardPattern" class="btn btn-success" onclick="ConfirmNewStandardPattern()">Confirm</button>
+            </div>           
+        </div>
+    </form>
+
+    <form id="frmModifyStandardPattern" hidden="true" method="post">
+        <div class="row mb-5 g-5">
+            <h2>Modify standard pattern</h2><input type="text" id="txtModifyStandard" name="isModifyStandard" hidden="true" />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label><strong>Clinician:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicianID" id="ddlClinician">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.staffMemberList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <button type="button" id="btnConfirmModifyStandardPattern" class="btn btn-success" onclick="ConfirmModifyStandardPattern()">Confirm</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="frmCreateAdHoc" hidden="true" method="post">
+        <div class="row mb-5 g-5">
+            <h2>Create Ad Hoc Clinic</h2><input type="text" id="txtNewAdHoc" name="isNewAdHoc" hidden="true" />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label><strong>Clinician:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicianID" id="ddlClinician">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.staffMemberList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label><strong>Clinic:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicID" id="ddlClinic">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.clinicVenueList)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        @*start date*@
+        <div class="row mb-5 g-5">
+            <div class="col-md-3">
+                <label><strong>Start Date:</strong> (leave blank for today)</label>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="dStartDate" />
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col md-2">
+                <strong>Start time and duration:</strong>
+            </div>
+            <div class="col-md-1">
+                <label>Hour:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iStartHr" />
+            </div>
+            <div class="col-md-1">
+                <label>Minute:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iStartMin" />
+            </div>
+            <div class="col-md-1">
+                <label>Duration:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iDuration" />
+            </div>
+            <div class="col md-1">
+                <label>Slots:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="iNumSlots" />
+            </div>
+            <div class="col md-2"></div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <button type="button" id="btnConfirmNewAdHoc" class="btn btn-success" onclick="ConfirmNewAdHoc()">Confirm</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="frmModifyAdHoc" hidden="true" method="post">
+        <div class="row mb-5 g-5">
+            <h2>Modify Ad Hoc Clinic</h2><input type="text" id="txtModifyAdHoc" name="isModifyAdHoc" hidden="true" />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label><strong>Clinician:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <select name="sClinicianID" id="ddlClinician">
+                    <option selected value="">Select...</option>
+                    @foreach (var item in Model.staffMemberList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <button type="button" id="btnConfirmModifyAdHoc" class="btn btn-success" onclick="ConfirmModifyAdHoc()">Confirm</button>
+            </div>           
+        </div>
+    </form>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-2">
+            <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+        </div>        
+    </div>
 </div>
 
 <script>
 
-    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
-    
-    function Confirm()
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+
+    function HideMenu() 
     {
-        window.alert("Okay!");
+        document.getElementById("TopMenu").hidden = true;
     }
 
+    function ShowClinicSetupForm() 
+    { 
+        document.getElementById("frmCreateStandardPattern").hidden = true;
+        document.getElementById("frmModifyStandardPattern").hidden = true;
+        document.getElementById("frmCreateAdHoc").hidden = true;
+        document.getElementById("frmModifyAdHoc").hidden = true;
+        document.getElementById("txtNewStandard").value = false;
+        document.getElementById("txtModifyStandard").value = false;
+        document.getElementById("txtNewAdHoc").value = false; 
+        document.getElementById("txtModifyAdHoc").value = false;
+
+        if (document.getElementById("ddlClinicSelect").value == "CreateStandard")
+        {
+            document.getElementById("frmCreateStandardPattern").hidden = false;
+            document.getElementById("txtNewStandard").value = true;
+        }
+
+        if (document.getElementById("ddlClinicSelect").value == "ModifyStandard") 
+        {
+            document.getElementById("frmModifyStandardPattern").hidden = false;
+            document.getElementById("txtModifyStandard").value = true;
+        }
+
+        if (document.getElementById("ddlClinicSelect").value == "CreateAdHoc") 
+        {
+            document.getElementById("frmCreateAdHoc").hidden = false;
+            document.getElementById("txtNewAdHoc").value = true;
+        }
+
+        if (document.getElementById("ddlClinicSelect").value == "ModifyAdHoc") 
+        {
+            document.getElementById("frmModifyAdHoc").hidden = false;
+            document.getElementById("txtModifyAdHoc").value = true;
+        }
+    }
+
+    function GoBack() 
+    {        
+        window.location.replace("Index");
+    }
+    
+    function ConfirmNewStandardPattern()
+    {
+        SetDateString();
+        document.getElementById("frmCreateStandardPattern").submit();
+    }
+
+    function ConfirmModifyStandardPattern() 
+    { 
+        document.getElementById("frmModifyStandardPattern").submit();
+    }
+
+    function ConfirmNewAdHoc() 
+    {
+        document.getElementById("frmCreateAdHoc").submit();
+    }
+
+    function ConfirmModifyAdHoc() 
+    {
+        document.getElementById("frmModifyAdHoc").submit();
+    }
+
+    function SetDateString()
+    {        
+        var mString="";
+
+        if (document.getElementById("m1").checked) { 
+            mString = mString + "1";
+        }
+        if (document.getElementById("m2").checked) {
+            mString = mString + "2";
+        }
+        if (document.getElementById("m3").checked) {
+            mString = mString + "3";
+        }
+        if (document.getElementById("m4").checked) {
+            mString = mString + "4";
+        }
+        if (document.getElementById("m5").checked) {
+            mString = mString + "5";
+        }
+        if (document.getElementById("m6").checked) {
+            mString = mString + "6";
+        }
+        if (document.getElementById("m7").checked) {
+            mString = mString + "7";
+        }
+        if (document.getElementById("m8").checked) {
+            mString = mString + "8";
+        }
+        if (document.getElementById("m9").checked) {
+            mString = mString + "9";
+        }
+        if (document.getElementById("m10").checked) {
+            mString = mString + "a";
+        }
+        if (document.getElementById("m11").checked) {
+            mString = mString + "b";
+        }
+        if (document.getElementById("m12").checked) {
+            mString = mString + "c";
+        }
+        document.getElementById("txtMonthString").value = mString;
+    }
 
  
 </script>

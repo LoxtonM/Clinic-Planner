@@ -266,7 +266,8 @@
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     function OnDoubleClickWL(MPI, clinicID, clinicianID)
     {
-        window.open("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
+        //window.open("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
+        window.location.replace("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
     }
 
     function OnDoubleClickAP(id)
@@ -276,7 +277,8 @@
             const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2);            
             
-            window.open("AppModify?sRefID=" + sRID);
+            //window.open("AppModify?sRefID=" + sRID);
+            window.location.replace("AppModify?sRefID=" + sRID);
         }
         else if (document.getElementById(id).innerHTML.includes("Free"))
         {

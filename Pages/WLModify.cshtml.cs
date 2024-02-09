@@ -10,12 +10,16 @@ namespace CPTest.Pages
     {
 
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         DataConnections dc;
+        SqlServices ss;
 
-        public WLModifyModel(DataContext context)
+        public WLModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             dc = new DataConnections(_context);
+            ss = new SqlServices(_config);
         }
 
         public Patient patient { get; set; }
@@ -54,7 +58,7 @@ namespace CPTest.Pages
             }
         }    
         
-        public void OnPost(int iMPI, string sClinicID, string sClinicianID)
+        public void OnPost(int iMPI, string sClinicianID, string sClinicID, string sOldClinicianID, string sOldClinicID, bool isRemoval)
         {
             try
             {
@@ -72,10 +76,15 @@ namespace CPTest.Pages
                 {
                     patient = dc.GetPatientDetails(iMPI);
                 }
+                string sUsername = "LoxM";
 
                 staffMemberList = dc.GetStaffMemberList();
 
                 clinicVenueList = dc.GetVenueList();
+
+                ss.ModifyWaitingListEntry(iMPI, sClinicianID, sClinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
+
+                Response.Redirect("Index");
             }
             catch (Exception ex)
             {

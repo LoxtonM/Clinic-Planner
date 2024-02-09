@@ -73,6 +73,8 @@ namespace CPTest.Pages
 
                 ss.ModifyAppointment(iRefID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, iDuration, sUser, sInstructions, sCancel);
+
+                Response.Redirect("Index");
             }
             catch (Exception ex)
             {

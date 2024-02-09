@@ -136,5 +136,17 @@ namespace CPTest.Connections
             var os  = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
             return os;
         }
+
+        public ClinicPattern GetPatternDetails(int iPatID) 
+        {
+            var pat = _context.ClinicPattern.FirstOrDefault(p => p.PatternID == iPatID);
+            return pat;
+        }
+
+        public List<ClinicPattern> GetPatternList(string sClinID)
+        {
+            var patterns = _context.ClinicPattern.Where(p => p.StaffID == sClinID).ToList();
+            return patterns;
+        }
     }
 }

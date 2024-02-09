@@ -136,4 +136,23 @@ namespace CPTest.Models
         public bool ISAPPT { get; set; }
         public Int16 NON_ACTIVE { get; set; }
     }
+
+    [Table("ClinicPattern", Schema = "dbo")]
+    public class ClinicPattern
+    {
+        [Key]
+        public int PatternID { get; set; }
+        public string Clinic { get; set; }
+        public string StaffID { get; set; }
+        public int DyOfWk { get; set; }
+        public int WkOfMth { get; set; }
+        public int NumSlots { get; set; }
+        public int StartHr { get; set; }
+        public int StartMin {  get; set; }
+        public int Duration {  get; set; }
+        public int EndHr { get; set; }
+        public int EndMin { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+    }
 }

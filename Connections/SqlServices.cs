@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using CPTest.Models;
+using System.Data;
 using System.Data.SqlClient;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CPTest.Connections
 {
@@ -70,6 +72,36 @@ namespace CPTest.Connections
             con.Close();
         }
 
+        public void ModifyWaitingListEntry(int iMPI, string sClinicianID, string sClinicID, string sOldClinicianID, string sOldClinicID, 
+            string sUsername, bool isRemoval)
+        {
+            //since there is no primary key on the Waiting List table, we need the old values to be able to update!
+            if(sOldClinicianID == null) { sOldClinicianID = ""; }
+            if (sOldClinicID == null) { sOldClinicID = ""; }
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerModifyWaitingListEntry]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@MPI", SqlDbType.Int).Value = iMPI;
+            cmd.Parameters.Add("@ClinicianID", SqlDbType.VarChar).Value = sClinicianID;
+            cmd.Parameters.Add("@ClinicID", SqlDbType.VarChar).Value = sClinicID;
+            cmd.Parameters.Add("@OldClinicianID", SqlDbType.VarChar).Value = sOldClinicianID;
+            cmd.Parameters.Add("@OldClinicID", SqlDbType.VarChar).Value = sOldClinicID;
+            cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = sUsername;
+            cmd.Parameters.Add("@isRemoval", SqlDbType.Bit).Value = isRemoval;
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+
+        public void CreateClinicSlot(DateTime dSlotDate, DateTime dSlotTime, string sClinicianID, string sClinicID)
+        {
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerCreateClinicSlot]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            //cmd.ExecuteNonQuery();
+            con.Close();
+        }
 
     }
 }
