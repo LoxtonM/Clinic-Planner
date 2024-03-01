@@ -114,7 +114,6 @@ namespace CPTest.Models
         public bool logicaldelete { get; set; }
     }
 
-
     [Table("MasterPatientTable", Schema = "dbo")]
     public class Patient
     {
@@ -146,13 +145,48 @@ namespace CPTest.Models
         public string StaffID { get; set; }
         public int DyOfWk { get; set; }
         public int WkOfMth { get; set; }
+        public string? MthOfYr { get; set; }
         public int NumSlots { get; set; }
         public int StartHr { get; set; }
         public int StartMin {  get; set; }
         public int Duration {  get; set; }
         public int EndHr { get; set; }
         public int EndMin { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
+    }
+
+    [Table("ClinicsAdded", Schema = "dbo")]
+    [Keyless]
+    public class ClinicsAdded
+    {
+        public string ClinicianID { get; set; }
+        public string ClinicID { get; set; }
+        public DateTime ClinicDate { get; set; }
+        public int Duration { get; set; }
+        public int StartHr { get; set; }
+        public int StartMin { get; set; }
+        public int NumSlots { get; set; }
+        public int ID { get; set; }
+    }
+
+
+    [Table("ListDates", Schema = "dbo")]
+    [Keyless]
+    public class DateList
+    {        
+        public DateTime Dt { get; set; }
+        public string WeekDay { get; set; }
+        public Int64 NumberOfThisWeekDayInMonth { get; set; }
+    }
+
+    [Table("ListNationalHolidays", Schema = "dbo")]
+    public class NationalHolidays
+    {
+        [Key]
+        public int ID { get; set; }
+        public DateTime HolidayDate { get; set; }
     }
 }
+
+

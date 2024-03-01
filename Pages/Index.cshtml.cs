@@ -80,7 +80,8 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
                                 
-                appointmentList = dc.GetAppointments(DateArray[0], DateArray[4], strClinician, strClinic);                
+                appointmentList = dc.GetAppointments(DateArray[0], DateArray[4], strClinician, strClinic);
+                
                 clinicSlotList = dc.GetClinicSlots(DateArray[0], DateArray[4], strClinician, strClinic);
 
                 if (sSearchTerm != null) //to search the waiting list for a CGU number

@@ -72,8 +72,10 @@ namespace CPTest.Connections
         }
 
         public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? strClinician, string? strClinic)
-        {
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" & a.Attendance != "Cancelled by patient").ToList();
+        {            
+            var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & 
+                    a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" 
+                    & a.Attendance != "Cancelled by patient").ToList();
 
             if (strClinician != null)
             {
@@ -83,7 +85,7 @@ namespace CPTest.Connections
             {
                 appts = appts.Where(l => l.FACILITY == strClinic).ToList();
             }
-
+            
             return appts;
         }
 
@@ -147,6 +149,25 @@ namespace CPTest.Connections
         {
             var patterns = _context.ClinicPattern.Where(p => p.StaffID == sClinID).ToList();
             return patterns;
+        }
+
+        public DateTime GetFirstDateFromList(DateTime dateToCheck, string sDay) 
+        {
+            DateTime firstDate = _context.DateList.FirstOrDefault(d => d.Dt.Month == dateToCheck.Month && d.Dt.Year == dateToCheck.Year
+                                            && d.NumberOfThisWeekDayInMonth == 1 && d.WeekDay == sDay).Dt;
+
+            return firstDate;
+        }
+
+        public bool GetIsNationalHoliday(DateTime date)
+        {
+            int holidays = _context.NationalHolidays.Where(d => d.HolidayDate == date).Count();
+
+            if(holidays > 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -10,12 +10,16 @@ namespace CPTest.Pages
     {
 
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         DataConnections dc;
+        ClinicSlotsCreator csc;
 
-        public ClinicSetupModel(DataContext context)
+        public ClinicSetupModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             dc = new DataConnections(_context);
+            csc = new ClinicSlotsCreator(_context, _config);
         }
         public List<StaffMember> staffMemberList { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }
@@ -45,7 +49,7 @@ namespace CPTest.Pages
 
                 staffMemberList = dc.GetStaffMemberList();
                 clinicVenueList = dc.GetVenueList();
-                string sUsername = "LoxM";
+                string sStaffCode = "LoxM";
 
                 if(dStartDate == DateTime.Parse("0001-01-01"))
                 {
@@ -69,8 +73,10 @@ namespace CPTest.Pages
                             sMonthString = "123456789abc";
                         }
 
-                        SetupStandardClinicPattern(dStartDate, dEndDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDayNum, iWeekNum, 
-                            iDuration, iNumSlots, sMonthString, sUsername);
+                        //SetupStandardClinicPattern(dStartDate, dEndDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDayNum, iWeekNum, 
+                        //  iDuration, iNumSlots, sMonthString, sUsername);
+                        csc.SetupClinicPattern(sClinicianID, sClinicID, dStartDate, dEndDate, iStartHr, iStartMin, iNumSlots, 
+                            iDuration, iDayNum, iWeekNum, sMonthString, sStaffCode);
                     }
 
                     
@@ -78,7 +84,7 @@ namespace CPTest.Pages
 
                 if (isModifyStandard.GetValueOrDefault())
                 {
-                    Response.Redirect("WIP");
+                    Response.Redirect("ClinicPattern?sClinician=" + sClinicianID);
                 }
 
                 if (isNewAdHoc.GetValueOrDefault())
@@ -92,7 +98,7 @@ namespace CPTest.Pages
                     {
                         isSuccess = true;
                         
-                        SetupAdHocClinic(dStartDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDuration, iNumSlots, sUsername);
+                        csc.SetupAdHocClinic(dStartDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDuration, iNumSlots, sStaffCode);
                     }
                 }
 
@@ -112,26 +118,26 @@ namespace CPTest.Pages
             }
         }
 
-        public void SetupStandardClinicPattern(DateTime dStartDate, DateTime dEndDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID,
-            int iDayNum, int iWeekNum, int iDuration, int iNumSlots, string sMonthString, string sUsername)
-        {
-            SetupClinicSlots(dStartDate, dEndDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDayNum, iWeekNum, iDuration,
-                    sMonthString, sUsername);
-        }
+        //public void SetupStandardClinicPattern(DateTime dStartDate, DateTime dEndDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID,
+        //    int iDayNum, int iWeekNum, int iDuration, int iNumSlots, string sMonthString, string sUsername)
+       // {
+       //     SetupClinicSlots(dStartDate, dEndDate, iStartHr, iStartMin, sClinicianID, sClinicID, iDayNum, iWeekNum, iDuration,
+       //             sMonthString, sUsername);
+       // }
 
-        public void SetupAdHocClinic(DateTime dStartDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID,
-            int iDuration, int iNumSlots, string sUsername)
-        {
-            //do stuff
-        }
+        //public void SetupAdHocClinic(DateTime dStartDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID,
+        //    int iDuration, int iNumSlots, string sUsername)
+       // {
+       //     //do stuff
+       // }
 
 
-        public void SetupClinicSlots(DateTime dStartDate, DateTime dEndDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID, int iDayNum, int iWeekNum, int iDuration,
-            string sMonthString, string sUsername)
-        {
-            int iToday = (int)DateTime.Today.DayOfWeek;
-            //Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
+       // public void SetupClinicSlots(DateTime dStartDate, DateTime dEndDate, int iStartHr, int iStartMin, string sClinicianID, string sClinicID, int iDayNum, int iWeekNum, int iDuration,
+       //     string sMonthString, string sUsername)
+       // {
+        //    int iToday = (int)DateTime.Today.DayOfWeek;
+        //    //Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
 
-        }
+       // }
     }
 }

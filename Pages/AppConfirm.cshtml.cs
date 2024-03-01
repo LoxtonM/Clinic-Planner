@@ -74,18 +74,18 @@ namespace CPTest.Pages
         {
             try
             {
-                string sUser;
+                string sStaffCode;
 
                 Patient = dc.GetPatientDetails(iMPI);
                 appTypeList = dc.GetAppTypeList();
                 staffMember = dc.GetStaffDetails(sClin);
-                sUser = dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
+                sStaffCode = dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
                 
                 clinicVenue = dc.GetVenueDetails(sVen);
 
                 linkedRefList = dc.GetReferralsList(iMPI);
 
-                ss.CreateAppointment(dDat, sTim, sClin, null, null, sVen, iRefID, iMPI, sType, iDur, sUser, sInstructions);
+                ss.CreateAppointment(dDat, sTim, sClin, null, null, sVen, iRefID, iMPI, sType, iDur, sStaffCode, sInstructions);
                 
                 Response.Redirect("Index");
             }

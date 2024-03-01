@@ -1,0 +1,43 @@
+﻿@page
+@model CPTest.Pages.ClinicPatternModel
+@{
+}
+
+<div class="container">
+    <h1>Clinic patterns for @Model.clinician</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Clinic</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Slots</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model.patternList)
+            {
+                <tr>
+                    <td>Edit</td>
+                    <td>@item.Clinic</td>
+                    <td>@item.startDate.Value.ToString("dd/MM/yyyy")</td>
+                    <td>@if(@item.endDate.HasValue)
+                        {
+                            @item.endDate.Value.ToString("dd/MM/yyyy")
+                        }
+                    </td>
+                    <td>@item.StartHr:@item.StartMin</td>
+                    <td>@item.EndHr:@item.EndMin</td>
+                    <td>@item.NumSlots</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+

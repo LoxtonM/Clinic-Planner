@@ -315,7 +315,8 @@
         var CGUNoArray = [];
         
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const rightnow = today.getHours() + ":" + today.getMinutes();
+        today.setHours(0, 0, 0, 0);       
 
         @if (Model.clinicSlotList != null) //set up all the clinic slots first
         {
@@ -327,13 +328,13 @@
                 @:clinicArray.push("@item.ClinicID");
                 @:clinicianArray.push("@item.ClinicianID");   
                 @:statusArray.push("@item.SlotStatus");
-                //we need to create the arrays like this because we can't access the data otherwise
+        //we need to create the arrays like this because we can't access the data otherwise
             }
         }
-                
+            
         @if (Model.appointmentList != null) //then set up all the appointments
         {
-        @foreach (var item in Model.appointmentList)
+            @foreach (var item in Model.appointmentList)
             {
                 @:apptDateArray.push("@item.BOOKED_DATE");
                 @:apptTimeArray.push("@item.BOOKED_TIME");
@@ -381,7 +382,7 @@
                                         var strSlotDetail;
                                         if (myTime == theTime) 
                                         {
-                                            if (colDate < today) //for clinic slots in the past
+                                            if (colDate < today || theTime < rightnow) //for clinic slots in the past
                                             {
                                                 document.getElementById(col.id).style.backgroundColor = "firebrick";
                                                 strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
@@ -413,6 +414,7 @@
         //now do the same but with the appointments
         if (apptDateArray.length != 0 && apptTimeArray.length != 0) 
         {
+            
             for (var i = 0, row; row = cMatrix.rows[i]; i++) {
                 if (i > 0) {
                     for (var j = 0, col; col = row.cells[j]; j++) {
@@ -432,10 +434,10 @@
                                         if (myTime == theTime) 
                                         {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
-                                            {
+                                            {                                                
                                                 //we have to do this here, because the C# throws a fit if we get nulls
-                                                if (colDate < today)  //past appointments
-                                                {
+                                                if (colDate < today || theTime < rightnow)  //past appointments
+                                                {                                                    
                                                     document.getElementById(col.id).style.backgroundColor = "purple";
                                                     strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " + 
