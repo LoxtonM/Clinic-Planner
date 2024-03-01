@@ -1,5 +1,5 @@
 ﻿@page
-@model CPTest.Pages.ClinicPatternModel
+@model CPTest.Pages.ClinicPatternListModel
 @{
 }
 
@@ -22,16 +22,27 @@
             @foreach(var item in Model.patternList)
             {
                 <tr>
-                    <td>Edit</td>
+                    <td><a asp-page="ClinicPatternModify" asp-route-ID=@item.PatternID>Edit</a></td>
                     <td>@item.Clinic</td>
-                    <td>@item.startDate.Value.ToString("dd/MM/yyyy")</td>
+                    <td>@if (@item.startDate.HasValue)
+                        {
+                            @item.startDate.Value.ToString("dd/MM/yyyy")
+                        }
+                    </td>
                     <td>@if(@item.endDate.HasValue)
                         {
                             @item.endDate.Value.ToString("dd/MM/yyyy")
                         }
                     </td>
-                    <td>@item.StartHr:@item.StartMin</td>
-                    <td>@item.EndHr:@item.EndMin</td>
+                    <td>@item.StartHr:@if(@item.StartMin == 0){<span>00</span>}
+                        else{@item.StartMin}
+                    </td>
+                    <td>
+                        @item.EndHr:@if(@item.EndMin == 0){<span>00</span>}
+                        else{@item.EndMin}
+                    </td>
+                    @*Believe it or not, this is the ONLY way I can make it appear 
+                        as a time in HTML!!!*@
                     <td>@item.NumSlots</td>
                 </tr>
             }

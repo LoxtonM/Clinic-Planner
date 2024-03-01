@@ -84,7 +84,7 @@ namespace CPTest.Pages
 
                 if (isModifyStandard.GetValueOrDefault())
                 {
-                    Response.Redirect("ClinicPattern?sClinician=" + sClinicianID);
+                    Response.Redirect("ClinicPatternList?sClinician=" + sClinicianID);
                 }
 
                 if (isNewAdHoc.GetValueOrDefault())
@@ -104,7 +104,7 @@ namespace CPTest.Pages
 
                 if (isModifyAdHoc.GetValueOrDefault())
                 {
-                    Response.Redirect("WIP");
+                    Response.Redirect("AdHocClinicList?sClinician=" + sClinicianID);
                 }
 
                 if (isSuccess)

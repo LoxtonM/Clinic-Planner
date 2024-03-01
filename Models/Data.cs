@@ -166,6 +166,8 @@ namespace CPTest.Models
         public int Duration { get; set; }
         public int StartHr { get; set; }
         public int StartMin { get; set; }
+        public int EndHr { get; set; }
+        public int EndMin { get; set; }
         public int NumSlots { get; set; }
         public int ID { get; set; }
     }

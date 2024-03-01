@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
 {
-    public class ClinicPatternModel : PageModel
+    public class ClinicPatternListModel : PageModel
     {
         private readonly DataContext _context;
         private DataConnections dc;
 
-        public ClinicPatternModel(DataContext context)
+        public ClinicPatternListModel(DataContext context)
         {
             _context = context;
             dc = new DataConnections(_context);
@@ -21,8 +21,15 @@ namespace CPTest.Pages
         public List<ClinicPattern> patternList {  get; set; }
         public void OnGet(string sClinician)
         {
-            clinician = dc.GetStaffDetails(sClinician).NAME;
-            patternList = dc.GetPatternList(sClinician);
+            try
+            {
+                clinician = dc.GetStaffDetails(sClinician).NAME;
+                patternList = dc.GetPatternList(sClinician);
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }
     }
 }

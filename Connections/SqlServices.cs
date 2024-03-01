@@ -1,4 +1,5 @@
 ﻿using CPTest.Models;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -155,6 +156,28 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@duration", SqlDbType.Int).Value = iDuration;
             cmd.Parameters.Add("@clinicdate", SqlDbType.DateTime).Value = dClinicDate;            
             cmd.ExecuteNonQuery();
+            con.Close();
+        }
+        public void UpdateClinicPattern(int iPatternID)
+        {
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerUpdateClinicPattern]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@PatternID", SqlDbType.Int).Value = iPatternID;
+            
+            //cmd.ExecuteNonQuery();
+            con.Close();
+        }
+        public void UpdateAdHocClinic(int ID)
+        {
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerUpdateAdHocClinic]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@ID", SqlDbType.Int).Value = ID;
+
+            //cmd.ExecuteNonQuery();
             con.Close();
         }
 

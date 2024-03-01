@@ -89,6 +89,24 @@ namespace CPTest.Connections
             return appts;
         }
 
+        public IEnumerable<Appointment> GetAppointmentsForADay(DateTime dClinicDate, string? strClinician, string? strClinic)
+        {
+            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == dClinicDate 
+            & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional"
+                    & a.Attendance != "Cancelled by patient").ToList();
+
+            if (strClinician != null)
+            {
+                appts = appts.Where(l => l.STAFF_CODE_1 == strClinician).ToList();
+            }
+            if (strClinic != null)
+            {
+                appts = appts.Where(l => l.FACILITY == strClinic).ToList();
+            }
+            
+            return appts;
+        }
+
         public IEnumerable<WaitingList> GetWaitingList(string? strClinician, string? strClinic)
         {
             var wl = _context.WaitingList.ToList();
@@ -149,6 +167,16 @@ namespace CPTest.Connections
         {
             var patterns = _context.ClinicPattern.Where(p => p.StaffID == sClinID).ToList();
             return patterns;
+        }
+        public ClinicsAdded GetAdHocClinicDetails(int ID)
+        {
+            var adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ID == ID);
+            return adhoc;
+        }
+        public List<ClinicsAdded> GetAdHocList(string sClinID) 
+        {
+            var adhocs = _context.ClinicsAdded.Where(c => c.ClinicianID == sClinID).ToList();
+            return adhocs;
         }
 
         public DateTime GetFirstDateFromList(DateTime dateToCheck, string sDay) 

@@ -1,0 +1,48 @@
+﻿@page
+@model CPTest.Pages.AdHocClinicListModel
+@{
+}
+
+<div class="container">
+    <h1>Clinics for @Model.clinician</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Clinic</th>
+                <th>Start Date</th>                
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Slots</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.adHocList)
+            {
+                <tr>
+                    <td><a asp-page="AdHocClinicModify" asp-route-ID=@item.ID>Edit</a></td>
+                    <td>@item.ClinicID</td>
+                    <td>
+                        @if (@item.ClinicDate != null)
+                        {
+                            @item.ClinicDate.ToString("dd/MM/yyyy")
+                        }
+                    </td>
+                    
+                    <td>
+                        @item.StartHr:@if (@item.StartMin == 0){<span>00</span>}
+                        else{@item.StartMin}
+                    </td>
+                    <td>
+                        @item.EndHr:@if (@item.EndMin == 0){<span>00</span>}
+                        else{@item.EndMin}
+                    </td>
+                    <td>@item.NumSlots</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
