@@ -368,7 +368,8 @@
                             var theDate = col.id.substring(0, 10);
                             var theTime = col.id.substring(11, col.id.length);
                             const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
-                        
+                            
+
                             for (var k = 0; k < dateArray.length; k++)
                             {
                                 const myDate = new Date(dateArray[k].substring(6, 10) + "-" + dateArray[k].substring(3, 5) + "-" + dateArray[k].substring(0, 2) + "T00:00:00");
@@ -382,8 +383,9 @@
                                         var strSlotDetail;
                                         if (myTime == theTime) 
                                         {
-                                            if (colDate < today || theTime < rightnow) //for clinic slots in the past
-                                            {
+                                            if ((colDate < today)|| (theTime < rightnow && colDate.getDate() == today.getDate()))//for clinic slots in the past
+                                            //fucking bullshit piece of shit simply won't evaluate correctly no matter what I do!!!!!
+                                            {                                                   
                                                 document.getElementById(col.id).style.backgroundColor = "firebrick";
                                                 strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                             }
@@ -436,7 +438,7 @@
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
                                             {                                                
                                                 //we have to do this here, because the C# throws a fit if we get nulls
-                                                if (colDate < today || theTime < rightnow)  //past appointments
+                                                if (colDate < today || (colDate == today && theTime < rightnow))  //past appointments
                                                 {                                                    
                                                     document.getElementById(col.id).style.backgroundColor = "purple";
                                                     strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
