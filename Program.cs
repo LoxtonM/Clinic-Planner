@@ -14,6 +14,7 @@ var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(config.GetConnectionString("ConString")));
 
 builder.Services.AddRazorPages();
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("secrets.json");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
