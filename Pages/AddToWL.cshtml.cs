@@ -1,3 +1,4 @@
+using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -8,16 +9,22 @@ namespace CPTest.Pages
     public class AddToWLModel : PageModel
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
+        private readonly DataConnections _dc;
+        private readonly SqlServices _sql;
         public IEnumerable<ClinicVenue> clinicVenueList { get; set; }        
         public IEnumerable<StaffMember> staffMemberList { get; set; }
         public Patient Patient { get; set; }
 
-        public AddToWLModel(DataContext context)
+        public AddToWLModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
+            _dc = new DataConnections(_context);
+            _sql = new SqlServices(_config);
         }
         
-        public void OnGet(string sCGU)
+        public void OnGet(string cgu)
         {
             try
             {
@@ -25,9 +32,9 @@ namespace CPTest.Pages
                 clinicVenueList = _context.ClinicVenues.OrderBy(v => v.NAME);
                 staffMemberList = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
 
-                if (sCGU != null)
+                if (cgu != null)
                 {
-                    Patient = _context.Patients.FirstOrDefault(p => p.CGU_No == sCGU);
+                    Patient = _context.Patients.FirstOrDefault(p => p.CGU_No == cgu);
                 }
             }
             catch (Exception ex)
@@ -36,11 +43,13 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost()
+        public void OnPost(int mpi, string clinician, string clinic)
         {
             try
             {
-                //do stuff
+                string staffCode = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
+
+                //_sql.CreateWaitingListEntry(mpi, clinician, clinic, staffCode);
             }
             catch (Exception ex)
             {

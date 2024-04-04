@@ -14,13 +14,13 @@
                 <label>CGU Number (including point):</label>
             </div>
             <div class="col-md-2" style="text-align:right">
-                <input type="text" id="txtCGUNo" name="sCGU" />
+                <input type="text" id="txtCGUNo" name="cgu" />
             </div>
             <div class="col-md-2" style="text-align:right">
                 <label>Clinician:</label>
             </div>
             <div class="col-md-2" style="text-align:right">
-                <select id="ddlClin" name="sClin" />                
+                <select id="ddlClin" name="clin" />                
                     <option value="" selected></option>
                     @if (Model.staffMemberList != null)
                     {
@@ -35,7 +35,7 @@
                 <label>Clinic:</label>
             </div>
             <div class="col-md-2" style="text-align:right">
-                <select id="ddlVen" name="sVen" />                
+                <select id="ddlVen" name="ven" />                
                     <option value="" selected></option>                
                     @if (Model.clinicVenueList != null)
                     {
@@ -88,7 +88,7 @@
     function Refresh()
     {        
         //window.Refresh();
-        window.location.replace("AddToWL?sCGU=" + document.getElementById("txtCGUNo").value);
+        window.location.replace("AddToWL?cgu=" + document.getElementById("txtCGUNo").value);
     }
 
     function GoBack()

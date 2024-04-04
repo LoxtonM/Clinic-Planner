@@ -14,7 +14,7 @@
                 <label>New Clinician:</label>
             </div>
             <div class="col-md-3">
-                <select id="ddlClinician" name="sClinicianID" asp-for=@Model.staffMember.STAFF_CODE>
+                <select id="ddlClinician" name="clinicianID" asp-for=@Model.staffMember.STAFF_CODE>
                     @foreach (var item in Model.staffMemberList)
                     {
                         <option value=@item.STAFF_CODE>@item.NAME</option>
@@ -25,7 +25,7 @@
                 <label>New clinic:</label>
             </div>
             <div class="col-md-3">
-                <select id="ddlClinic" name="sClinicID" asp-for=@Model.clinicVenue.FACILITY>
+                <select id="ddlClinic" name="clinicID" asp-for=@Model.clinicVenue.FACILITY>
                     @*@if (Model.ClinicVenue != null)
                     {
                         <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>

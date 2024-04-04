@@ -11,15 +11,15 @@ namespace CPTest.Pages
 
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        DataConnections dc;
-        SqlServices ss;
+        private readonly DataConnections _dc;
+        private readonly SqlServices _ss;
 
         public WLModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            dc = new DataConnections(_context);
-            ss = new SqlServices(_config);
+            _dc = new DataConnections(_context);
+            _ss = new SqlServices(_config);
         }
 
         public Patient patient { get; set; }
@@ -29,28 +29,28 @@ namespace CPTest.Pages
         public List<ClinicVenue> clinicVenueList { get; set; }        
 
         
-        public void OnGet(int iMPI, string sClinicID, string sClinicianID)
+        public void OnGet(int mpi, string clinicID, string clinicianID)
         {
             try
             {
-                if (sClinicianID != null)
+                if (clinicianID != null)
                 {
-                    staffMember = dc.GetStaffDetails(sClinicianID);
+                    staffMember = _dc.GetStaffDetails(clinicianID);
                 }
 
-                if (sClinicID != null)
+                if (clinicID != null)
                 {
-                    clinicVenue = dc.GetVenueDetails(sClinicID);
+                    clinicVenue = _dc.GetVenueDetails(clinicID);
                 }
 
-                if (iMPI != null)
+                if (mpi != null)
                 {
-                    patient = dc.GetPatientDetails(iMPI);
+                    patient = _dc.GetPatientDetails(mpi);
                 }
 
-                staffMemberList = dc.GetStaffMemberList();
+                staffMemberList = _dc.GetStaffMemberList();
 
-                clinicVenueList = dc.GetVenueList();
+                clinicVenueList = _dc.GetVenueList();
             }
             catch (Exception ex)
             {
@@ -58,31 +58,31 @@ namespace CPTest.Pages
             }
         }    
         
-        public void OnPost(int iMPI, string sClinicianID, string sClinicID, string sOldClinicianID, string sOldClinicID, bool isRemoval)
+        public void OnPost(int mpi, string clinicianID, string clinicID, string sOldClinicianID, string sOldClinicID, bool isRemoval)
         {
             try
             {
-                if (sClinicianID != null)
+                if (clinicianID != null)
                 {
-                    staffMember = dc.GetStaffDetails(sClinicianID);
+                    staffMember = _dc.GetStaffDetails(clinicianID);
                 }
 
-                if (sClinicID != null)
+                if (clinicID != null)
                 {
-                    clinicVenue = dc.GetVenueDetails(sClinicID);
+                    clinicVenue = _dc.GetVenueDetails(clinicID);
                 }
 
-                if (iMPI != null)
+                if (mpi != null)
                 {
-                    patient = dc.GetPatientDetails(iMPI);
+                    patient = _dc.GetPatientDetails(mpi);
                 }
                 string sUsername = "LoxM";
 
-                staffMemberList = dc.GetStaffMemberList();
+                staffMemberList = _dc.GetStaffMemberList();
 
-                clinicVenueList = dc.GetVenueList();
+                clinicVenueList = _dc.GetVenueList();
 
-                ss.ModifyWaitingListEntry(iMPI, sClinicianID, sClinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
+                _ss.ModifyWaitingListEntry(mpi, clinicianID, clinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
 
                 Response.Redirect("Index");
             }

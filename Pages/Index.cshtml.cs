@@ -10,12 +10,12 @@ namespace CPTest.Pages
     public class IndexModel : PageModel
     {        
         private readonly DataContext _context;
-        DataConnections dc;
+        private readonly DataConnections _dc;
 
         public IndexModel(DataContext context)
         {
             _context = context;
-            dc = new DataConnections(_context);
+            _dc = new DataConnections(_context);
         }
         public IEnumerable<Outcome> outcomes { get; set; }
         public IEnumerable<WaitingList> waitingList { get; set; }
@@ -33,26 +33,26 @@ namespace CPTest.Pages
 
         //public string wcDateString = new string("");
         public DateTime wcDate;
-        public string sClinician = new string("");
-        public string sClinic = new string("");
+        public string clinician = new string("");
+        public string clinic = new string("");
 
 
-        public void OnGet(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
+        public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
-            ClinicFormSetup(wcDt, strClinician, strClinic, sSearchTerm);
+            ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
         }
 
-        public void OnPost(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
+        public void OnPost(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
-            ClinicFormSetup(wcDt, strClinician, strClinic, sSearchTerm);
+            ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
         }
 
-        private void ClinicFormSetup(DateTime wcDt, string strClinician, string strClinic, string sSearchTerm)
+        private void ClinicFormSetup(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
             try
             {                
-                staffMemberList = dc.GetStaffMemberList();
-                clinicVenueList = dc.GetVenueList();
+                staffMemberList = _dc.GetStaffMemberList();
+                clinicVenueList = _dc.GetVenueList();
 
 
                 if (wcDt.ToString() != "01/01/0001 00:00:00")
@@ -65,8 +65,8 @@ namespace CPTest.Pages
                 }
 
                 string TheDay = wcDate.DayOfWeek.ToString();
-                sClinician = strClinician;
-                sClinic = strClinic;
+                clinician = clinician;
+                clinic = clinic;
                 DateTime initTime = wcDate.Add(new TimeSpan(8, 0, 0));
 
                 //DateArray is used by the JS to create the day/time slots
@@ -80,35 +80,35 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
                                 
-                appointmentList = dc.GetAppointments(DateArray[0], DateArray[4], strClinician, strClinic);
+                appointmentList = _dc.GetAppointments(DateArray[0], DateArray[4], clinician, clinic);
                 
-                clinicSlotList = dc.GetClinicSlots(DateArray[0], DateArray[4], strClinician, strClinic);
+                clinicSlotList = _dc.GetClinicSlots(DateArray[0], DateArray[4], clinician, clinic);
 
-                if (sSearchTerm != null) //to search the waiting list for a CGU number
+                if (searchTerm != null) //to search the waiting list for a CGU number
                 {                    
-                    waitingList = dc.GetWaitingListByCGUNo(sSearchTerm);
+                    waitingList = _dc.GetWaitingListByCGUNo(searchTerm);
                 }
                 else
                 {
-                    waitingList = dc.GetWaitingList(strClinician, strClinic);
+                    waitingList = _dc.GetWaitingList(clinician, clinic);
                 }
 
-                if (!strClinic.IsNullOrEmpty())
+                if (!clinic.IsNullOrEmpty())
                 {
-                    clinicVenue = dc.GetVenueDetails(strClinic);
+                    clinicVenue = _dc.GetVenueDetails(clinic);
                 }
 
-                if (!strClinician.IsNullOrEmpty()) //if a clinician is selected as well
+                if (!clinician.IsNullOrEmpty()) //if a clinician is selected as well
                 {
-                    staffMember = dc.GetStaffDetails(strClinician);
+                    staffMember = _dc.GetStaffDetails(clinician);
                     var Clinics = new List<CliniciansClinics>();
-                    Clinics = dc.GetCliniciansClinics(strClinician);
+                    Clinics = _dc.GetCliniciansClinics(clinician);
 
                     clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                openSlotList = dc.GetOpenSlots(clinicSlotList);
+                openSlotList = _dc.GetOpenSlots(clinicSlotList);
             }
             catch (Exception ex) 
             {

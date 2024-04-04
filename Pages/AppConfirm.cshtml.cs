@@ -10,15 +10,15 @@ namespace CPTest.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config; 
-        DataConnections dc;
-        SqlServices ss;
+        private readonly DataConnections _dc;
+        private readonly SqlServices _ss;
 
         public AppConfirmModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            dc = new DataConnections(_context);
-            ss = new SqlServices(_config);            
+            _dc = new DataConnections(_context);
+            _ss = new SqlServices(_config);            
         }
 
         public Patient? Patient { get; set; }
@@ -34,26 +34,26 @@ namespace CPTest.Pages
         public string? appTimeString;
         public string? appTypeDef;
         
-        public void OnGet(string sMPI, string sClin, string sVen, string sDat, string sTim, string sDur, string sInstructions)
+        public void OnGet(string mpiString, string clin, string ven, string dat, string tim, string dur, string instructions)
         {
             try
             {
-                int iMPI = Int32.Parse(sMPI);
+                int mpi = Int32.Parse(mpiString);
 
-                Patient = dc.GetPatientDetails(iMPI);
-                appTypeList = dc.GetAppTypeList();
-                staffMember = dc.GetStaffDetails(sClin);
+                Patient = _dc.GetPatientDetails(mpi);
+                appTypeList = _dc.GetAppTypeList();
+                staffMember = _dc.GetStaffDetails(clin);
 
-                clinicVenue = dc.GetVenueDetails(sVen);
+                clinicVenue = _dc.GetVenueDetails(ven);
 
-                linkedRefList = dc.GetReferralsList(iMPI);
+                linkedRefList = _dc.GetReferralsList(mpi);
 
-                appDateString = sDat;
-                appTimeString = sTim;
+                appDateString = dat;
+                appTimeString = tim;
 
-                appDate = DateTime.Parse(sDat);
-                appTime = DateTime.Parse("1899-12-30 " + sTim);
-                appDur = Int32.Parse(sDur);
+                appDate = DateTime.Parse(dat);
+                appTime = DateTime.Parse("1899-12-30 " + tim);
+                appDur = Int32.Parse(dur);
 
                 if (staffMember.CLINIC_SCHEDULER_GROUPS == "GC")
                 {
@@ -70,22 +70,22 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int iMPI, int iRefID, string sClin, string sVen, DateTime dDat, string sTim, int iDur, string sInstructions, string sType)
+        public void OnPost(int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type)
         {
             try
             {
-                string sStaffCode;
+                string staffCode;
 
-                Patient = dc.GetPatientDetails(iMPI);
-                appTypeList = dc.GetAppTypeList();
-                staffMember = dc.GetStaffDetails(sClin);
-                sStaffCode = dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
+                Patient = _dc.GetPatientDetails(mpi);
+                appTypeList = _dc.GetAppTypeList();
+                staffMember = _dc.GetStaffDetails(clin);
+                staffCode = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
                 
-                clinicVenue = dc.GetVenueDetails(sVen);
+                clinicVenue = _dc.GetVenueDetails(ven);
 
-                linkedRefList = dc.GetReferralsList(iMPI);
+                linkedRefList = _dc.GetReferralsList(mpi);
 
-                ss.CreateAppointment(dDat, sTim, sClin, null, null, sVen, iRefID, iMPI, sType, iDur, sStaffCode, sInstructions);
+                _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions);
                 
                 Response.Redirect("Index");
             }

@@ -34,7 +34,7 @@
                 <label>Clinician:</label>
             </div>
             <div class="col-md-2"> @*Clinician select*@
-                <select id="ddlClinician" name="strClinician" asp-for=@Model.sClinician onchange="RefreshForm()">
+                <select id="ddlClinician" name="clinician" asp-for=@Model.clinician onchange="RefreshForm()">
                     @if (Model.staffMember != null)
                     {
                         <option value="@Model.staffMember" selected>@Model.staffMember.NAME</option>
@@ -56,7 +56,7 @@
                 <label>Clinic:</label>
             </div>
             <div class="col-md-2"> @*Clinic select*@
-                <select id="ddlClinic" name="strClinic" asp-for=@Model.sClinic onchange="RefreshForm()">
+                <select id="ddlClinic" name="clinic" asp-for=@Model.clinic onchange="RefreshForm()">
                     @if (Model.clinicVenue != null)
                     {
                         <option value="@Model.clinicVenue" selected>@Model.clinicVenue.NAME</option>
@@ -96,7 +96,7 @@
                 <div class="row mb-2 g-2">
                     <p>Search by CGU Number:</p>
                     <div class="col-6">
-                        <input class="w-100" name="sSearchTerm" />
+                        <input class="w-100" name="searchTerm" />
                     </div>
                     <div class="col-6">
                         <button class="btn-success w-50 h-100" type="button" id="btnSearchWL" onclick="WaitingListSearch()">
@@ -142,7 +142,7 @@
                         <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
                         <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
                         <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
-                        <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
+                        <th>Frday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.TimeArray)
@@ -236,7 +236,7 @@
             //this is necessary to make sure SQL doesn't render it into American
             const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
                  
-            window.location.replace ("AppConfirm?sMPI=" + MPI + "&sClin=" + apClin + "&sVen=" + apVen + "&sDat=" + apDateProper + "&sTim=" + apTime + "&sDur=" + apDur);
+            window.location.replace ("AppConfirm?mpiString=" + MPI + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
             //document.getElementById("ClinicForm").submit();
         }        
     }
@@ -266,8 +266,8 @@
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     function OnDoubleClickWL(MPI, clinicID, clinicianID)
     {
-        //window.open("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
-        window.location.replace("WLModify?iMPI=" + MPI + "&sClinicianID=" + clinicianID + "&sClinicID=" + clinicID);
+        //window.open("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
+        window.location.replace("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
     }
 
     function OnDoubleClickAP(id)
@@ -383,8 +383,8 @@
                                         var strSlotDetail;
                                         if (myTime == theTime) 
                                         {
-                                            if ((colDate < today)|| (theTime < rightnow && colDate.getDate() == today.getDate()))//for clinic slots in the past
-                                            {                                                   
+                                            if ((colDate < today) || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))//for clinic slots in the past
+                                            {                                                
                                                 document.getElementById(col.id).style.backgroundColor = "firebrick";
                                                 strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                             }
@@ -437,7 +437,7 @@
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
                                             {                                                
                                                 //we have to do this here, because the C# throws a fit if we get nulls
-                                                if (colDate < today || (colDate == today && theTime < rightnow))  //past appointments
+                                                if (colDate < today || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))  //past appointments
                                                 {                                                    
                                                     document.getElementById(col.id).style.backgroundColor = "purple";
                                                     strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +

@@ -30,7 +30,7 @@
                     <label>Linked Referral:</label>
                 </div>
                 <div class="col-md-8">                
-                    <select name="iRefID">
+                    <select name="refID">
                         @foreach (var r in Model.linkedRefList)
                         {
                             <option value=@r.RefID>@r.RefType - @r.RefDate.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
@@ -49,7 +49,7 @@
                 <label>Appointment Type:</label>
             </div>
             <div class="col-md-4">
-                <select name="sType" asp-for=@Model.appTypeDef>
+                <select name="type" asp-for=@Model.appTypeDef>
                     @foreach(var t in Model.appTypeList)
                     {
                         <option value=@t.APP_TYPE>@t.APP_TYPE</option>
@@ -60,7 +60,7 @@
                 <label>Duration: (minutes)</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iDur" asp-for=@Model.appDur />
+                <input type="text" class="w-50" name="dur" asp-for=@Model.appDur />
             </div>
             <div class="col-md-3">
                 
@@ -72,7 +72,7 @@
                 <label>Special Instructions:</label>
             </div>
             <div class="col-md-10">
-                <textarea rows="10" cols="100" name="sInstructions"></textarea>
+                <textarea rows="10" cols="100" name="instructions"></textarea>
             </div>
         </div>
 
@@ -90,12 +90,12 @@
         <div id="metadata">
             @if(@Model.staffMember != null)
             {
-                <input id="txtMPI" name="iMPI" value=@Model.Patient.MPI />
-                <input id="txtClin" name="sClin" value=@Model.staffMember.STAFF_CODE />
-                <input id="txtVen" name="sVen" value=@Model.clinicVenue.FACILITY />
-                <input id="txtDat" name="dDat" value=@Model.appDate.ToString("yyyy-MM-dd") />
-                <input id="txtTim" name="sTim" value=@Model.appTime.ToString("HH:mm:ss") />
-                <input id="txtDur" name="iDur" value=@Model.appDur />
+                <input id="txtMPI" name="mpi" value=@Model.Patient.MPI />
+                <input id="txtClin" name="clin" value=@Model.staffMember.STAFF_CODE />
+                <input id="txtVen" name="ven" value=@Model.clinicVenue.FACILITY />
+                <input id="txtDat" name="dat" value=@Model.appDate.ToString("yyyy-MM-dd") />
+                <input id="txtTim" name="tim" value=@Model.appTime.ToString("HH:mm:ss") />
+                <input id="txtDur" name="dur" value=@Model.appDur />
             }
         </div>
     </form>

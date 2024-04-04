@@ -9,22 +9,22 @@ namespace CPTest.Pages
     public class ClinicPatternListModel : PageModel
     {
         private readonly DataContext _context;
-        private DataConnections dc;
+        private readonly DataConnections _dc;
 
         public ClinicPatternListModel(DataContext context)
         {
             _context = context;
-            dc = new DataConnections(_context);
+            _dc = new DataConnections(_context);
         }
 
         public string clinician;
         public List<ClinicPattern> patternList {  get; set; }
-        public void OnGet(string sClinician)
+        public void OnGet(string clinician)
         {
             try
             {
-                clinician = dc.GetStaffDetails(sClinician).NAME;
-                patternList = dc.GetPatternList(sClinician);
+                clinician = _dc.GetStaffDetails(clinician).NAME;
+                patternList = _dc.GetPatternList(clinician);
             }
             catch (Exception ex)
             {

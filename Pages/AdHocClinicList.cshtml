@@ -21,7 +21,7 @@
             @foreach (var item in Model.adHocList)
             {
                 <tr>
-                    <td><a asp-page="AdHocClinicModify" asp-route-ID=@item.ID>Edit</a></td>
+                    <td><a asp-page="AdHocClinicModify" asp-route-id=@item.ID>Edit</a></td>
                     <td>@item.ClinicID</td>
                     <td>
                         @if (@item.ClinicDate != null)

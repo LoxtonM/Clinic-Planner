@@ -43,7 +43,7 @@
                 <label><strong>Clinician:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicianID" id="ddlClinician">
+                <select name="clinicianID" id="ddlClinician">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.staffMemberList)
                     {
@@ -55,7 +55,7 @@
                 <label><strong>Clinic:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicID" id="ddlClinic">
+                <select name="clinicID" id="ddlClinic">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.clinicVenueList)
                     {
@@ -87,25 +87,25 @@
                 <label>Hour:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iStartHr" />
+                <input type="text" class="w-50" name="startHr" />
             </div>
             <div class="col-md-1">
                 <label>Minute:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iStartMin" />
+                <input type="text" class="w-50" name="startMin" />
             </div>
             <div class="col-md-1">
                 <label>Duration:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iDuration" />
+                <input type="text" class="w-50" name="duration" />
             </div>
             <div class="col md-1">
                 <label>Slots:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iNumSlots" />
+                <input type="text" class="w-50" name="numSlots" />
             </div>
             <div class="col md-2"></div>
         </div>
@@ -119,13 +119,13 @@
                 <label>Day: (Monday = 1 etc)</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iDayNum" />
+                <input type="text" class="w-50" name="dayNum" />
             </div>
             <div class="col-md-1">
                 <label>Week:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iWeekNum" />
+                <input type="text" class="w-50" name="weekNum" />
             </div>
             <div class="col-md-5">
                 <div class="row">
@@ -152,7 +152,7 @@
 
             </div>
             <div class="row" hidden="true">
-                <input type="text" id="txtMonthString" name="sMonthString" />
+                <input type="text" id="txtMonthString" name="monthstring" />
             </div>
             
         </div>
@@ -173,7 +173,7 @@
                 <label><strong>Clinician:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicianID" id="ddlClinician">
+                <select name="clinicianID" id="ddlClinician">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.staffMemberList)
                     {
@@ -199,7 +199,7 @@
                 <label><strong>Clinician:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicianID" id="ddlClinician">
+                <select name="clinicianID" id="ddlClinician">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.staffMemberList)
                     {
@@ -211,7 +211,7 @@
                 <label><strong>Clinic:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicID" id="ddlClinic">
+                <select name="clinicID" id="ddlClinic">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.clinicVenueList)
                     {
@@ -237,25 +237,25 @@
                 <label>Hour:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iStartHr" />
+                <input type="text" class="w-50" name="startHr" />
             </div>
             <div class="col-md-1">
                 <label>Minute:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iStartMin" />
+                <input type="text" class="w-50" name="startMin" />
             </div>
             <div class="col-md-1">
                 <label>Duration:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iDuration" />
+                <input type="text" class="w-50" name="duration" />
             </div>
             <div class="col md-1">
                 <label>Slots:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="iNumSlots" />
+                <input type="text" class="w-50" name="numSlots" />
             </div>
             <div class="col md-2"></div>
         </div>
@@ -275,7 +275,7 @@
                 <label><strong>Clinician:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="sClinicianID" id="ddlClinician">
+                <select name="clinicianID" id="ddlClinician">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.staffMemberList)
                     {

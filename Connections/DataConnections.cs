@@ -11,21 +11,21 @@ namespace CPTest.Connections
             _context = context;
         }
 
-        public Patient GetPatientDetails(int iMPI)
+        public Patient GetPatientDetails(int mpi)
         {
-            var pt = _context.Patients.FirstOrDefault(p => p.MPI == iMPI);
+            var pt = _context.Patients.FirstOrDefault(p => p.MPI == mpi);
             return pt;
         }
 
-        public StaffMember GetStaffDetails(string sClin)
+        public StaffMember GetStaffDetails(string clin)
         {
-            var staff = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == sClin);
+            var staff = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == clin);
             return staff;
         }
 
-        public StaffMember GetStaffDetailsByUsername(string sUsername)
+        public StaffMember GetStaffDetailsByUsername(string username)
         {
-            var staff = _context.StaffMembers.FirstOrDefault(s => s.EMPLOYEE_NUMBER == sUsername);
+            var staff = _context.StaffMembers.FirstOrDefault(s => s.EMPLOYEE_NUMBER == username);
             return staff;
         }
 
@@ -35,9 +35,9 @@ namespace CPTest.Connections
             return stafflist.ToList();
         }
 
-        public ClinicVenue GetVenueDetails(string sVen)
+        public ClinicVenue GetVenueDetails(string ven)
         {
-            var clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == sVen);
+            var clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == ven);
             return clin;
         }
 
@@ -47,9 +47,9 @@ namespace CPTest.Connections
             return venuelist.ToList();
         }
 
-        public List<Referral> GetReferralsList(int iMPI) 
+        public List<Referral> GetReferralsList(int mpi) 
         {
-            var refs = _context.Referrals.Where(r => r.MPI == iMPI & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate).ToList();
+            var refs = _context.Referrals.Where(r => r.MPI == mpi & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate).ToList();
             return refs;
         }
 
@@ -65,89 +65,89 @@ namespace CPTest.Connections
             return oc;
         }
 
-        public Appointment GetAppointmentDetails(int iRefID)
+        public Appointment GetAppointmentDetails(int refID)
         {
-            var appt = _context.Appointments.FirstOrDefault(a => a.RefID == iRefID);
+            var appt = _context.Appointments.FirstOrDefault(a => a.RefID == refID);
             return appt;
         }
 
-        public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? strClinician, string? strClinic)
+        public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic)
         {            
             var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & 
                     a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" 
                     & a.Attendance != "Cancelled by patient").ToList();
 
-            if (strClinician != null)
+            if (clinician != null)
             {
-                appts = appts.Where(l => l.STAFF_CODE_1 == strClinician).ToList();
+                appts = appts.Where(l => l.STAFF_CODE_1 == clinician).ToList();
             }
-            if (strClinic != null)
+            if (clinic != null)
             {
-                appts = appts.Where(l => l.FACILITY == strClinic).ToList();
+                appts = appts.Where(l => l.FACILITY == clinic).ToList();
             }
             
             return appts;
         }
 
-        public IEnumerable<Appointment> GetAppointmentsForADay(DateTime dClinicDate, string? strClinician, string? strClinic)
+        public IEnumerable<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician, string? clinic)
         {
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == dClinicDate 
+            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate 
             & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional"
                     & a.Attendance != "Cancelled by patient").ToList();
 
-            if (strClinician != null)
+            if (clinician != null)
             {
-                appts = appts.Where(l => l.STAFF_CODE_1 == strClinician).ToList();
+                appts = appts.Where(l => l.STAFF_CODE_1 == clinician).ToList();
             }
-            if (strClinic != null)
+            if (clinic != null)
             {
-                appts = appts.Where(l => l.FACILITY == strClinic).ToList();
+                appts = appts.Where(l => l.FACILITY == clinic).ToList();
             }
             
             return appts;
         }
 
-        public IEnumerable<WaitingList> GetWaitingList(string? strClinician, string? strClinic)
+        public IEnumerable<WaitingList> GetWaitingList(string? clinician, string? clinic)
         {
             var wl = _context.WaitingList.ToList();
 
-            if (strClinician != null)
+            if (clinician != null)
             {
-                wl = wl.Where(l => l.ClinicianID == strClinician).ToList();
+                wl = wl.Where(l => l.ClinicianID == clinician).ToList();
             }
-            if (strClinic != null)
+            if (clinic != null)
             {
-                wl = wl.Where(l => l.ClinicID == strClinic).ToList();
+                wl = wl.Where(l => l.ClinicID == clinic).ToList();
             }            
 
             return wl.OrderBy(l => l.AddedDate);
         }
 
-        public IEnumerable<WaitingList> GetWaitingListByCGUNo(string sSearchTerm)
+        public IEnumerable<WaitingList> GetWaitingListByCGUNo(string searchTerm)
         {
-            var wl = _context.WaitingList.Where(w => w.CGU_No.Contains(sSearchTerm));                       
+            var wl = _context.WaitingList.Where(w => w.CGU_No.Contains(searchTerm));                       
             return wl.OrderBy(l => l.AddedDate);
         }
 
-        public IEnumerable<ClinicSlot> GetClinicSlots(DateTime dFrom, DateTime dTo, string? strClinician, string? strClinic)
+        public IEnumerable<ClinicSlot> GetClinicSlots(DateTime dFrom, DateTime dTo, string? clinician, string? clinic)
         {
             var slots = _context.ClinicSlots.Where(l => l.SlotDate >= dFrom & l.SlotDate <= dTo).ToList().OrderBy(l => l.SlotDate).ToList();
             
-            if (strClinician != null)
+            if (clinician != null)
             {
-                slots = slots.Where(s => s.ClinicianID == strClinician).ToList();
+                slots = slots.Where(s => s.ClinicianID == clinician).ToList();
             }
-            if (strClinic != null)
+            if (clinic != null)
             {
-                slots = slots.Where(s => s.ClinicID == strClinic).ToList();
+                slots = slots.Where(s => s.ClinicID == clinic).ToList();
             }
 
             return slots;
         }
 
-        public List<CliniciansClinics> GetCliniciansClinics(string strClinician)
+        public List<CliniciansClinics> GetCliniciansClinics(string clinician)
         {
-            var clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == strClinician).ToList();
+            var clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == clinician).ToList();
             return clinics;
         }
 
@@ -157,41 +157,41 @@ namespace CPTest.Connections
             return os;
         }
 
-        public ClinicPattern GetPatternDetails(int iPatID) 
+        public ClinicPattern GetPatternDetails(int patID) 
         {
-            var pat = _context.ClinicPattern.FirstOrDefault(p => p.PatternID == iPatID);
+            var pat = _context.ClinicPattern.FirstOrDefault(p => p.PatternID == patID);
             return pat;
         }
 
-        public List<ClinicPattern> GetPatternList(string sClinID)
+        public List<ClinicPattern> GetPatternList(string clinID)
         {
-            var patterns = _context.ClinicPattern.Where(p => p.StaffID == sClinID).ToList();
+            var patterns = _context.ClinicPattern.Where(p => p.StaffID == clinID).ToList();
             return patterns;
         }
-        public ClinicsAdded GetAdHocClinicDetails(int ID)
+        public ClinicsAdded GetAdHocClinicDetails(int id)
         {
-            var adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ID == ID);
+            var adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ID == id);
             return adhoc;
         }
-        public List<ClinicsAdded> GetAdHocList(string sClinID) 
+        public List<ClinicsAdded> GetAdHocList(string clinID) 
         {
-            var adhocs = _context.ClinicsAdded.Where(c => c.ClinicianID == sClinID).ToList();
+            var adhocs = _context.ClinicsAdded.Where(c => c.ClinicianID == clinID).ToList();
             return adhocs;
         }
 
-        public DateTime GetFirstDateFromList(DateTime dateToCheck, string sDay) 
+        public DateTime GetFirstDateFromList(DateTime dateToCheck, string day) 
         {
             DateTime firstDate = _context.DateList.FirstOrDefault(d => d.Dt.Month == dateToCheck.Month && d.Dt.Year == dateToCheck.Year
-                                            && d.NumberOfThisWeekDayInMonth == 1 && d.WeekDay == sDay).Dt;
+                                            && d.NumberOfThisWeekDayInMonth == 1 && d.WeekDay == day).Dt;
 
             return firstDate;
         }
 
-        public bool GetIsNationalHoliday(DateTime date)
+        public bool GetIsNationalHolday(DateTime date)
         {
-            int holidays = _context.NationalHolidays.Where(d => d.HolidayDate == date).Count();
+            int holdays = _context.NationalHoldays.Where(d => d.HoldayDate == date).Count();
 
-            if(holidays > 0)
+            if(holdays > 0)
             {
                 return true;
             }

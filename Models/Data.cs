@@ -182,12 +182,12 @@ namespace CPTest.Models
         public Int64 NumberOfThisWeekDayInMonth { get; set; }
     }
 
-    [Table("ListNationalHolidays", Schema = "dbo")]
-    public class NationalHolidays
+    [Table("ListNationalHoldays", Schema = "dbo")]
+    public class NationalHoldays
     {
         [Key]
         public int ID { get; set; }
-        public DateTime HolidayDate { get; set; }
+        public DateTime HoldayDate { get; set; }
     }
 }
 

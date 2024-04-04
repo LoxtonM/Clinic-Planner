@@ -9,12 +9,12 @@ namespace CPTest.Pages
     public class ClinicDayViewModel : PageModel
     {
         private readonly DataContext _context;
-        DataConnections dc;
+        private readonly DataConnections _dc;
 
         public ClinicDayViewModel(DataContext context)
         {
             _context = context;
-            dc = new DataConnections(_context);
+            _dc = new DataConnections(_context);
         }
 
         public IEnumerable<Outcome> outcomes { get; set; }
@@ -33,8 +33,8 @@ namespace CPTest.Pages
 
         //public string wcDateString = new string("");
         public DateTime dDate;
-        public string sClinician = new string("");
-        public string sClinic = new string("");
+        public string clinician = new string("");
+        public string clinic = new string("");
 
         public void OnGet(string? clinician, string? clinic, DateTime dClinicDate)
         {
@@ -45,13 +45,13 @@ namespace CPTest.Pages
                     dClinicDate = DateTime.Today;
                 }
 
-                staffMemberList = dc.GetStaffMemberList();
-                clinicVenueList = dc.GetVenueList();
+                staffMemberList = _dc.GetStaffMemberList();
+                clinicVenueList = _dc.GetVenueList();
 
                 dDate = dClinicDate;
 
-                sClinician = clinician;
-                sClinic = clinic;
+                clinician = clinician;
+                clinic = clinic;
                 DateTime initTime = dClinicDate.Add(new TimeSpan(8, 0, 0));
 
                 for (int i = 0; i < 120; i++)
@@ -59,7 +59,7 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = dc.GetAppointmentsForADay(dClinicDate, clinician, clinic);
+                appointmentList = _dc.GetAppointmentsForADay(dClinicDate, clinician, clinic);
                 
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicList = new List<string>();
@@ -69,27 +69,27 @@ namespace CPTest.Pages
                     //ClinicArray.Append(item.FACILITY);
                     clinicList.Add(item.FACILITY);
                 }
-                //clinicSlotList = dc.GetClinicSlots(dClinicDate, , clinician, clinic);
+                //clinicSlotList = _dc.GetClinicSlots(dClinicDate, , clinician, clinic);
                 
                 clinicList = clinicList.Distinct().ToList();
                 ClinicArray = clinicList.ToArray();
 
                 if (clinic != null)
                 {
-                    clinicVenue = dc.GetVenueDetails(clinic);
+                    clinicVenue = _dc.GetVenueDetails(clinic);
                 }
 
                 if (clinician != null)
                 {
-                    staffMember = dc.GetStaffDetails(clinician);
+                    staffMember = _dc.GetStaffDetails(clinician);
                     var Clinics = new List<CliniciansClinics>();
-                    Clinics = dc.GetCliniciansClinics(clinician);
+                    Clinics = _dc.GetCliniciansClinics(clinician);
 
                     clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                //openSlotList = dc.GetOpenSlots(clinicSlotList);
+                //openSlotList = _dc.GetOpenSlots(clinicSlotList);
                 
             }
             catch (Exception ex)

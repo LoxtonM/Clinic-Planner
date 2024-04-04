@@ -11,27 +11,27 @@ namespace CPTest.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        DataConnections dc;
-        SqlServices sql;
+        private readonly DataConnections _dc;
+        private readonly SqlServices _sql;
 
         public AdHocClinicModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            dc = new DataConnections(_context);
-            sql = new SqlServices(_config);
+            _dc = new DataConnections(_context);
+            _sql = new SqlServices(_config);
         }
 
         public ClinicsAdded adhocclinic {  get; set; }
         public StaffMember clinician { get; set; }
         public ClinicVenue venue { get; set; }
-        public void OnGet(int ID)
+        public void OnGet(int id)
         {
             try
             {
-                adhocclinic = dc.GetAdHocClinicDetails(ID);
-                clinician = dc.GetStaffDetails(adhocclinic.ClinicianID);
-                venue = dc.GetVenueDetails(adhocclinic.ClinicID);
+                adhocclinic = _dc.GetAdHocClinicDetails(id);
+                clinician = _dc.GetStaffDetails(adhocclinic.ClinicianID);
+                venue = _dc.GetVenueDetails(adhocclinic.ClinicID);
             }
             catch (Exception ex)
             {

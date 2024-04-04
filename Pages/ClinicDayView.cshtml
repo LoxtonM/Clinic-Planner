@@ -36,7 +36,7 @@
             </div>
             <div class="col-md-4">
                 @*Clinician select*@
-                <select id="ddlClinician" name="clinician" asp-for=@Model.sClinician onchange="RefreshForm()">
+                <select id="ddlClinician" name="clinician" asp-for=@Model.clinician onchange="RefreshForm()">
                     @if (Model.staffMember != null)
                     {
                         <option value="@Model.staffMember" selected>@Model.staffMember.NAME</option>
@@ -59,7 +59,7 @@
             </div>
             <div class="col-md-4">
                 @*Clinic select*@
-                <select id="ddlClinic" name="clinic" asp-for=@Model.sClinic onchange="RefreshForm()">
+                <select id="ddlClinic" name="clinic" asp-for=@Model.clinic onchange="RefreshForm()">
                     @if (Model.clinicVenue != null)
                     {
                         <option value="@Model.clinicVenue" selected>@Model.clinicVenue.NAME</option>
