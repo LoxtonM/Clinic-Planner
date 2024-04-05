@@ -142,7 +142,7 @@
                         <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
                         <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
                         <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
-                        <th>Frday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
+                        <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.TimeArray)
@@ -315,7 +315,9 @@
         var CGUNoArray = [];
         
         const today = new Date();
-        const rightnow = today.getHours() + ":" + today.getMinutes();
+        //const rightnow = today.getHours() + ":" + today.getMinutes();
+        const rightnow = today.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        //window.alert(rightnow);
         today.setHours(0, 0, 0, 0);       
 
         @if (Model.clinicSlotList != null) //set up all the clinic slots first
