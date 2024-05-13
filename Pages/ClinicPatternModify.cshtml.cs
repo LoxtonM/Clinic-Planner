@@ -1,7 +1,6 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
@@ -10,14 +9,18 @@ namespace CPTest.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IPatternData _patternData;
         private readonly SqlServices _sql;
 
         public ClinicPatternModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;            
             _config = config;
-            _dc = new DataConnections(_context);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
+            _patternData = new PatternData(_context);
             _sql = new SqlServices(_config);
         }
 
@@ -29,9 +32,9 @@ namespace CPTest.Pages
         {
             try
             {
-                pattern = _dc.GetPatternDetails(id);
-                clinician = _dc.GetStaffDetails(pattern.StaffID);
-                venue = _dc.GetVenueDetails(pattern.Clinic);
+                pattern = _patternData.GetPatternDetails(id);
+                clinician = _staffData.GetStaffDetails(pattern.StaffID);
+                venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
             }
             catch (Exception ex)
             {
@@ -44,9 +47,9 @@ namespace CPTest.Pages
         {
             try
             {
-                pattern = _dc.GetPatternDetails(id);
-                clinician = _dc.GetStaffDetails(pattern.StaffID);
-                venue = _dc.GetVenueDetails(pattern.Clinic);
+                pattern = _patternData.GetPatternDetails(id);
+                clinician = _staffData.GetStaffDetails(pattern.StaffID);
+                venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
 
                 _sql.UpdateClinicPattern(id); //, day, week, months, dur, startHr, startMin, numSlots, dStart, dEnd);
             }

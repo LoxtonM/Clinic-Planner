@@ -2,26 +2,33 @@ using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Data.SqlClient;
 
 namespace CPTest.Pages
 {
     public class AppConfirmModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly IConfiguration _config; 
-        private readonly DataConnections _dc;
+        private readonly IConfiguration _config;
+        private readonly IPatientData _patientData;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IReferralData _referralData;
+        private readonly IAppTypeData _appTypeData;        
         private readonly SqlServices _ss;
 
         public AppConfirmModel(DataContext context, IConfiguration config)
         {
             _context = context;
-            _config = config;
-            _dc = new DataConnections(_context);
-            _ss = new SqlServices(_config);            
+            _config = config;            
+            _ss = new SqlServices(_config);
+            _patientData = new PatientData(_context);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
+            _referralData = new ReferralData(_context);
+            _appTypeData = new AppTypeData(_context);
         }
 
-        public Patient? Patient { get; set; }
+        public Patient? patient { get; set; }
         public StaffMember? staffMember { get; set; }
         public ClinicVenue? clinicVenue { get; set; }
         public List<Referral> linkedRefList { get; set; }
@@ -34,19 +41,30 @@ namespace CPTest.Pages
         public string? appTimeString;
         public string? appTypeDef;
         
-        public void OnGet(string mpiString, string clin, string ven, string dat, string tim, string dur, string instructions)
+        public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
         {
             try
             {
-                int mpi = Int32.Parse(mpiString);
+                int intID = Int32.Parse(intIDString);
+                int mpi = 0;
 
-                Patient = _dc.GetPatientDetails(mpi);
-                appTypeList = _dc.GetAppTypeList();
-                staffMember = _dc.GetStaffDetails(clin);
+                patient = _patientData.GetPatientDetailsByIntID(intID);
 
-                clinicVenue = _dc.GetVenueDetails(ven);
+                if (patient == null)
+                {
+                    Response.Redirect("PatientNotFound?intID=" + intID.ToString() + "&clinicianID=" + clin + "&clinicID=" + ven, true);
+                }
+                else
+                {
+                    mpi = patient.MPI;
+                }
 
-                linkedRefList = _dc.GetReferralsList(mpi);
+                appTypeList = _appTypeData.GetAppTypeList();
+                staffMember = _staffData.GetStaffDetails(clin);
+
+                clinicVenue = _clinicVenueData.GetVenueDetails(ven);
+
+                linkedRefList = _referralData.GetReferralsList(mpi);
 
                 appDateString = dat;
                 appTimeString = tim;
@@ -76,14 +94,14 @@ namespace CPTest.Pages
             {
                 string staffCode;
 
-                Patient = _dc.GetPatientDetails(mpi);
-                appTypeList = _dc.GetAppTypeList();
-                staffMember = _dc.GetStaffDetails(clin);
-                staffCode = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
+                patient = _patientData.GetPatientDetails(mpi);
+                appTypeList = _appTypeData.GetAppTypeList();
+                staffMember = _staffData.GetStaffDetails(clin);
+                staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
                 
-                clinicVenue = _dc.GetVenueDetails(ven);
+                clinicVenue = _clinicVenueData.GetVenueDetails(ven);
 
-                linkedRefList = _dc.GetReferralsList(mpi);
+                linkedRefList = _referralData.GetReferralsList(mpi);
 
                 _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions);
                 

@@ -1,0 +1,21 @@
+﻿@page
+@model CPTest.Pages.PatientNotFoundModel
+@{
+}
+
+<h1>There is no patient that corresponds to this waiting list entry. You cannot modify it.</h1>
+<br />
+<br />
+<h1>Do you want to delete this waiting list entry?</h1>
+<br />
+<br />
+<form method="post">
+    <input type="text" name="intID" asp-for=@Model.wlIntID hidden="true" />
+    <input type="text" name="clinicianID" asp-for=@Model.wlClinicianID hidden="true" />
+    <input type="text" name="clinicID" asp-for=@Model.wlClinicID hidden="true" />
+
+    <button type="submit" class="btn btn-success">Yes - Delete</button>
+</form>
+<br />
+<br />
+<a type="button" class="btn btn-success" asp-page="Index">No - Go Back</a>

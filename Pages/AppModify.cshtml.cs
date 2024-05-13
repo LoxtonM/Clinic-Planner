@@ -10,15 +10,25 @@ namespace CPTest.Pages
 
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly IPatientData _patientData;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IAppTypeData _appTypeData;
+        private readonly IOutcomeData _outcomeData;
+        private readonly IAppointmentData _appointmentData;        
         private readonly SqlServices _ss;
 
         public AppModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
-            _config = config;
-            _dc = new DataConnections(_context);
-            _ss = new SqlServices(_config);       
+            _config = config;            
+            _ss = new SqlServices(_config);
+            _patientData = new PatientData(_context);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
+            _appTypeData = new AppTypeData(_context);
+            _outcomeData = new OutcomeData(_context);
+            _appointmentData = new AppointmentData(_context);
         }
 
         public Patient patient { get; set; }
@@ -37,14 +47,14 @@ namespace CPTest.Pages
             {
                 int refID = Int32.Parse(sRefID);
 
-                appointment = _dc.GetAppointmentDetails(refID);
-                staffMember = _dc.GetStaffDetails(appointment.STAFF_CODE_1);
-                clinicVenue = _dc.GetVenueDetails(appointment.FACILITY);
-                patient = _dc.GetPatientDetails(appointment.MPI);
-                staffMemberList = _dc.GetStaffMemberList();
-                clinicVenueList = _dc.GetVenueList();
-                outcomeList = _dc.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
-                appTypeList = _dc.GetAppTypeList();
+                appointment = _appointmentData.GetAppointmentDetails(refID);
+                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
+                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                patient = _patientData.GetPatientDetails(appointment.MPI);
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
+                outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                appTypeList = _appTypeData.GetAppTypeList();
             }
             catch (Exception ex)
             {
@@ -59,17 +69,17 @@ namespace CPTest.Pages
             {
                 int refID = Int32.Parse(sRefID);
 
-                appointment = _dc.GetAppointmentDetails(refID);
-                staffMember = _dc.GetStaffDetails(appointment.STAFF_CODE_1);
-                clinicVenue = _dc.GetVenueDetails(appointment.FACILITY);
-                patient = _dc.GetPatientDetails(appointment.MPI);
-                staffMemberList = _dc.GetStaffMemberList();
-                clinicVenueList = _dc.GetVenueList();
-                outcomeList = _dc.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
-                appTypeList = _dc.GetAppTypeList();
+                appointment = _appointmentData.GetAppointmentDetails(refID);
+                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
+                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                patient = _patientData.GetPatientDetails(appointment.MPI);
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
+                outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                appTypeList = _appTypeData.GetAppTypeList();
 
                 string sNewTime = dNewTime.Hour.ToString() + ":" + dNewTime.Minute.ToString(); //for some reason, I can't just convert the time to a string!!!
-                string sUser = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE;
+                string sUser = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
 
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, duration, sUser, sInstructions, sCancel);

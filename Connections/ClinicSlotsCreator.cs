@@ -6,14 +6,14 @@ namespace CPTest.Connections
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly MiscData _dc;
         private readonly SqlServices _sql;
 
         public ClinicSlotsCreator(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _dc = new DataConnections(_context);
+            _dc = new MiscData(_context);
             _sql = new SqlServices(_config);
         }
         public void SetupClinicPattern(string clinician, string clinic, DateTime startDate, DateTime? endDate,

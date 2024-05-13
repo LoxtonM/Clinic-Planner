@@ -8,11 +8,13 @@ namespace CPTest.Pages
     public class AdHocClinicListModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly DataConnections _dc;
+        private readonly IStaffData _staffData;
+        private readonly IAdHocClinicData _adHocClinicData;
         public AdHocClinicListModel(DataContext context)
         {
             _context = context;
-            _dc = new DataConnections(_context);
+            _staffData = new StaffData(_context);
+            _adHocClinicData = new AdHocClinicData(_context);
         }
         
         public string clinician;
@@ -21,8 +23,8 @@ namespace CPTest.Pages
         {
             try
             {
-                clinician = _dc.GetStaffDetails(clinician).NAME;
-                adHocList = _dc.GetAdHocList(clinician).Where(c => c.ClinicDate >= DateTime.Now.Date).OrderByDescending(c => c.ClinicDate).ToList();
+                clinician = _staffData.GetStaffDetails(clinician).NAME;
+                adHocList = _adHocClinicData.GetAdHocList(clinician).Where(c => c.ClinicDate >= DateTime.Now.Date).OrderByDescending(c => c.ClinicDate).ToList();
             }
             catch (Exception ex)
             {

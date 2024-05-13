@@ -5,9 +5,9 @@
 
 <div class="container">
 
-    @if (Model.Patient != null)
+    @if (Model.patient != null)
     {
-        <h1 style="text-align:center">Confirm appt for @Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</h1>
+        <h1 style="text-align:center">Confirm appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
     }
     else
     {
@@ -88,9 +88,9 @@
             <div class="col-md-4"></div>
         </div>
         <div id="metadata">
-            @if(@Model.staffMember != null)
+            @if(@Model.staffMember != null && Model.patient != null)
             {
-                <input id="txtMPI" name="mpi" value=@Model.Patient.MPI />
+                <input id="txtMPI" name="mpi" value=@Model.patient.MPI />
                 <input id="txtClin" name="clin" value=@Model.staffMember.STAFF_CODE />
                 <input id="txtVen" name="ven" value=@Model.clinicVenue.FACILITY />
                 <input id="txtDat" name="dat" value=@Model.appDate.ToString("yyyy-MM-dd") />

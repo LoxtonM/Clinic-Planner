@@ -11,15 +11,21 @@ namespace CPTest.Pages
 
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly IPatientData _patientData;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicalVenueData;
+        private readonly IWaitingListData _waitingListData;
         private readonly SqlServices _ss;
 
         public WLModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _dc = new DataConnections(_context);
             _ss = new SqlServices(_config);
+            _patientData = new PatientData(_context);
+            _staffData = new StaffData(_context);
+            _clinicalVenueData = new ClinicVenueData(_context);
+            _waitingListData = new WaitingListData(_context);
         }
 
         public Patient patient { get; set; }
@@ -29,28 +35,33 @@ namespace CPTest.Pages
         public List<ClinicVenue> clinicVenueList { get; set; }        
 
         
-        public void OnGet(int mpi, string clinicID, string clinicianID)
+        public void OnGet(int intID, string clinicID, string clinicianID)
         {
             try
             {
                 if (clinicianID != null)
                 {
-                    staffMember = _dc.GetStaffDetails(clinicianID);
+                    staffMember = _staffData.GetStaffDetails(clinicianID);
                 }
 
                 if (clinicID != null)
                 {
-                    clinicVenue = _dc.GetVenueDetails(clinicID);
+                    clinicVenue = _clinicalVenueData.GetVenueDetails(clinicID);
                 }
 
-                if (mpi != null)
+                if (intID != null)
                 {
-                    patient = _dc.GetPatientDetails(mpi);
+                    patient = _patientData.GetPatientDetailsByIntID(intID);
                 }
 
-                staffMemberList = _dc.GetStaffMemberList();
+                if (patient == null)
+                {                    
+                    Response.Redirect("PatientNotFound?intID=" + intID.ToString() + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID, true);
+                }
 
-                clinicVenueList = _dc.GetVenueList();
+                staffMemberList = _staffData.GetStaffMemberList();
+
+                clinicVenueList = _clinicalVenueData.GetVenueList();
             }
             catch (Exception ex)
             {
@@ -64,25 +75,26 @@ namespace CPTest.Pages
             {
                 if (clinicianID != null)
                 {
-                    staffMember = _dc.GetStaffDetails(clinicianID);
+                    staffMember = _staffData.GetStaffDetails(clinicianID);
                 }
 
                 if (clinicID != null)
                 {
-                    clinicVenue = _dc.GetVenueDetails(clinicID);
+                    clinicVenue = _clinicalVenueData.GetVenueDetails(clinicID);
                 }
 
                 if (mpi != null)
                 {
-                    patient = _dc.GetPatientDetails(mpi);
+                    patient = _patientData.GetPatientDetails(mpi);
                 }
                 string sUsername = "LoxM";
+                int intID = patient.INTID;
 
-                staffMemberList = _dc.GetStaffMemberList();
+                staffMemberList = _staffData.GetStaffMemberList();
 
-                clinicVenueList = _dc.GetVenueList();
+                clinicVenueList = _clinicalVenueData.GetVenueList();
 
-                _ss.ModifyWaitingListEntry(mpi, clinicianID, clinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
+                _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
 
                 Response.Redirect("Index");
             }

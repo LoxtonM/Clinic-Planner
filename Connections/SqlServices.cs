@@ -88,7 +88,7 @@ namespace CPTest.Connections
             con.Close();
         }
 
-        public void ModifyWaitingListEntry(int mpi, string clinicianID, string clinicID, string sOldClinicianID, string sOldClinicID, 
+        public void ModifyWaitingListEntry(int intID, string clinicianID, string clinicID, string sOldClinicianID, string sOldClinicID, 
             string staffCode, bool isRemoval)
         {
             //since there is no primary key on the Waiting List table, we need the old values to be able to update!
@@ -98,7 +98,7 @@ namespace CPTest.Connections
             con.Open();
             SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerModifyWaitingListEntry]", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@MPI", SqlDbType.Int).Value = mpi;
+            cmd.Parameters.Add("@IntID", SqlDbType.Int).Value = intID;
             cmd.Parameters.Add("@ClinicianID", SqlDbType.VarChar).Value = clinicianID;
             cmd.Parameters.Add("@ClinicID", SqlDbType.VarChar).Value = clinicID;
             cmd.Parameters.Add("@OldClinicianID", SqlDbType.VarChar).Value = sOldClinicianID;
@@ -107,7 +107,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@isRemoval", SqlDbType.Bit).Value = isRemoval;
             cmd.ExecuteNonQuery();
             con.Close();
-        }
+        }        
 
         public void CreateClinicSlot(DateTime dSlotDate, DateTime dSlotTime, string clinicianID, 
             string clinicID, string sStaffCode, int duration, int iPatternID)

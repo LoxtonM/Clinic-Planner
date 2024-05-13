@@ -18,6 +18,7 @@ namespace CPTest.Models
     public class WaitingList
     {
         public int MPI { get; set; }
+        public int IntID { get; set; }
         public string? ClinicianID { get; set; }
         public string? ClinicID { get; set; }
         //public DateTime? AddedDate { get; set; }

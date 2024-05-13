@@ -6,7 +6,10 @@
 <div class="container">
 
     <div class="row mb-5 g-5">
-        <h1 style="text-align:center">Modify Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+        @if(Model.patient != null)
+        {
+            <h1 style="text-align:center">Modify Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+        }
     </div>
     <form method="post">
         <div class="row mb-5 g-5">

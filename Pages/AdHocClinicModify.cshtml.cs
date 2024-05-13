@@ -1,9 +1,7 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
 
 namespace CPTest.Pages
 {
@@ -11,15 +9,17 @@ namespace CPTest.Pages
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
-        private readonly SqlServices _sql;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IAdHocClinicData _adHocClinicData;
 
         public AdHocClinicModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _dc = new DataConnections(_context);
-            _sql = new SqlServices(_config);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
+            _adHocClinicData = new AdHocClinicData(_context);
         }
 
         public ClinicsAdded adhocclinic {  get; set; }
@@ -29,9 +29,9 @@ namespace CPTest.Pages
         {
             try
             {
-                adhocclinic = _dc.GetAdHocClinicDetails(id);
-                clinician = _dc.GetStaffDetails(adhocclinic.ClinicianID);
-                venue = _dc.GetVenueDetails(adhocclinic.ClinicID);
+                adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
+                clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
+                venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
             }
             catch (Exception ex)
             {

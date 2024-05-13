@@ -1,20 +1,21 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
 {
     public class ClinicPatternListModel : PageModel
     {
-        private readonly DataContext _context;
-        private readonly DataConnections _dc;
+        private readonly DataContext _context;        
+        private readonly IStaffData _staffData;
+        private readonly IPatternData _patternData;
 
         public ClinicPatternListModel(DataContext context)
         {
             _context = context;
-            _dc = new DataConnections(_context);
+            _staffData = new StaffData(_context);
+            _patternData = new PatternData(_context);
         }
 
         public string clinician;
@@ -23,8 +24,8 @@ namespace CPTest.Pages
         {
             try
             {
-                clinician = _dc.GetStaffDetails(clinician).NAME;
-                patternList = _dc.GetPatternList(clinician);
+                clinician = _staffData.GetStaffDetails(clinician).NAME;
+                patternList = _patternData.GetPatternList(clinician);
             }
             catch (Exception ex)
             {

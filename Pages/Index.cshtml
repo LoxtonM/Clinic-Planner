@@ -118,7 +118,7 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row" id=@item.MPI style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.MPI, '@item.ClinicID', '@item.ClinicianID')">
+                        <div class="row" id=@item.IntID style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
                             <div>@item.FIRSTNAME @item.LASTNAME</div>
                             <div>@item.CGU_No</div>
                             <div>@item.ClinicianID</div>
@@ -232,11 +232,11 @@
             const apClin = ev.target.innerHTML.slice(18, 22);
             const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.length);
            
-            const MPI = draggableElement.id;
+            const intID = draggableElement.id;
             //this is necessary to make sure SQL doesn't render it into American
             const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
                  
-            window.location.replace ("AppConfirm?mpiString=" + MPI + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
+            window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
             //document.getElementById("ClinicForm").submit();
         }        
     }
@@ -264,10 +264,10 @@
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
-    function OnDoubleClickWL(MPI, clinicID, clinicianID)
+    function OnDoubleClickWL(intID, clinicID, clinicianID)
     {
         //window.open("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
-        window.location.replace("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
+        window.location.replace("WLModify?intid=" + intID + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
     }
 
     function OnDoubleClickAP(id)

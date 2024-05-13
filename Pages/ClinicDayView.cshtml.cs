@@ -1,7 +1,6 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
@@ -9,12 +8,20 @@ namespace CPTest.Pages
     public class ClinicDayViewModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly DataConnections _dc;
+        private readonly MiscData _dc;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IAppointmentData _appointmentData;
+        private readonly ICliniciansClinicData _cliniciansClinicData;
 
         public ClinicDayViewModel(DataContext context)
         {
             _context = context;
-            _dc = new DataConnections(_context);
+            _dc = new MiscData(_context);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
+            _appointmentData = new AppointmentData(_context);
+            _cliniciansClinicData = new CliniciansClinicData(_context);
         }
 
         public IEnumerable<Outcome> outcomes { get; set; }
@@ -45,8 +52,8 @@ namespace CPTest.Pages
                     dClinicDate = DateTime.Today;
                 }
 
-                staffMemberList = _dc.GetStaffMemberList();
-                clinicVenueList = _dc.GetVenueList();
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
 
                 dDate = dClinicDate;
 
@@ -59,7 +66,7 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = _dc.GetAppointmentsForADay(dClinicDate, clinician, clinic);
+                appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate, clinician, clinic);
                 
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicList = new List<string>();
@@ -76,14 +83,14 @@ namespace CPTest.Pages
 
                 if (clinic != null)
                 {
-                    clinicVenue = _dc.GetVenueDetails(clinic);
+                    clinicVenue = _clinicVenueData.GetVenueDetails(clinic);
                 }
 
                 if (clinician != null)
                 {
-                    staffMember = _dc.GetStaffDetails(clinician);
+                    staffMember = _staffData.GetStaffDetails(clinician);
                     var Clinics = new List<CliniciansClinics>();
-                    Clinics = _dc.GetCliniciansClinics(clinician);
+                    Clinics = _cliniciansClinicData.GetCliniciansClinics(clinician);
 
                     clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }

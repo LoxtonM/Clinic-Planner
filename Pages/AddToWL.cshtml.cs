@@ -9,8 +9,9 @@ namespace CPTest.Pages
     public class AddToWLModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly IConfiguration _config;        
+        private readonly IStaffData _staffData;
+        private readonly MiscData _dc;
         private readonly SqlServices _sql;
         public IEnumerable<ClinicVenue> clinicVenueList { get; set; }        
         public IEnumerable<StaffMember> staffMemberList { get; set; }
@@ -20,7 +21,8 @@ namespace CPTest.Pages
         {
             _context = context;
             _config = config;
-            _dc = new DataConnections(_context);
+            _dc = new MiscData(_context);
+            _staffData = new StaffData(_context);            
             _sql = new SqlServices(_config);
         }
         
@@ -47,7 +49,7 @@ namespace CPTest.Pages
         {
             try
             {
-                string staffCode = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
+                string staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
 
                 //_sql.CreateWaitingListEntry(mpi, clinician, clinic, staffCode);
             }

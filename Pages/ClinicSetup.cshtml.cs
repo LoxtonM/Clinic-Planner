@@ -11,15 +11,19 @@ namespace CPTest.Pages
 
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly DataConnections _dc;
+        private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicVenueData;
+        private readonly MiscData _dc;
         private readonly ClinicSlotsCreator _csc;
 
         public ClinicSetupModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _dc = new DataConnections(_context);
+            _dc = new MiscData(_context);
             _csc = new ClinicSlotsCreator(_context, _config);
+            _staffData = new StaffData(_context);
+            _clinicVenueData = new ClinicVenueData(_context);
         }
         public List<StaffMember> staffMemberList { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }
@@ -31,8 +35,8 @@ namespace CPTest.Pages
         {
             try
             {
-                staffMemberList = _dc.GetStaffMemberList();
-                clinicVenueList = _dc.GetVenueList();
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
             }
             catch (Exception ex)
             {
@@ -47,9 +51,9 @@ namespace CPTest.Pages
             try
             {
 
-                staffMemberList = _dc.GetStaffMemberList();
-                clinicVenueList = _dc.GetVenueList();
-                string sStaffCode = _dc.GetStaffDetailsByUsername("mnln").STAFF_CODE;
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
+                string sStaffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
 
                 if (dStartDate == DateTime.Parse("0001-01-01"))
                 {
