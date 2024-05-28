@@ -13,14 +13,12 @@ namespace CPTest.Pages
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
-        private readonly MiscData _dc;
-        private readonly ClinicSlotsCreator _csc;
+        private readonly IClinicSlotsCreator _csc;
 
         public ClinicSetupModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _dc = new MiscData(_context);
             _csc = new ClinicSlotsCreator(_context, _config);
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
@@ -88,7 +86,7 @@ namespace CPTest.Pages
 
                 if (isModifyStandard.GetValueOrDefault())
                 {
-                    Response.Redirect("ClinicPatternList?clinician=" + clinicianID);
+                    Response.Redirect("ClinicPatternList?staffCode=" + clinicianID);
                 }
 
                 if (isNewAdHoc.GetValueOrDefault())
@@ -108,7 +106,7 @@ namespace CPTest.Pages
 
                 if (isModifyAdHoc.GetValueOrDefault())
                 {
-                    Response.Redirect("AdHocClinicList?clinician=" + clinicianID);
+                    Response.Redirect("AdHocClinicList?staffCode=" + clinicianID);
                 }
 
                 if (isSuccess)

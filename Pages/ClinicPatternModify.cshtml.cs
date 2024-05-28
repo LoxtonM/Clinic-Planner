@@ -12,7 +12,7 @@ namespace CPTest.Pages
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IPatternData _patternData;
-        private readonly SqlServices _sql;
+        private readonly IClinicPatternSqlServices _ss;
 
         public ClinicPatternModifyModel(DataContext context, IConfiguration config)
         {
@@ -21,12 +21,14 @@ namespace CPTest.Pages
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _patternData = new PatternData(_context);
-            _sql = new SqlServices(_config);
+            _ss = new ClinicPatternSqlServices(_config);
         }
 
         public ClinicPattern pattern { get; set; }
         public StaffMember clinician { get; set; }
         public ClinicVenue venue { get; set; }
+        public List<StaffMember> staffMemberList { get; set; }
+        public List<ClinicVenue> clinicVenueList { get; set; }
 
         public void OnGet(int id)
         {
@@ -35,6 +37,8 @@ namespace CPTest.Pages
                 pattern = _patternData.GetPatternDetails(id);
                 clinician = _staffData.GetStaffDetails(pattern.StaffID);
                 venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
             }
             catch (Exception ex)
             {
@@ -50,8 +54,10 @@ namespace CPTest.Pages
                 pattern = _patternData.GetPatternDetails(id);
                 clinician = _staffData.GetStaffDetails(pattern.StaffID);
                 venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
+                staffMemberList = _staffData.GetStaffMemberList();
+                clinicVenueList = _clinicVenueData.GetVenueList();
 
-                _sql.UpdateClinicPattern(id); //, day, week, months, dur, startHr, startMin, numSlots, dStart, dEnd);
+                _ss.UpdateClinicPattern(id); //, day, week, months, dur, startHr, startMin, numSlots, dStart, dEnd);
             }
             catch (Exception ex)
             {

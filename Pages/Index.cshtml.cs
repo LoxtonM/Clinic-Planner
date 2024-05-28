@@ -10,7 +10,6 @@ namespace CPTest.Pages
     public class IndexModel : PageModel
     {        
         private readonly DataContext _context;
-        private readonly MiscData _dc;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAppointmentData _appointmentData;
@@ -21,7 +20,6 @@ namespace CPTest.Pages
         public IndexModel(DataContext context)
         {
             _context = context;
-            _dc = new MiscData(_context);
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);

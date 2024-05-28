@@ -20,6 +20,6 @@ namespace CPTest.Data
         public DbSet<ClinicPattern> ClinicPattern { get; set; }
         public DbSet<ClinicsAdded> ClinicsAdded { get; set; }
         public DbSet<DateList> DateList { get; set; }
-        public DbSet<NationalHoldays> NationalHoldays { get; set; }
+        public DbSet<NationalHolidays> NationalHolidays { get; set; }
     }
 }

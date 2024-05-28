@@ -43,6 +43,8 @@ namespace CPTest.Models
         [DataType(DataType.Time)]
         public DateTime SlotTime { get; set; }
         public int duration { get; set; }
+        public int StartHr { get; set; }
+        public int StartMin {  get; set; }
     }
 
     [Table("CLIN_FACILITIES", Schema = "dbo")]
@@ -183,8 +185,8 @@ namespace CPTest.Models
         public Int64 NumberOfThisWeekDayInMonth { get; set; }
     }
 
-    [Table("ListNationalHoldays", Schema = "dbo")]
-    public class NationalHoldays
+    [Table("ListNationalHolidays", Schema = "dbo")]
+    public class NationalHolidays
     {
         [Key]
         public int ID { get; set; }

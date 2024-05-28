@@ -11,8 +11,8 @@ namespace CPTest.Pages
         private readonly DataContext _context;
         private readonly IConfiguration _config;        
         private readonly IStaffData _staffData;
-        private readonly MiscData _dc;
-        private readonly SqlServices _sql;
+        private readonly IWaitingListSqlServices _ss;
+        
         public IEnumerable<ClinicVenue> clinicVenueList { get; set; }        
         public IEnumerable<StaffMember> staffMemberList { get; set; }
         public Patient Patient { get; set; }
@@ -21,9 +21,8 @@ namespace CPTest.Pages
         {
             _context = context;
             _config = config;
-            _dc = new MiscData(_context);
-            _staffData = new StaffData(_context);            
-            _sql = new SqlServices(_config);
+            _staffData = new StaffData(_context);
+            _ss = new WaitingListSqlServices(_config);
         }
         
         public void OnGet(string cgu)
@@ -45,13 +44,13 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int mpi, string clinician, string clinic)
+        public void OnPost(int mpi, string clin, string ven)
         {
             try
             {
                 string staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
 
-                //_sql.CreateWaitingListEntry(mpi, clinician, clinic, staffCode);
+                _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode);
             }
             catch (Exception ex)
             {

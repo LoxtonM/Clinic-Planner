@@ -1,26 +1,41 @@
 ﻿using CPTest.Data;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 
 namespace CPTest.Connections
 {
-    public class ClinicSlotsCreator
+    interface IClinicSlotsCreator
+    {
+        public void SetupClinicPattern(string clinician, string clinic, DateTime startDate, DateTime? endDate,
+            int startHr, int startMin, int numSlots, int duration, int dayOfWeek, int weekOfMonth,
+            string monthOfYear, string username);
+        public void SetupAdHocClinic(DateTime clinicDate, int startHr, int startMin, string clinicianID,
+            string clinicID, int duration, int numSlots, string staffCode);     
+    }
+    public class ClinicSlotsCreator : IClinicSlotsCreator
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
-        private readonly MiscData _dc;
-        private readonly SqlServices _sql;
+        private readonly IClinicSlotData _slotData;
+        private readonly IMiscData _dc;
+        private readonly IClinicPatternSqlServices _ssPattern;
+        private readonly IAdHocClinicSqlServices _ssAdHoc;
+        private readonly IClinicSlotSqlServices _ssSlot;
 
         public ClinicSlotsCreator(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
+            _slotData = new ClinicSlotData(_context);
             _dc = new MiscData(_context);
-            _sql = new SqlServices(_config);
+            _ssPattern = new ClinicPatternSqlServices(_config);
+            _ssAdHoc = new AdHocClinicSqlServices(_config);
+            _ssSlot = new ClinicSlotSqlServices(_config);
         }
         public void SetupClinicPattern(string clinician, string clinic, DateTime startDate, DateTime? endDate,
             int startHr, int startMin, int numSlots, int duration, int dayOfWeek, int weekOfMonth, 
             string monthOfYear, string username) //creates slots for a standard clinic pattern
         {
-            _sql.SaveClinicPattern(clinician, clinic, dayOfWeek, weekOfMonth, monthOfYear, numSlots, duration,
+            _ssPattern.SaveClinicPattern(clinician, clinic, dayOfWeek, weekOfMonth, monthOfYear, numSlots, duration,
                 startHr, startMin, startDate, endDate);
 
             int iPatternID = _context.ClinicPattern.FirstOrDefault(p => p.StaffID == clinician && p.Clinic == clinic && 
@@ -125,7 +140,7 @@ namespace CPTest.Connections
         {
             DateTime dStartTime = DateTime.Parse("1899-12-30 " + startHr.ToString() + ":" + startMin.ToString() + ":00");
 
-            _sql.SaveAdHocClinic(clinicianID, clinicID, numSlots, duration, startHr, startMin, clinicDate);
+            _ssAdHoc.SaveAdHocClinic(clinicianID, clinicID, numSlots, duration, startHr, startMin, clinicDate);
 
             int iPatternID = _context.ClinicsAdded.FirstOrDefault(p => p.ClinicianID == clinicianID && p.ClinicID == clinicID &&
                                 p.ClinicDate == clinicDate && p.StartHr == startHr && p.StartMin == startMin).ID;
@@ -141,7 +156,14 @@ namespace CPTest.Connections
             for (int i = 0; i < numSlots; i++) //adds the time slots from the duration
             {
                 slotTime = StartTime.AddMinutes(i * duration);
-                _sql.CreateClinicSlot(slotDate, slotTime, clinician, clinic, sUsername, duration, iPatternID);
+
+                int starthr = slotTime.Hour;
+                int startmin = slotTime.Minute;
+
+                if (!IsExistingClinicSlot(slotDate, starthr, startmin, clinician, clinic, duration))
+                {
+                    _ssSlot.CreateClinicSlot(slotDate, slotTime, clinician, clinic, sUsername, duration, iPatternID);
+                }
             }
         }
         private bool GetIsMonthInPattern(string months, DateTime dDate)
@@ -168,9 +190,14 @@ namespace CPTest.Connections
             if (intDay == 5) strDay = "Frday";
 
             FirstDate = _dc.GetFirstDateFromList(date, strDay);
-
             return FirstDate;
         }
 
+        private bool IsExistingClinicSlot(DateTime slotDate, int starthr, int startmin, string clinician, string clinic, int duration) 
+        {
+            if (_slotData.GetMatchingSlots(clinician, clinic, slotDate, starthr, startmin, duration).Count() > 0 ) return true;
+
+            return false;
+        }
     }
 }

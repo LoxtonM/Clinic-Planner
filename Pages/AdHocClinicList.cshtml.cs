@@ -17,14 +17,14 @@ namespace CPTest.Pages
             _adHocClinicData = new AdHocClinicData(_context);
         }
         
-        public string clinician;
+        public StaffMember clinician;
         public List<ClinicsAdded> adHocList { get; set; }
-        public void OnGet(string clinician)
+        public void OnGet(string staffCode)
         {
             try
             {
-                clinician = _staffData.GetStaffDetails(clinician).NAME;
-                adHocList = _adHocClinicData.GetAdHocList(clinician).Where(c => c.ClinicDate >= DateTime.Now.Date).OrderByDescending(c => c.ClinicDate).ToList();
+                clinician = _staffData.GetStaffDetails(staffCode);
+                adHocList = _adHocClinicData.GetAdHocList(staffCode).Where(c => c.ClinicDate >= DateTime.Now.Date).OrderByDescending(c => c.ClinicDate).ToList();
             }
             catch (Exception ex)
             {

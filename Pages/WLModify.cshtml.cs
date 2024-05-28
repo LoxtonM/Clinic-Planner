@@ -14,14 +14,14 @@ namespace CPTest.Pages
         private readonly IPatientData _patientData;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicalVenueData;
-        private readonly IWaitingListData _waitingListData;
-        private readonly SqlServices _ss;
+        private readonly IWaitingListData _waitingListData;        
+        private readonly IWaitingListSqlServices _ss;
 
         public WLModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _ss = new SqlServices(_config);
+            _ss = new WaitingListSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
             _clinicalVenueData = new ClinicVenueData(_context);
@@ -69,7 +69,7 @@ namespace CPTest.Pages
             }
         }    
         
-        public void OnPost(int mpi, string clinicianID, string clinicID, string sOldClinicianID, string sOldClinicID, bool isRemoval)
+        public void OnPost(int mpi, string clinicianID, string clinicID, string oldClinicianID, string oldClinicID, bool isRemoval)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace CPTest.Pages
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
-                _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, sOldClinicianID, sOldClinicID, sUsername, isRemoval);
+                _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, oldClinicianID, oldClinicID, sUsername, isRemoval);
 
                 Response.Redirect("Index");
             }

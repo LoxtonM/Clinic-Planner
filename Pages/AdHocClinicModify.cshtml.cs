@@ -8,7 +8,6 @@ namespace CPTest.Pages
     public class AdHocClinicModifyModel : PageModel
     {
         private readonly DataContext _context;
-        private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAdHocClinicData _adHocClinicData;
@@ -16,7 +15,6 @@ namespace CPTest.Pages
         public AdHocClinicModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
-            _config = config;
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _adHocClinicData = new AdHocClinicData(_context);

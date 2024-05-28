@@ -16,13 +16,13 @@ namespace CPTest.Pages
         private readonly IAppTypeData _appTypeData;
         private readonly IOutcomeData _outcomeData;
         private readonly IAppointmentData _appointmentData;        
-        private readonly SqlServices _ss;
+        private readonly IAppointmentSqlServices _ss;
 
         public AppModifyModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;            
-            _ss = new SqlServices(_config);
+            _ss = new AppointmentSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
@@ -41,11 +41,11 @@ namespace CPTest.Pages
         public Appointment appointment { get; set; }
 
         
-        public void OnGet(string sRefID)
+        public void OnGet(int refID)
         {
             try
             {
-                int refID = Int32.Parse(sRefID);
+                //int refID = Int32.Parse(sRefID);
 
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
@@ -62,12 +62,12 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(string sRefID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
+        public void OnPost(int refID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
             string appType, int duration, string sInstructions, string sCancel)
         {
             try
             {
-                int refID = Int32.Parse(sRefID);
+                //int refID = Int32.Parse(sRefID);
 
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);

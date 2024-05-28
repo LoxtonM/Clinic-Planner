@@ -2,7 +2,12 @@
 
 namespace CPTest.Connections
 {
-    public class MiscData
+    interface IMiscData
+    {
+        public DateTime GetFirstDateFromList(DateTime dateToCheck, string day);
+        public bool GetIsNationalHolday(DateTime date);
+    }
+    public class MiscData : IMiscData
     {
         private readonly DataContext _context;
         public MiscData(DataContext context)
@@ -21,7 +26,7 @@ namespace CPTest.Connections
 
         public bool GetIsNationalHolday(DateTime date)
         {
-            int holdays = _context.NationalHoldays.Where(d => d.HoldayDate == date).Count();
+            int holdays = _context.NationalHolidays.Where(d => d.HoldayDate == date).Count();
 
             if(holdays > 0)
             {

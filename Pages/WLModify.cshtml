@@ -48,10 +48,11 @@
             <div class="col-md-2">
                 <input type="checkbox" class="form-check-input" id="chkIsWLRemoval" value="false" onclick="SetWLRemovalCheckBox()" />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6" hidden="true">
                 <input type="text" id="txtIsWLRemoval" name="isRemoval" />
-                <input type="text" name="sOldClinicianID" asp-for=@Model.staffMember.STAFF_CODE />
-                <input type="text" name="sOldClinicID" asp-for=@Model.clinicVenue.FACILITY />
+                <input type="text" name="mpi" asp-for=@Model.patient.MPI />
+                <input type="text" name="oldClinicianID" asp-for=@Model.staffMember.STAFF_CODE />
+                <input type="text" name="oldClinicID" asp-for=@Model.clinicVenue.FACILITY />
             </div>
         </div>
         

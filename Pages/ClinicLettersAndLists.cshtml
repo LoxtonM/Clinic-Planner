@@ -1,0 +1,39 @@
+﻿@page
+@model CPTest.Pages.ClinicLettersAndListsModel
+@{
+}
+
+<div class="container">
+    <h1>WIP</h1>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        //window.close();
+        window.location.replace("Index");
+    }
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>

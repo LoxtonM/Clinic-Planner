@@ -119,13 +119,13 @@
                     @foreach (var item in Model.waitingList)
                     {                
                         <div class="row" id=@item.IntID style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
-                            <div>@item.FIRSTNAME @item.LASTNAME</div>
                             <div>@item.CGU_No</div>
+                            <div>@item.FIRSTNAME @item.LASTNAME</div>                            
                             <div>@item.ClinicianID</div>
                             <div>@item.ClinicID</div>
                             @if (item.Duration != null)
                             {
-                                <div>@item.Duration mins</div>
+                                <div>Duration: @item.Duration mins</div>
                             }
                         </div>
                     }
@@ -222,30 +222,55 @@
         const id = ev.dataTransfer.getData("text");
         const draggableElement = document.getElementById(id);
         const dropzone = ev.target;
-        
-        if(ev.target.innerHTML.includes("Free"))
+        const intID = draggableElement.id;
+        const slotID = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('S:') + 2, ev.target.innerHTML.length);
+
+        if (ev.target.innerHTML.includes("Free"))
         {
-            //substrings, substrings, and more substrings...
-            const apDate = ev.target.id.slice(0,10);
-            const apTime = ev.target.id.slice(11, 16);
-            const apDur = ev.target.innerHTML.slice(7,9);
-            const apClin = ev.target.innerHTML.slice(18, 22);
-            const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.length);
-           
-            const intID = draggableElement.id;
+            //substrings, substrings, and more substrings... //we don't actually need all this - but I'm keeping them here just in case!
+            //const apDate = ev.target.id.slice(0,10);      //you never know what BS is just around the corner...
+            //const apTime = ev.target.id.slice(11, 16);
+            //const apDur = ev.target.innerHTML.slice(7,9);
+            //const apClin = ev.target.innerHTML.slice(18, 22);
+            //const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.indexOf('<br>S:'));           
+            
             //this is necessary to make sure SQL doesn't render it into American
-            const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
-                 
-            window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
+            //const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
+                        
+            //window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
+            window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
             //document.getElementById("ClinicForm").submit();
-        }        
+        }
+        if (ev.target.innerHTML.includes("Reserved"))
+        {
+            //const apDate = ev.target.id.slice(0, 10);
+            //const apTime = ev.target.id.slice(11, 16);
+            //const apDur = ev.target.innerHTML.slice(7, 9);            
+            //const apClin = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('<br>') + 4, 26);
+            //const apVen = ev.target.innerHTML.slice(30, ev.target.innerHTML.indexOf('<br>S:'));
+            const targCguNo = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('for ') + 4, ev.target.innerHTML.indexOf('<br>'));
+            const sourcCguNo = draggableElement.innerHTML.slice(draggableElement.innerHTML.indexOf('<div>') + 5, draggableElement.innerHTML.indexOf('.'));                 
+
+            if (sourcCguNo != targCguNo) 
+            {
+                window.alert("This is reserved for patient " + targCguNo);
+                ev.target.style.backgroundColor = "orange";
+                ev.target.style.color = "white";
+            }
+            else 
+            { 
+                //window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
+                window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
+            }
+        }
+
     }
     //Sets highlight colours for drag/drop
     function OnDragOver(ev)
     {
        ev.preventDefault();
        
-        if (ev.currentTarget.innerHTML.includes("Free")) 
+        if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved")) 
         {
             ev.currentTarget.style.backgroundColor = "yellow";
             ev.currentTarget.style.color = "black";
@@ -256,11 +281,16 @@
     {
         ev.preventDefault();
 
-       if (ev.currentTarget.innerHTML.includes("Free")) 
-       {
+        if (ev.currentTarget.innerHTML.includes("Free")) 
+        {
             ev.currentTarget.style.backgroundColor = "green";
             ev.currentTarget.style.color = "white";
-       }       
+        }
+        else if (ev.currentTarget.innerHTML.includes("Reserved")) 
+        {
+            ev.currentTarget.style.backgroundColor = "orange";
+            ev.currentTarget.style.color = "white";
+        }
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
@@ -272,17 +302,20 @@
 
     function OnDoubleClickAP(id)
     {
+        //window.alert(id);
+        const str = document.getElementById(id).innerHTML;
         if (document.getElementById(id).innerHTML.includes("Booked"))
         {
-            const str = document.getElementById(id).innerHTML;
+            //const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2);            
             
             //window.open("AppModify?sRefID=" + sRID);
-            window.location.replace("AppModify?sRefID=" + sRID);
+            window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
         else if (document.getElementById(id).innerHTML.includes("Free"))
         {
-            window.open("WIP");
+            const sSID = str.slice(str.indexOf('S:') + 2);
+            window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
         }
         else if (document.getElementById(id).innerHTML.includes("PAST")) 
         {
@@ -305,6 +338,8 @@
         var clinicArray = [];
         var clinicianArray = [];
         var statusArray = [];
+        var pednumArray = [];
+        var slotIDArray = [];
         var apptDateArray = [];
         var apptTimeArray = [];
         var apptDurationArray = [];
@@ -330,6 +365,8 @@
                 @:clinicArray.push("@item.ClinicID");
                 @:clinicianArray.push("@item.ClinicianID");   
                 @:statusArray.push("@item.SlotStatus");
+                @:pednumArray.push("@item.PedNum");
+                @:slotIDArray.push("@item.SlotID");
         //we need to create the arrays like this because we can't access the data otherwise
             }
         }
@@ -395,12 +432,17 @@
                                                 if (statusArray[k] == "Open") //for available slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "green";
-                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k] + "</br>" + "S:" + slotIDArray[k];
                                                 }
-                                                else //for unavailable/reserved slots
+                                                else if (statusArray[k] == "Reserved")
+                                                {
+                                                    document.getElementById(col.id).style.backgroundColor = "orange";
+                                                    strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" + clinicArray[k] + "</br>" + "S:" + slotIDArray[k];
+                                                }
+                                                else //for unavailable slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "firebrick";
-                                                    strSlotDetail = statusArray[k] + " - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                    strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
                                                 }
                                             }
                                             document.getElementById(col.id).innerHTML = strSlotDetail;

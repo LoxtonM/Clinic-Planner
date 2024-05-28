@@ -18,14 +18,14 @@ namespace CPTest.Pages
             _patternData = new PatternData(_context);
         }
 
-        public string clinician;
+        public StaffMember clinician;
         public List<ClinicPattern> patternList {  get; set; }
-        public void OnGet(string clinician)
+        public void OnGet(string staffCode)
         {
             try
             {
-                clinician = _staffData.GetStaffDetails(clinician).NAME;
-                patternList = _patternData.GetPatternList(clinician);
+                clinician = _staffData.GetStaffDetails(staffCode);
+                patternList = _patternData.GetPatternList(staffCode);
             }
             catch (Exception ex)
             {

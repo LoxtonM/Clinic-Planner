@@ -8,12 +8,12 @@ namespace CPTest.Pages
     public class PatientNotFoundModel : PageModel
     {
         private readonly IConfiguration _config;
-        private readonly SqlServices _ss;
+        private readonly IWaitingListSqlServices _ss;
 
         public PatientNotFoundModel(IConfiguration config)
         {
             _config = config;
-            _ss = new SqlServices(_config);
+            _ss = new WaitingListSqlServices(_config);
         }
 
         public int wlIntID { get; set; }

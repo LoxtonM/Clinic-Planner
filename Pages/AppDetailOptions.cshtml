@@ -1,0 +1,55 @@
+﻿@page
+@model CPTest.Pages.AppDetailOptionsModel
+@{
+}
+
+<h1 style="text-align:center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+
+
+<div class="container">
+    <div class="row mb-5 g-5" style="text-align:center">
+        <h2>@Model.staffMember.NAME, @Model.clinicVenue.NAME, @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+    </div>
+    
+    <div class="row mb-5 g-5">        
+        <div class="col-md-6">
+            <a type="button" id="btnLetters" class="btn btn-success" asp-page="ClinicLettersAndLists" asp-route-refID=@Model.refID>Print Letters/Clinic Lists</a>
+        </div>        
+    </div>
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            <a type="button" id="btnModify" class="btn btn-success" asp-page="AppModify" asp-route-refID=@Model.refID>Modify Appointment</a>
+        </div>
+    </div>
+    
+    <div class="row mb-5 g-5">        
+        <div class="col-md-6">
+            <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+        </div>        
+    </div>    
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        //window.close();
+        window.location.replace("Index");
+    }
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+        
+
+</script>

@@ -1,0 +1,110 @@
+﻿@page
+@model CPTest.Pages.ClinicSlotModifyModel
+@{
+}
+
+<div class="container">
+    <h1>Open slot for @Model.staffMember.NAME</h1>
+    <h1>at @Model.clinicVenue.NAME</h1>
+    <h1>@Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
+    <form method="post">
+        <div class="row mb-5 g-5" hidden="true">
+            <input name="slotID" value=@Model.slotID />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Select:</label>
+            </div>
+            <div class="col-md-4">
+                <select id="ddlSelectAction" name="sAction">
+                    <option value="">Select...</option>
+                    <option value="Unavail">Mark as unavailable</option>
+                    <option value="Reserve">Mark as reserved</option>
+                    <option value="ForMeOnly">Mark as bookable only by you</option>
+                    <option value="Delete">Delete slot</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label id="lReservedFor" hidden="true">Enter CGU number to reserve slot for:</label>
+            </div>
+            <div class="col-md-2">
+                <input id="sReservedFor" name="detail" hidden="true" />
+            </div>            
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label id="lApplyToWholeClinic" hidden="true">Apply to whole clinic day?</label>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlApplyToWholeClinic" name="isApplyClinic" hidden="true">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.getElementById("ddlSelectAction").addEventListener("change", ShowDetails);
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        //window.close();
+        window.location.replace("Index");
+    }
+
+    function ShowDetails() 
+    { 
+        //window.alert(document.getElementById("ddlSelectAction").value);
+        if (document.getElementById("ddlSelectAction").value == "Reserve") 
+        {
+            document.getElementById("sReservedFor").hidden = false;
+            document.getElementById("lReservedFor").hidden = false;
+            document.getElementById("lApplyToWholeClinic").hidden = true;
+            document.getElementById("ddlApplyToWholeClinic").hidden = true;
+        }
+        else if (document.getElementById("ddlSelectAction").value == "Delete") 
+        {
+            document.getElementById("sReservedFor").hidden = true;
+            document.getElementById("lReservedFor").hidden = true;
+            document.getElementById("lApplyToWholeClinic").hidden = true;
+            document.getElementById("ddlApplyToWholeClinic").hidden = true;
+        }
+        else
+        { 
+            document.getElementById("sReservedFor").hidden = true;
+            document.getElementById("lReservedFor").hidden = true;
+            document.getElementById("lApplyToWholeClinic").hidden = false;
+            document.getElementById("ddlApplyToWholeClinic").hidden = false;
+        }
+    }
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>
