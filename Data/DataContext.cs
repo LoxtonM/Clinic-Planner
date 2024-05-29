@@ -21,5 +21,6 @@ namespace CPTest.Data
         public DbSet<ClinicsAdded> ClinicsAdded { get; set; }
         public DbSet<DateList> DateList { get; set; }
         public DbSet<NationalHolidays> NationalHolidays { get; set; }
+        public DbSet<Notifications> Notifications { get; set; }
     }
 }

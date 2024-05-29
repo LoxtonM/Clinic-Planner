@@ -2,6 +2,7 @@
 using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.IdentityModel.Tokens;
 
 
@@ -10,22 +11,26 @@ namespace CPTest.Pages
     public class IndexModel : PageModel
     {        
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAppointmentData _appointmentData;
         private readonly IWaitingListData _waitingListData;
         private readonly IClinicSlotData _slotData;
         private readonly ICliniciansClinicData _cliniciansClinicData;
+        private readonly INotificationData _note;
 
-        public IndexModel(DataContext context)
+        public IndexModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
             _waitingListData = new WaitingListData(_context);
             _slotData = new ClinicSlotData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_context);
+            _note = new NotificationData(_context);            
         }
         public IEnumerable<Outcome> outcomes { get; set; }
         public IEnumerable<WaitingList> waitingList { get; set; }
@@ -38,6 +43,9 @@ namespace CPTest.Pages
         public IEnumerable<Patient> patientList { get; set; }
         public IEnumerable<Appointment?> appointmentList { get; set; }
 
+        public string notificationMessage { get; set; }
+        public bool isLive { get; set; }
+
         public DateTime[] DateArray = new DateTime[5];
         public DateTime[] TimeArray = new DateTime[120];
 
@@ -49,6 +57,8 @@ namespace CPTest.Pages
 
         public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
+            notificationMessage = _note.GetMessage();
+            isLive = bool.Parse(_config.GetValue("IsLive", ""));
             ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
         }
 

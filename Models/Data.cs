@@ -29,7 +29,7 @@ namespace CPTest.Models
         public int? Duration { get; set; }
     }
 
-    [Table("ClinicSlotsAll", Schema = "dbo")]
+    [Table("ViewClinicSlots", Schema = "dbo")]
     public class ClinicSlot
     {
         [Key]
@@ -45,6 +45,8 @@ namespace CPTest.Models
         public int duration { get; set; }
         public int StartHr { get; set; }
         public int StartMin {  get; set; }
+        public string Clinician {  get; set; }
+        public string Facility { get; set; }
     }
 
     [Table("CLIN_FACILITIES", Schema = "dbo")]
@@ -191,6 +193,16 @@ namespace CPTest.Models
         [Key]
         public int ID { get; set; }
         public DateTime HoldayDate { get; set; }
+    }
+
+    [Table("Notifications")]
+    public class Notifications
+    {
+        [Key]
+        public int ID { get; set; }
+        public string MessageCode { get; set; }
+        public string Message { get; set; }
+        public bool IsActive { get; set; }
     }
 }
 

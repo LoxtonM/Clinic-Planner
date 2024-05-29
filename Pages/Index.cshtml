@@ -6,6 +6,16 @@
 
 <div class="container">
 
+    @if (!Model.isLive)
+    {
+        <h1 class="text-center" style="color:red">NOTE: This is a test system. Work completed here will not be reflected in production.</h1>
+    }
+
+    @if (Model.notificationMessage != null && Model.notificationMessage != "")
+    {
+        <h1 class="text-center" style="color:red">@Model.notificationMessage</h1>
+    }
+
     <div class="row mb-5 g-5"> @*Header only - appears if clinician and/or clinic selected*@
         <div class="col-md-2" id="holding"></div>
         @if (Model.clinicVenue != null)
@@ -223,31 +233,15 @@
         const draggableElement = document.getElementById(id);
         const dropzone = ev.target;
         const intID = draggableElement.id;
-        const slotID = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('S:') + 2, ev.target.innerHTML.length);
+        const slotID = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('S:') + 2, ev.target.innerHTML.length - 7);
 
         if (ev.target.innerHTML.includes("Free"))
-        {
-            //substrings, substrings, and more substrings... //we don't actually need all this - but I'm keeping them here just in case!
-            //const apDate = ev.target.id.slice(0,10);      //you never know what BS is just around the corner...
-            //const apTime = ev.target.id.slice(11, 16);
-            //const apDur = ev.target.innerHTML.slice(7,9);
-            //const apClin = ev.target.innerHTML.slice(18, 22);
-            //const apVen = ev.target.innerHTML.slice(26, ev.target.innerHTML.indexOf('<br>S:'));           
-            
-            //this is necessary to make sure SQL doesn't render it into American
-            //const apDateProper = apDate.slice(6,10) + "-" + apDate.slice(3,5) + "-" + apDate.slice(0,2);
-                        
-            //window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
+        {            
             window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
             //document.getElementById("ClinicForm").submit();
         }
         if (ev.target.innerHTML.includes("Reserved"))
         {
-            //const apDate = ev.target.id.slice(0, 10);
-            //const apTime = ev.target.id.slice(11, 16);
-            //const apDur = ev.target.innerHTML.slice(7, 9);            
-            //const apClin = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('<br>') + 4, 26);
-            //const apVen = ev.target.innerHTML.slice(30, ev.target.innerHTML.indexOf('<br>S:'));
             const targCguNo = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('for ') + 4, ev.target.innerHTML.indexOf('<br>'));
             const sourcCguNo = draggableElement.innerHTML.slice(draggableElement.innerHTML.indexOf('<div>') + 5, draggableElement.innerHTML.indexOf('.'));                 
 
@@ -304,20 +298,21 @@
     {
         //window.alert(id);
         const str = document.getElementById(id).innerHTML;
-        if (document.getElementById(id).innerHTML.includes("Booked"))
+        if (str.includes("Booked"))
         {
             //const str = document.getElementById(id).innerHTML;
-            const sRID = str.slice(str.indexOf('R:') + 2);            
+            const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
             
             //window.open("AppModify?sRefID=" + sRID);
             window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
-        else if (document.getElementById(id).innerHTML.includes("Free"))
+        else if (str.includes("Free") || str.includes("Reserved"))
         {
-            const sSID = str.slice(str.indexOf('S:') + 2);
+            const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
+            //window.alert(sSID);
             window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
         }
-        else if (document.getElementById(id).innerHTML.includes("PAST")) 
+        else if (str.includes("PAST")) 
         {
             window.alert("This is in the past, you cannot edit this.");            
         }
@@ -362,8 +357,8 @@
                 @:dateArray.push("@item.SlotDate");
                 @:timeArray.push("@item.SlotTime");   
                 @:durationArray.push("@item.duration");
-                @:clinicArray.push("@item.ClinicID");
-                @:clinicianArray.push("@item.ClinicianID");   
+                @:clinicArray.push("@item.Facility");
+                @:clinicianArray.push("@item.Clinician");   
                 @:statusArray.push("@item.SlotStatus");
                 @:pednumArray.push("@item.PedNum");
                 @:slotIDArray.push("@item.SlotID");
@@ -432,12 +427,14 @@
                                                 if (statusArray[k] == "Open") //for available slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "green";
-                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + clinicArray[k] + "</br>" + "S:" + slotIDArray[k];
+                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + 
+                                                    clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else if (statusArray[k] == "Reserved")
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "orange";
-                                                    strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" + clinicArray[k] + "</br>" + "S:" + slotIDArray[k];
+                                                    strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" +
+                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else //for unavailable slots
                                                 {
@@ -485,11 +482,11 @@
                                                 {                                                    
                                                     document.getElementById(col.id).style.backgroundColor = "purple";
                                                     strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                    apptClinicianArray[k] + "</br> " + 
-                                                    apptClinicArray[k] + "</br>" + 
-                                                    //apptOutcomeArray[k] + "</br>R:" +
-                                                    CGUNoArray[k] + "</br>R:" +
-                                                    apptRefIDArray[k].toString();
+                                                    apptClinicianArray[k] + "</br> " +
+                                                    apptClinicArray[k] + "</br>" +
+                                                    apptOutcomeArray[k] + "</br>" +
+                                                    CGUNoArray[k];// + "</br>R:" +
+                                                    //apptRefIDArray[k].toString();
                                                 }
                                                 else //current/future appointments
                                                 {
@@ -498,8 +495,8 @@
                                                     apptClinicianArray[k] + "</br> " + 
                                                     apptClinicArray[k] + "</br>" + 
                                                     //apptOutcomeArray[k] + "</br>R:" +
-                                                    CGUNoArray[k] + "</br>R:" +
-                                                    apptRefIDArray[k].toString();
+                                                    CGUNoArray[k] + "</br><span hidden='true'>R:" +
+                                                    apptRefIDArray[k].toString() + "</span>";
                                                 }
                                                 document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
