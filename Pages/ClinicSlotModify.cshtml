@@ -4,9 +4,7 @@
 }
 
 <div class="container">
-    <h1>Open slot for @Model.staffMember.NAME</h1>
-    <h1>at @Model.clinicVenue.NAME</h1>
-    <h1>@Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
+    <h1>Open slot for @Model.staffMember.NAME at @Model.clinicVenue.NAME, @Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
     <form method="post">
         <div class="row mb-5 g-5" hidden="true">
             <input name="slotID" value=@Model.slotID />

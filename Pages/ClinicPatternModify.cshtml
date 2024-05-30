@@ -138,6 +138,13 @@
 
 <script>
     document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
 
     function GoBack() 
     {
