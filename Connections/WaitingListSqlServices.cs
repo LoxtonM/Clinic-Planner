@@ -5,7 +5,7 @@ namespace CPTest.Connections
 {
     interface IWaitingListSqlServices
     {        
-        public void CreateWaitingListEntry(int mpi, string clinicianID, string clinicID, string staffCode);
+        public void CreateWaitingListEntry(int mpi, string clinicianID, string clinicID, string staffCode, int priorityLevel, int linkedRef);
         public void ModifyWaitingListEntry(int intID, string clinicianID, string clinicID, string oldClinicianID, string oldClinicID,
             string staffCode, bool isRemoval);        
     }
@@ -17,7 +17,7 @@ namespace CPTest.Connections
             _config = config;
         }        
         
-        public void CreateWaitingListEntry(int mpi, string clinicianID, string clinicID, string staffCode)
+        public void CreateWaitingListEntry(int mpi, string clinicianID, string clinicID, string staffCode, int priorityLevel, int linkedRef)
         {
             SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
             con.Open();
@@ -25,8 +25,10 @@ namespace CPTest.Connections
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Add("@MPI", SqlDbType.Int).Value = mpi;
             cmd.Parameters.Add("@ClinicianID", SqlDbType.VarChar).Value = clinicianID;
-            cmd.Parameters.Add("@ClinicID", SqlDbType.VarChar).Value = clinicID;            
-            cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = staffCode;            
+            cmd.Parameters.Add("@ClinicID", SqlDbType.VarChar).Value = clinicID;
+            cmd.Parameters.Add("@refID", SqlDbType.Int).Value = linkedRef;
+            cmd.Parameters.Add("@priorityLevel", SqlDbType.Int).Value = priorityLevel;
+            cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = staffCode;
             cmd.ExecuteNonQuery();
             con.Close();
         }

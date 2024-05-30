@@ -27,6 +27,8 @@ namespace CPTest.Models
         public string? LASTNAME { get; set; }
         public DateTime? AddedDate { get; set; }
         public int? Duration { get; set; }
+        public int PriorityLevel { get; set; }
+        public string Priority { get; set; } 
     }
 
     [Table("ViewClinicSlots", Schema = "dbo")]
@@ -193,6 +195,16 @@ namespace CPTest.Models
         [Key]
         public int ID { get; set; }
         public DateTime HoldayDate { get; set; }
+    }
+
+    [Table("CLIN_CLASS", Schema = "dbo")]
+    public class Priority
+    {
+        [Key]
+        public int PriorityLevel { get; set; }
+        public string CLASS { get; set; }
+        public string DESCRIPTION { get; set; }
+        public bool IsActive { get; set; }
     }
 
     [Table("Notifications")]

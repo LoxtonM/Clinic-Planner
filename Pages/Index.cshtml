@@ -129,6 +129,10 @@
                     @foreach (var item in Model.waitingList)
                     {                
                         <div class="row" id=@item.IntID style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                            @if(@item.Priority == "Urgent")
+                            {
+                                <div style="background-color:red">@item.Priority</div>
+                            }
                             <div>@item.CGU_No</div>
                             <div>@item.FIRSTNAME @item.LASTNAME</div>                            
                             <div>@item.ClinicianID</div>
@@ -179,7 +183,7 @@
     
     function AddToWL()
     {   
-        window.open("AddToWL");
+        window.location.replace("AddToWL");
     }
 
     //Handles Next and Back buttons for the date selector

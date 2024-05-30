@@ -29,7 +29,7 @@ namespace CPTest.Connections
             {
                 wl = wl.Where(l => l.ClinicID == clinic).ToList();
             }
-            return wl.OrderBy(l => l.AddedDate);
+            return wl.OrderBy(l => l.PriorityLevel).ThenBy(l => l.AddedDate);
         }
 
         public IEnumerable<WaitingList> GetWaitingListByCGUNo(string searchTerm)

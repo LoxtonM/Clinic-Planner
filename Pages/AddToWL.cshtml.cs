@@ -11,10 +11,16 @@ namespace CPTest.Pages
         private readonly DataContext _context;
         private readonly IConfiguration _config;        
         private readonly IStaffData _staffData;
+        private readonly IClinicVenueData _clinicalVenueData;
+        private readonly IPatientData _patientData;
         private readonly IWaitingListSqlServices _ss;
+        private readonly IPriorityData _priorityData;
+        private readonly IReferralData _referralData;
         
         public IEnumerable<ClinicVenue> clinicVenueList { get; set; }        
         public IEnumerable<StaffMember> staffMemberList { get; set; }
+        public IEnumerable<Priority> priorityList { get; set; }
+        public IEnumerable<Referral> referralList { get; set; }
         public Patient Patient { get; set; }
 
         public AddToWLModel(DataContext context, IConfiguration config)
@@ -22,20 +28,25 @@ namespace CPTest.Pages
             _context = context;
             _config = config;
             _staffData = new StaffData(_context);
+            _clinicalVenueData = new ClinicVenueData(_context);
+            _priorityData = new PriorityData(_context);
+            _patientData = new PatientData(_context);
+            _referralData = new ReferralData(_context);
             _ss = new WaitingListSqlServices(_config);
         }
         
         public void OnGet(string cgu)
         {
             try
-            {
-                //ClinicVenues = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
-                clinicVenueList = _context.ClinicVenues.OrderBy(v => v.NAME);
-                staffMemberList = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
+            {                
+                clinicVenueList = _clinicalVenueData.GetVenueList();       
+                staffMemberList = _staffData.GetStaffMemberList();
+                priorityList = _priorityData.GetPriorityList();
 
                 if (cgu != null)
-                {
-                    Patient = _context.Patients.FirstOrDefault(p => p.CGU_No == cgu);
+                {                    
+                    Patient = _patientData.GetPatientDetailsByCGUNo(cgu);
+                    referralList = _referralData.GetReferralsList(Patient.MPI);
                 }
             }
             catch (Exception ex)
@@ -44,13 +55,18 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int mpi, string clin, string ven)
+        public void OnPost(int mpi, string clin, string ven, int priorityLevel, int linkedRef)
         {
             try
             {
+                clinicVenueList = _clinicalVenueData.GetVenueList();
+                staffMemberList = _staffData.GetStaffMemberList();
+                priorityList = _priorityData.GetPriorityList();
                 string staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
 
-                _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode);
+                _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode, priorityLevel, linkedRef);
+
+                Response.Redirect("Index");
             }
             catch (Exception ex)
             {
