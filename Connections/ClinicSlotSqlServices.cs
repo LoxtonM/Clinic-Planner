@@ -59,14 +59,15 @@ namespace CPTest.Connections
 
         public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details="")
         {            
-            if (action == "Unavail")
+            if (action == "Unavail" || action == "Open")
             {
                 SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
                 con.Open();
-                SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerSetUnavailable]", con);
+                SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerSetAvailability]", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;
                 cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = staffCode;
+                cmd.Parameters.Add("@action", SqlDbType.VarChar).Value = action;
                 cmd.ExecuteNonQuery();
                 con.Close();
                 

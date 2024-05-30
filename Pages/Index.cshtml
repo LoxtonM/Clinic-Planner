@@ -306,7 +306,7 @@
             //window.open("AppModify?sRefID=" + sRID);
             window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
-        else if (str.includes("Free") || str.includes("Reserved"))
+        else if (str.includes("Free") || str.includes("Reserved") || str.includes("Unavailable"))
         {
             const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
             //window.alert(sSID);
@@ -439,7 +439,8 @@
                                                 else //for unavailable slots
                                                 {
                                                     document.getElementById(col.id).style.backgroundColor = "firebrick";
-                                                    strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                                    strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
+                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                             }
                                             document.getElementById(col.id).innerHTML = strSlotDetail;
