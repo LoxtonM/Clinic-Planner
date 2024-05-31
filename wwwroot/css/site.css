@@ -16,3 +16,53 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.redtext {
+    color: red;
+}
+
+.whitetext {
+    color: whitesmoke;
+}
+
+.redalert {
+    background-color: red;
+    color: whitesmoke;
+}
+
+.waitinglistitem {
+    border: solid;
+    background-color: darkcyan;
+    color: whitesmoke;
+}
+
+
+.freeslot {
+    background-color: green !important;
+    color: whitesmoke;
+}
+
+.unavailslot {
+    background-color: firebrick !important;
+    color: whitesmoke;
+}
+
+.reservedslot {
+    background-color: orange !important;
+    color: whitesmoke;
+}
+
+.pastappt {
+    background-color: purple !important;
+    color: whitesmoke;
+}
+
+.currentappt {
+    background-color: blue !important;
+    color: whitesmoke;
+}
+
+.selecteditem {
+    background-color: yellow !important;
+    color: black;
+}

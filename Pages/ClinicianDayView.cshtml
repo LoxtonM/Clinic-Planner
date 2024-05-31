@@ -105,15 +105,10 @@
                         @foreach (var item in Model.TimeArray)
                         {
                             <tr id=@item.ToString("HH:mm")>
-                                <th scope="row">@item.ToString("HH:mm")</th>
-                                @*<td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>*@
+                                <th scope="row">@item.ToString("HH:mm")</th>                                
                                 @foreach (var header in Model.ClinicianArray)
                                 {
-                                    <td id="@(@item.ToString("HH:mm")) + ' ' + @header)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                    <td id="@(@item.ToString("HH:mm")) + ' ' + @header)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
                                 }
                             </tr>
                         }

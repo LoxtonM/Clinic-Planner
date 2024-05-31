@@ -7,20 +7,20 @@
 
     @if (Model.patient != null)
     {
-        <h1 style="text-align:center">Confirm appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+        <h1 class="text-center">Confirm appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
     }
     else
     {
-        <h1 style="text-align:center">This patient does not exist.</h1>
+        <h1 class="text-center">This patient does not exist.</h1>
     }
 
     <form id="ApptForm" method="post">
         <div class="row mb-5 g-5">
             @if(@Model.staffMember != null)
             {
-                <h2 style ="text-align:center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME</h2>
-                <h2 style="text-align:center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("HH:mm")</h2>
-                <h2 style="text-align:center">for @Model.appDur minutes</h2>
+                <h2 class="text-center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME</h2>
+                <h2 class="text-center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("HH:mm")</h2>
+                <h2 class="text-center">for @Model.appDur minutes</h2>
             }
         </div>
         <div class="row mb-5 g-5">

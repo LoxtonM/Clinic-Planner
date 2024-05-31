@@ -8,12 +8,12 @@
 
     @if (!Model.isLive)
     {
-        <h1 class="text-center" style="color:red">NOTE: This is a test system. Work completed here will not be reflected in production.</h1>
+        <h1 class="text-center redtext">NOTE: This is a test system. Work completed here will not be reflected in production.</h1>
     }
 
     @if (Model.notificationMessage != null && Model.notificationMessage != "")
     {
-        <h1 class="text-center" style="color:red">@Model.notificationMessage</h1>
+        <h1 class="text-center redtext">@Model.notificationMessage</h1>
     }
 
     <div class="row mb-5 g-5"> @*Header only - appears if clinician and/or clinic selected*@
@@ -128,10 +128,10 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row" id=@item.IntID style="border:solid;background-color:darkcyan;color:ivory" draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        <div class="row waitinglistitem" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
                             @if(@item.Priority == "Urgent")
                             {
-                                <div style="background-color:red">@item.Priority</div>
+                                <div class="redalert">@item.Priority</div>
                             }
                             <div>@item.CGU_No</div>
                             <div>@item.FIRSTNAME @item.LASTNAME</div>                            
@@ -163,11 +163,11 @@
                         {
                             <tr id=@item.ToString("HH:mm")>
                                 <th scope="row">@item.ToString("HH:mm")</th>                            
-                                <td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
-                                <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" style="color:white" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[0].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[1].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[2].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[3].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
+                                <td id="@(@Model.DateArray[4].ToString("dd/MM/yyyy") + " " + @item.ToString("HH:mm"))" ondrop="OnDrop(event)" ondragover="OnDragOver(event)" ondragleave="OnDragLeave(event)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
                             </tr>
                         }                
                     </tbody>
@@ -219,15 +219,13 @@
     //Drag-and-drop functionality
     function OnDragStart(ev)
     {  
-        ev.dataTransfer.setData("text", ev.target.id);
-        ev.currentTarget.style.backgroundColor = "yellow";
-        ev.currentTarget.style.color = "black";
+        ev.dataTransfer.setData("text", ev.target.id);        
+        ev.currentTarget.classList.add("selecteditem");
     }
     
     function OnDragEnd(iIntID, ev)
     {
-        ev.currentTarget.style.backgroundColor = "darkcyan";
-        ev.currentTarget.style.color = "ivory";
+        ev.currentTarget.classList.remove("selecteditem");        
     }
 
     function OnDrop(ev)
@@ -251,9 +249,8 @@
 
             if (sourcCguNo != targCguNo) 
             {
-                window.alert("This is reserved for patient " + targCguNo);
-                ev.target.style.backgroundColor = "orange";
-                ev.target.style.color = "white";
+                window.alert("This is reserved for patient " + targCguNo);                
+                ev.target.classList.add("reservedslot");
             }
             else 
             { 
@@ -269,9 +266,8 @@
        ev.preventDefault();
        
         if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved")) 
-        {
-            ev.currentTarget.style.backgroundColor = "yellow";
-            ev.currentTarget.style.color = "black";
+        {            
+            ev.currentTarget.classList.add("selecteditem");
         }       
     }
 
@@ -281,13 +277,11 @@
 
         if (ev.currentTarget.innerHTML.includes("Free")) 
         {
-            ev.currentTarget.style.backgroundColor = "green";
-            ev.currentTarget.style.color = "white";
+            ev.currentTarget.classList.remove("selecteditem");            
         }
         else if (ev.currentTarget.innerHTML.includes("Reserved")) 
         {
-            ev.currentTarget.style.backgroundColor = "orange";
-            ev.currentTarget.style.color = "white";
+            ev.currentTarget.classList.remove("selecteditem");            
         }
     }
 
@@ -341,6 +335,7 @@
         var slotIDArray = [];
         var apptDateArray = [];
         var apptTimeArray = [];
+        var apptDurationArray = [];
         var apptDurationArray = [];
         var apptClinicArray = [];
         var apptClinicianArray = [];
@@ -423,26 +418,26 @@
                                         {
                                             if ((colDate < today) || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))//for clinic slots in the past
                                             {                                                
-                                                document.getElementById(col.id).style.backgroundColor = "firebrick";
-                                                strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
-                                            }
+                                                document.getElementById(col.id).classList.add("unavailslot");
+                                                strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k]; 
+                                            } 
                                             else
                                             {
                                                 if (statusArray[k] == "Open") //for available slots
-                                                {
-                                                    document.getElementById(col.id).style.backgroundColor = "green";
+                                                {                                                
+                                                    document.getElementById(col.id).classList.add("freeslot");
                                                     strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + 
                                                     clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else if (statusArray[k] == "Reserved")
                                                 {
-                                                    document.getElementById(col.id).style.backgroundColor = "orange";
+                                                    document.getElementById(col.id).classList.add("reservedslot");
                                                     strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" +
                                                         clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else //for unavailable slots
-                                                {
-                                                    document.getElementById(col.id).style.backgroundColor = "firebrick";
+                                                {                                                   
+                                                    document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
                                                         clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
@@ -485,7 +480,7 @@
                                                 //we have to do this here, because the C# throws a fit if we get nulls
                                                 if (colDate < today || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))  //past appointments
                                                 {                                                    
-                                                    document.getElementById(col.id).style.backgroundColor = "purple";
+                                                    document.getElementById(col.id).classList.add("pastappt");
                                                     strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " +
                                                     apptClinicArray[k] + "</br>" +
@@ -495,7 +490,8 @@
                                                 }
                                                 else //current/future appointments
                                                 {
-                                                    document.getElementById(col.id).style.backgroundColor = "blue";
+                                                    document.getElementById(col.id).classList.add("currentappt");
+                                                    
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " + 
                                                     apptClinicArray[k] + "</br>" + 
