@@ -13,13 +13,17 @@ namespace CPTest.Pages
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
-        private readonly IClinicSlotsCreator _csc;
+        //private readonly IClinicSlotsCreator _csc;
+        private readonly IClinicPatternSqlServices _ssPat;
+        private readonly IAdHocClinicSqlServices _ssAdHoc;
 
         public ClinicSetupModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _csc = new ClinicSlotsCreator(_context, _config);
+            //_csc = new ClinicSlotsCreator(_context, _config);
+            _ssPat = new ClinicPatternSqlServices(_context, _config);
+            _ssAdHoc = new AdHocClinicSqlServices(_context, _config);
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
         }
@@ -52,6 +56,7 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
                 string sStaffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
+                string username = "mnln";
 
                 if (dStartDate == DateTime.Parse("0001-01-01"))
                 {
@@ -74,14 +79,11 @@ namespace CPTest.Pages
                         {
                             monthstring = "123456789abc";
                         }
-
-                        //SetupStandardClinicPattern(dStartDate, dEndDate, startHr, startMin, clinicianID, clinicID, dayNum, weekNum, 
-                        //  duration, numSlots, monthstring, sUsername);
-                        _csc.SetupClinicPattern(clinicianID, clinicID, dStartDate, dEndDate, startHr, startMin, numSlots, 
-                            duration, dayNum, weekNum, monthstring, sStaffCode);
+                        
+                        _ssPat.SaveClinicPattern(clinicianID, clinicID, dayNum, weekNum, monthstring, numSlots, duration, startHr, startMin, dStartDate, dEndDate, username);
                     }
 
-                    
+
                 }
 
                 if (isModifyStandard.GetValueOrDefault())
@@ -99,8 +101,8 @@ namespace CPTest.Pages
                     else
                     {
                         isSuccess = true;
-                        
-                        _csc.SetupAdHocClinic(dStartDate, startHr, startMin, clinicianID, clinicID, duration, numSlots, sStaffCode);
+
+                        _ssAdHoc.SaveAdHocClinic(clinicianID, clinicID, numSlots, duration, startHr, startMin, dStartDate, username);
                     }
                 }
 

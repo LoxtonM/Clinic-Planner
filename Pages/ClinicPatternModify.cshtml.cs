@@ -21,7 +21,7 @@ namespace CPTest.Pages
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _patternData = new PatternData(_context);
-            _ss = new ClinicPatternSqlServices(_config);
+            _ss = new ClinicPatternSqlServices(_context, _config);
         }
 
         public ClinicPattern pattern { get; set; }
@@ -57,7 +57,14 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
 
-                _ss.UpdateClinicPattern(id); //, day, week, months, dur, startHr, startMin, numSlots, dStart, dEnd);
+                if (months == null)
+                {
+                    months = "123456789abc";
+                }
+
+                _ss.UpdateClinicPattern(id, pattern.StaffID, pattern.Clinic, day, week, months, numSlots, dur, startHr, startMin,  dStart, dEnd, "mnln");
+
+                Response.Redirect("Index");
             }
             catch (Exception ex)
             {

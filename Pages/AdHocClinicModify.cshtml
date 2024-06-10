@@ -6,7 +6,64 @@
 <div class="container">
 
     <h1>Clinic for @Model.clinician.NAME, @Model.venue.NAME, @Model.adhocclinic.ClinicDate.ToString("dd/MM/yyyy")</h1>
-    <form method="post">
+    <form id="frmModifyAdHocClinic" method="post">             
+        @*start date*@
+        <div class="row mb-5 g-5">
+            <div class="col-md-3">
+                <label><strong>Date:</strong></label>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="dClinicDate" asp-for=@Model.adhocclinic.ClinicDate />
+            </div>
+            <div action="col-md-2">
+                <input name="id" asp-for=@Model.adhocclinic.ID hidden="true" />
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col md-2">
+                <strong>Start time and duration:</strong>
+            </div>
+            <div class="col-md-1">
+                <label>Hour:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="startHr" asp-for=@Model.adhocclinic.StartHr />
+            </div>
+            <div class="col-md-1">
+                <label>Minute:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="startMin" asp-for=@Model.adhocclinic.StartMin />
+            </div>
+            <div class="col-md-1">
+                <label>Duration:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="duration" asp-for=@Model.adhocclinic.Duration />
+            </div>
+            <div class="col md-1">
+                <label>Slots:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="numSlots" asp-for=@Model.adhocclinic.NumSlots />
+            </div>
+            <div class="col md-2"></div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <button type="button" id="btnConfirmNewAdHoc" class="btn btn-success" onclick="ConfirmNewAdHoc()">Confirm</button>
+            </div>
+        </div>
+
     </form>
 
 </div>
+
+<script>
+
+    function ConfirmNewAdHoc() 
+    {        
+        document.getElementById("frmModifyAdHocClinic").submit();
+    }
+
+</script>

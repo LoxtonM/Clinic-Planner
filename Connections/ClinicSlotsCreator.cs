@@ -4,12 +4,12 @@ using Microsoft.Extensions.FileSystemGlobbing.Internal;
 namespace CPTest.Connections
 {
     interface IClinicSlotsCreator
-    {
-        public void SetupClinicPattern(string clinician, string clinic, DateTime startDate, DateTime? endDate,
-            int startHr, int startMin, int numSlots, int duration, int dayOfWeek, int weekOfMonth,
-            string monthOfYear, string username);
-        public void SetupAdHocClinic(DateTime clinicDate, int startHr, int startMin, string clinicianID,
-            string clinicID, int duration, int numSlots, string staffCode);     
+    {      
+        public void SetupClinicPattern(int patternID, string clinicianID, string clinicID, int dayofWeek, int weekofMonth,
+                string sMonthofYear, int numSlots, int duration, int startHour, int startMin,
+                DateTime dStartDate, DateTime? dEndDate, string username);
+        public void SetupAdHocClinic(int adHocID, DateTime clinicDate, int startHr, int startMin, string clinicianID,
+            string clinicID, int duration, int numSlots, string username);     
     }
     public class ClinicSlotsCreator : IClinicSlotsCreator
     {
@@ -17,8 +17,6 @@ namespace CPTest.Connections
         private readonly IConfiguration _config;
         private readonly IClinicSlotData _slotData;
         private readonly IMiscData _dc;
-        private readonly IClinicPatternSqlServices _ssPattern;
-        private readonly IAdHocClinicSqlServices _ssAdHoc;
         private readonly IClinicSlotSqlServices _ssSlot;
 
         public ClinicSlotsCreator(DataContext context, IConfiguration config)
@@ -27,22 +25,16 @@ namespace CPTest.Connections
             _config = config;
             _slotData = new ClinicSlotData(_context);
             _dc = new MiscData(_context);
-            _ssPattern = new ClinicPatternSqlServices(_config);
-            _ssAdHoc = new AdHocClinicSqlServices(_config);
             _ssSlot = new ClinicSlotSqlServices(_config);
         }
-        public void SetupClinicPattern(string clinician, string clinic, DateTime startDate, DateTime? endDate,
-            int startHr, int startMin, int numSlots, int duration, int dayOfWeek, int weekOfMonth, 
-            string monthOfYear, string username) //creates slots for a standard clinic pattern
+                
+        public void SetupClinicPattern(int patternID, string clinicianID, string clinicID, int dayofWeek, int weekofMonth,
+                string sMonthofYear, int numSlots, int duration, int startHour, int startMin,
+                DateTime dStartDate, DateTime? dEndDate, string username)
         {
-            _ssPattern.SaveClinicPattern(clinician, clinic, dayOfWeek, weekOfMonth, monthOfYear, numSlots, duration,
-                startHr, startMin, startDate, endDate);
+            //var pattern = _patternData.GetPatternDetails(patternID);          
 
-            int iPatternID = _context.ClinicPattern.FirstOrDefault(p => p.StaffID == clinician && p.Clinic == clinic && 
-                                p.DyOfWk == dayOfWeek && p.WkOfMth == weekOfMonth && p.startDate == startDate && p.MthOfYr == monthOfYear
-                                && p.StartHr == startHr && p.StartMin == startMin).PatternID;
-
-            List<DateTime> ClinicDates = new List<DateTime>(); //list of all clinic dates, to be populated later
+            List <DateTime> ClinicDates = new List<DateTime>(); //list of all clinic dates, to be populated later
 
             DateTime firstDayCurrentMonth = DateTime.Parse(DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + 1);
             DateTime firstDateCurrentMonth;
@@ -51,19 +43,24 @@ namespace CPTest.Connections
             DateTime firstDateNextMonth;
             DateTime firstOccurrenceNextMonth;
             DateTime nextClinicDate;
-            DateTime slotTime = DateTime.Parse("1899-12-30 " + startHr.ToString() + ":" + startMin.ToString() + ":00");
+            DateTime slotTime = DateTime.Parse("1899-12-30 " + startHour.ToString() + ":" + startMin.ToString() + ":00");
+            DateTime startDate;
+            DateTime endDate;
             int iMonth;
             int iYear;
+
+            startDate = dStartDate;
+            endDate = dEndDate.GetValueOrDefault();            
 
             if(endDate == DateTime.Parse("0001-01-01")) //set a default end date if none specified
             {
                 endDate = DateTime.Now.AddYears(1);
             }
 
-            if (GetIsMonthInPattern(monthOfYear, firstDayCurrentMonth)) //check if month is in the pattern
+            if (GetIsMonthInPattern(sMonthofYear, firstDayCurrentMonth)) //check if month is in the pattern
             {
-                firstOccurrenceCurrentMonth = FindFirstOccurrence(firstDayCurrentMonth, dayOfWeek);
-                firstDateCurrentMonth = firstOccurrenceCurrentMonth.AddDays(-7 + (weekOfMonth * 7));
+                firstOccurrenceCurrentMonth = FindFirstOccurrence(firstDayCurrentMonth, dayofWeek);
+                firstDateCurrentMonth = firstOccurrenceCurrentMonth.AddDays(-7 + (weekofMonth * 7));
             }
             else
             {
@@ -80,10 +77,10 @@ namespace CPTest.Connections
             }
 
             firstDayNextMonth = DateTime.Parse(iYear + "-" + iMonth + "-" + 1);
-            if (GetIsMonthInPattern(monthOfYear, firstDayNextMonth))
+            if (GetIsMonthInPattern(sMonthofYear, firstDayNextMonth))
             {
-                firstOccurrenceNextMonth = FindFirstOccurrence(firstDayNextMonth, dayOfWeek);
-                firstDateNextMonth = firstOccurrenceNextMonth.AddDays(-7 + (weekOfMonth * 7));
+                firstOccurrenceNextMonth = FindFirstOccurrence(firstDayNextMonth, dayofWeek);
+                firstDateNextMonth = firstOccurrenceNextMonth.AddDays(-7 + (weekofMonth * 7));
             }
             else
             {
@@ -99,7 +96,7 @@ namespace CPTest.Connections
                 nextClinicDate = firstDateNextMonth;
             }
 
-            if(GetIsMonthInPattern(monthOfYear, nextClinicDate) && nextClinicDate >= startDate && !_dc.GetIsNationalHolday(nextClinicDate))
+            if(GetIsMonthInPattern(sMonthofYear, nextClinicDate) && nextClinicDate >= startDate && !_dc.GetIsNationalHoliday(nextClinicDate))
             {
                 ClinicDates.Add(nextClinicDate);
             }
@@ -113,10 +110,12 @@ namespace CPTest.Connections
                     iYear += 1;
                 }
                 firstDayNextMonth = DateTime.Parse(iYear + "-" + iMonth + "-" + 1);
-                if (GetIsMonthInPattern(monthOfYear, firstDayNextMonth))
+                if (GetIsMonthInPattern(sMonthofYear, firstDayNextMonth))
                 {
-                    firstOccurrenceNextMonth = FindFirstOccurrence(firstDayNextMonth, dayOfWeek);
-                    firstDateNextMonth = firstOccurrenceNextMonth.AddDays(7 - (weekOfMonth * 7));                //DateAdd("ww", intWeek - 1, firstOccurrenceNextMonth)
+                    firstOccurrenceNextMonth = FindFirstOccurrence(firstDayNextMonth, dayofWeek);
+                    int sdf = -7 + (weekofMonth* 7);
+                    DateTime asdfgf = firstOccurrenceNextMonth.AddDays(-7 + (weekofMonth * 7));
+                    firstDateNextMonth = firstOccurrenceNextMonth.AddDays(-7 + (weekofMonth * 7));
                     nextClinicDate = firstDateNextMonth;
                     ClinicDates.Add(nextClinicDate);
                 }
@@ -131,21 +130,16 @@ namespace CPTest.Connections
 
             foreach (var date in ClinicDates) 
             {
-                CreateDayOfClinicSlots(clinician, clinic, date, slotTime, numSlots, duration, username, iPatternID);
+                CreateDayOfClinicSlots(clinicianID, clinicID, date, slotTime, numSlots, duration, username, patternID);
             }
         }
 
-        public void SetupAdHocClinic(DateTime clinicDate, int startHr, int startMin, string clinicianID,
-        string clinicID, int duration, int numSlots, string staffCode)
+        public void SetupAdHocClinic(int adHocID, DateTime clinicDate, int startHr, int startMin, string clinicianID,
+        string clinicID, int duration, int numSlots, string username)
         {
-            DateTime dStartTime = DateTime.Parse("1899-12-30 " + startHr.ToString() + ":" + startMin.ToString() + ":00");
+            DateTime dStartTime = DateTime.Parse("1899-12-30 " + startHr.ToString() + ":" + startMin.ToString() + ":00");            
 
-            _ssAdHoc.SaveAdHocClinic(clinicianID, clinicID, numSlots, duration, startHr, startMin, clinicDate);
-
-            int iPatternID = _context.ClinicsAdded.FirstOrDefault(p => p.ClinicianID == clinicianID && p.ClinicID == clinicID &&
-                                p.ClinicDate == clinicDate && p.StartHr == startHr && p.StartMin == startMin).ID;
-
-            CreateDayOfClinicSlots(clinicianID, clinicID, clinicDate, dStartTime, numSlots, duration, staffCode, iPatternID);
+            CreateDayOfClinicSlots(clinicianID, clinicID, clinicDate, dStartTime, numSlots, duration, username, adHocID);
         }
 
         private void CreateDayOfClinicSlots(string clinician, string clinic, DateTime slotDate,

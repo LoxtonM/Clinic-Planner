@@ -11,7 +11,7 @@
                 <label><strong>Clinician:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="clinicianID" id="ddlClinician">
+                <select name="clinicianID" asp-for=@Model.pattern.StaffID disabled="true">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.staffMemberList)
                     {
@@ -23,7 +23,7 @@
                 <label><strong>Clinic:</strong></label>
             </div>
             <div class="col-md-3">
-                <select name="clinicID" id="ddlClinic">
+                <select name="clinicID" asp-for=@Model.pattern.Clinic disabled="true">
                     <option selected value="">Select...</option>
                     @foreach (var item in Model.clinicVenueList)
                     {
@@ -31,19 +31,22 @@
                     }
                 </select>
             </div>
+            <div action="col-md-2">
+                <input name="id" asp-for=@Model.pattern.PatternID hidden="true" />
+            </div>
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-3">
                 <label><strong>Start Date:</strong> (leave blank for today)</label>
             </div>
             <div class="col-md-3">
-                <input type="date" name="dStartDate" asp-for=@Model.pattern.startDate />
+                <input type="date" name="dStart" asp-for=@Model.pattern.startDate />
             </div>
             <div class="col-md-3">
                 <label><strong>End Date:</strong> (leave blank for none)</label>
             </div>
             <div class="col-md-3">
-                <input type="date" name="dEndDate" asp-for=@Model.pattern.endDate />
+                <input type="date" name="dEnd" asp-for=@Model.pattern.endDate />
             </div>
         </div>
         <div class="row mb-5 g-5">
@@ -66,7 +69,7 @@
                 <label>Duration:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="duration" asp-for=@Model.pattern.Duration />
+                <input type="text" class="w-50" name="dur" asp-for=@Model.pattern.Duration />
             </div>
             <div class="col md-1">
                 <label>Slots:</label>
@@ -85,13 +88,13 @@
                 <label>Day: (Monday = 1 etc)</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="dayNum" asp-for=@Model.pattern.DyOfWk />
+                <input type="text" class="w-50" name="day" asp-for=@Model.pattern.DyOfWk />
             </div>
             <div class="col-md-1">
                 <label>Week:</label>
             </div>
             <div class="col-md-1">
-                <input type="text" class="w-50" name="weekNum" asp-for=@Model.pattern.WkOfMth />
+                <input type="text" class="w-50" name="week" asp-for=@Model.pattern.WkOfMth />
             </div>
             <div class="col-md-5">                
                 <div class="row">
@@ -118,7 +121,7 @@
             </div>
         </div>
         <div class="row" hidden="true">
-            <input type="text" id="txtMonthString" name="monthstring" asp-for=@Model.pattern.MthOfYr />
+            <input type="text" id="txtMonthString" name="months" asp-for=@Model.pattern.MthOfYr />
         </div>
 
 

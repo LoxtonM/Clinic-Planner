@@ -194,7 +194,7 @@ namespace CPTest.Models
     {
         [Key]
         public int ID { get; set; }
-        public DateTime HoldayDate { get; set; }
+        public DateTime HolidayDate { get; set; }
     }
 
     [Table("CLIN_CLASS", Schema = "dbo")]
