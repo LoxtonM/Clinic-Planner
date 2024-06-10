@@ -23,6 +23,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 clinician = _staffData.GetStaffDetails(staffCode);
                 adHocList = _adHocClinicData.GetAdHocList(staffCode).Where(c => c.ClinicDate >= DateTime.Now.Date).OrderByDescending(c => c.ClinicDate).ToList();
             }

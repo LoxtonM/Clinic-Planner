@@ -45,7 +45,10 @@ namespace CPTest.Pages
         {
             try
             {
-                //int refID = Int32.Parse(sRefID);
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
 
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
@@ -68,7 +71,7 @@ namespace CPTest.Pages
             try
             {
                 //int refID = Int32.Parse(sRefID);
-
+                string username = User.Identity.Name;
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
                 clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
@@ -79,7 +82,7 @@ namespace CPTest.Pages
                 appTypeList = _appTypeData.GetAppTypeList();
 
                 string sNewTime = dNewTime.Hour.ToString() + ":" + dNewTime.Minute.ToString(); //for some reason, I can't just convert the time to a string!!!
-                string sUser = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
+                string sUser = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
 
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, duration, sUser, sInstructions, sCancel);

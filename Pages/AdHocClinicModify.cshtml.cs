@@ -31,6 +31,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
                 clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
                 venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
@@ -48,7 +53,7 @@ namespace CPTest.Pages
                 adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
                 clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
                 venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
-                string username = "mnln";
+                string username = User.Identity.Name;
 
                 _ss.UpdateAdHocClinic(id, adhocclinic.ClinicianID, adhocclinic.ClinicID, duration, startHr, startMin, numSlots, dClinicDate, username);
 

@@ -39,6 +39,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 if (clinicianID != null)
                 {
                     staffMember = _staffData.GetStaffDetails(clinicianID);

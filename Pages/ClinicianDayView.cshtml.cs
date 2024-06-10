@@ -46,6 +46,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+                
                 if (dClinicDate.ToString() == "01/01/0001 00:00:00")
                 {
                     dClinicDate = DateTime.Today;
@@ -66,17 +71,17 @@ namespace CPTest.Pages
                 }
 
                 appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate, clinician, clinic);
-                
+
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicianList = new List<string>();
 
                 foreach (var item in appointmentList)
                 {
                     //ClinicArray.Append(item.FACILITY);
-                    clinicianList.Add(item.STAFF_CODE_1);
+                    
                 }
                 //clinicSlotList = _dc.GetClinicSlots(dClinicDate, , clinician, clinic);
-                
+
                 clinicianList = clinicianList.Distinct().ToList();
                 ClinicianArray = clinicianList.ToArray();
 
@@ -94,9 +99,8 @@ namespace CPTest.Pages
                     clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
-                //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                //openSlotList = _dc.GetOpenSlots(clinicSlotList);
-                
+                    //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
+                    //openSlotList = _dc.GetOpenSlots(clinicSlotList);                
             }
             catch (Exception ex)
             {

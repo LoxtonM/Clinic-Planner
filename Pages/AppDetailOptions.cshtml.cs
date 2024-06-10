@@ -33,7 +33,11 @@ namespace CPTest.Pages
         {
             try
             {
-                //int refID = 0;
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+                
                 refID = Int32.Parse(sRefID);
 
                 appointment = _appointmentData.GetAppointmentDetails(refID);

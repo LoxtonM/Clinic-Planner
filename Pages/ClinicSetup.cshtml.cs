@@ -13,7 +13,6 @@ namespace CPTest.Pages
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
-        //private readonly IClinicSlotsCreator _csc;
         private readonly IClinicPatternSqlServices _ssPat;
         private readonly IAdHocClinicSqlServices _ssAdHoc;
 
@@ -21,7 +20,6 @@ namespace CPTest.Pages
         {
             _context = context;
             _config = config;
-            //_csc = new ClinicSlotsCreator(_context, _config);
             _ssPat = new ClinicPatternSqlServices(_context, _config);
             _ssAdHoc = new AdHocClinicSqlServices(_context, _config);
             _staffData = new StaffData(_context);
@@ -37,8 +35,14 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+                
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
+                
             }
             catch (Exception ex)
             {
@@ -52,11 +56,10 @@ namespace CPTest.Pages
         {
             try
             {
-
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
-                string sStaffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
-                string username = "mnln";
+                string username = User.Identity.Name;
+                string sStaffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
 
                 if (dStartDate == DateTime.Parse("0001-01-01"))
                 {
@@ -82,8 +85,6 @@ namespace CPTest.Pages
                         
                         _ssPat.SaveClinicPattern(clinicianID, clinicID, dayNum, weekNum, monthstring, numSlots, duration, startHr, startMin, dStartDate, dEndDate, username);
                     }
-
-
                 }
 
                 if (isModifyStandard.GetValueOrDefault())
@@ -120,28 +121,6 @@ namespace CPTest.Pages
             {
                 Response.Redirect("Error?sError=" + ex.Message);
             }
-        }
-
-        //public void SetupStandardClinicPattern(DateTime dStartDate, DateTime dEndDate, int startHr, int startMin, string clinicianID, string clinicID,
-        //    int dayNum, int weekNum, int duration, int numSlots, string monthstring, string sUsername)
-       // {
-       //     SetupClinicSlots(dStartDate, dEndDate, startHr, startMin, clinicianID, clinicID, dayNum, weekNum, duration,
-       //             monthstring, sUsername);
-       // }
-
-        //public void SetupAdHocClinic(DateTime dStartDate, int startHr, int startMin, string clinicianID, string clinicID,
-        //    int duration, int numSlots, string sUsername)
-       // {
-       //     //do stuff
-       // }
-
-
-       // public void SetupClinicSlots(DateTime dStartDate, DateTime dEndDate, int startHr, int startMin, string clinicianID, string clinicID, int dayNum, int weekNum, int duration,
-       //     string monthstring, string sUsername)
-       // {
-        //    int iToday = (int)DateTime.Today.DayOfWeek;
-        //    //Monday = 1, Tuesday = 2, Wednesday = 3, Thursday = 4, Frday = 5
-
-       // }
+        }        
     }
 }

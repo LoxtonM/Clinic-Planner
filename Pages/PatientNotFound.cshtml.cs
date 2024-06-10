@@ -21,7 +21,12 @@ namespace CPTest.Pages
         public string wlClinicID { get; set; }
 
         public void OnGet(int intID, string clinicianID, string clinicID)
-        {            
+        {
+            if (User.Identity.Name is null)
+            {
+                Response.Redirect("Login");
+            }
+
             wlIntID = intID;
             wlClinicianID = clinicianID;
             wlClinicID = clinicID;

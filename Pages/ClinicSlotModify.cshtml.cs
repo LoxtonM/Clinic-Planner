@@ -34,6 +34,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 slotID = Int32.Parse(sSlotID);
 
                 slot = _slotData.GetSlotDetails(slotID);
@@ -53,11 +58,11 @@ namespace CPTest.Pages
                 slot = _slotData.GetSlotDetails(slotID);
                 clinicVenue = _clinicVenueData.GetVenueDetails(slot.ClinicID);
                 staffMember = _staffData.GetStaffDetails(slot.ClinicianID);
-                string staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE;
+                string username = User.Identity.Name;
+                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
 
                 if (sAction=="ForMeOnly")
-                {
-                    //detail = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE; //TODO - replace when login available
+                {                    
                     detail = staffCode;
                 }
 

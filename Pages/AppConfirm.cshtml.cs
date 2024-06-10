@@ -48,6 +48,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 int intID = Int32.Parse(intIDString);
                 int slotID = Int32.Parse(slotIDString);
                 int mpi = 0;
@@ -99,11 +104,12 @@ namespace CPTest.Pages
             try
             {
                 string staffCode;
+                string username = User.Identity.Name;
 
                 patient = _patientData.GetPatientDetails(mpi);
                 appTypeList = _appTypeData.GetAppTypeList();
                 staffMember = _staffData.GetStaffDetails(clin);
-                staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //placeholder - will replace when login screen available                
+                staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE; //placeholder - will replace when login screen available                
                 
                 clinicVenue = _clinicVenueData.GetVenueDetails(ven);
 

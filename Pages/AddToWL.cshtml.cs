@@ -38,7 +38,12 @@ namespace CPTest.Pages
         public void OnGet(string cgu)
         {
             try
-            {                
+            {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 clinicVenueList = _clinicalVenueData.GetVenueList();       
                 staffMemberList = _staffData.GetStaffMemberList();
                 priorityList = _priorityData.GetPriorityList();
@@ -62,7 +67,8 @@ namespace CPTest.Pages
                 clinicVenueList = _clinicalVenueData.GetVenueList();
                 staffMemberList = _staffData.GetStaffMemberList();
                 priorityList = _priorityData.GetPriorityList();
-                string staffCode = _staffData.GetStaffDetailsByUsername("mnln").STAFF_CODE; //todo: change when login screen available
+                string username = User.Identity.Name;
+                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE; //todo: change when login screen available
 
                 _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode, priorityLevel, linkedRef);
 

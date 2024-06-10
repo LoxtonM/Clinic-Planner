@@ -34,6 +34,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 pattern = _patternData.GetPatternDetails(id);
                 clinician = _staffData.GetStaffDetails(pattern.StaffID);
                 venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
@@ -61,8 +66,9 @@ namespace CPTest.Pages
                 {
                     months = "123456789abc";
                 }
+                string username = User.Identity.Name;
 
-                _ss.UpdateClinicPattern(id, pattern.StaffID, pattern.Clinic, day, week, months, numSlots, dur, startHr, startMin,  dStart, dEnd, "mnln");
+                _ss.UpdateClinicPattern(id, pattern.StaffID, pattern.Clinic, day, week, months, numSlots, dur, startHr, startMin,  dStart, dEnd, username);
 
                 Response.Redirect("Index");
             }

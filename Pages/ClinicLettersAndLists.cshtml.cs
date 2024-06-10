@@ -32,6 +32,11 @@ namespace CPTest.Pages
         {
             try
             {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
                 patient = _patientData.GetPatientDetails(appointment.MPI);

@@ -57,9 +57,23 @@ namespace CPTest.Pages
 
         public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
-            notificationMessage = _note.GetMessage();
-            isLive = bool.Parse(_config.GetValue("IsLive", ""));
-            ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
+            try
+            {
+                if (User.Identity.Name is null)
+                {
+                    Response.Redirect("Login");
+                }
+                else
+                {
+                    notificationMessage = _note.GetMessage();
+                    isLive = bool.Parse(_config.GetValue("IsLive", ""));
+                    ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Redirect("Error?sError=" + ex.Message);
+            }
         }
 
         public void OnPost(DateTime wcDt, string clinician, string clinic, string searchTerm)
