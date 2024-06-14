@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CPTest.Models;
-using System.Collections.Generic;
 
 namespace CPTest.Data
 {
@@ -23,5 +22,8 @@ namespace CPTest.Data
         public DbSet<NationalHolidays> NationalHolidays { get; set; }
         public DbSet<Priority> Priority { get; set; }
         public DbSet<Notifications> Notifications { get; set; }
+        public DbSet<Constants> Constants { get; set; }
+        public DbSet<DocumentsContent> DocumentsContent { get; set; }
+        public DbSet<ExternalClinician> ExternalClinician { get; set; }
     }
 }

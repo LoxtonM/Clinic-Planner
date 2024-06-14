@@ -53,6 +53,7 @@ namespace CPTest.Pages
         public DateTime wcDate;
         public string clinician = new string("");
         public string clinic = new string("");
+        public string userStaffCode { get; set; }
 
 
         public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm)
@@ -68,6 +69,7 @@ namespace CPTest.Pages
                     notificationMessage = _note.GetMessage();
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
+                    
                 }
             }
             catch (Exception ex)
@@ -87,7 +89,7 @@ namespace CPTest.Pages
             {                
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
-
+                userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
 
                 if (wcDt.ToString() != "01/01/0001 00:00:00")
                 {

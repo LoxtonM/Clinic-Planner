@@ -20,8 +20,9 @@ namespace CPTest.Models
         public int MPI { get; set; }
         public int IntID { get; set; }
         public string? ClinicianID { get; set; }
+        public string? ClinicianName { get; set; }
         public string? ClinicID { get; set; }
-        //public DateTime? AddedDate { get; set; }
+        public string? ClinicName { get; set; }
         public string? CGU_No { get; set; }
         public string? FIRSTNAME { get; set; }
         public string? LASTNAME { get; set; }
@@ -57,7 +58,10 @@ namespace CPTest.Models
         [Key]
         public string FACILITY { get; set; }
         public string? NAME { get; set; }
+        public string? LOCATION { get; set; }
+        public string? NOTES { get; set; }
         public Int16 NON_ACTIVE { get; set; }
+        public bool HasQRCode { get; set; }
     }
 
     //This view only exists so that the Clinics menu can filter by Clinician.
@@ -80,6 +84,7 @@ namespace CPTest.Models
         public string CLINIC_SCHEDULER_GROUPS { get; set; }
         public bool InPost { get; set; }
         public bool Clinical { get; set; }
+        public string POSITION { get; set; }
 
     }
 
@@ -105,6 +110,8 @@ namespace CPTest.Models
         public string? AppType { get; set; }
         public string? Clinician { get; set; }
         public string? Clinic {  get; set; }
+        public int ReferralRefID { get; set; }
+        public string? LetterPrintedDate { get; set; }
     }
 
     [Table("ViewPatientReferralDetails", Schema = "dbo")]
@@ -117,11 +124,14 @@ namespace CPTest.Models
         public DateTime RefDate { get; set; }
         public string? COMPLETE { get; set; }
         public string? ReferringClinician {  get; set; }
+        public string? ReferrerCode { get; set; }
         public string? ReferringFacility { get; set; }
         public bool logicaldelete { get; set; }
+        public string? LeadClinician { get; set; }
+        public string? GC {  get; set; }
     }
 
-    [Table("MasterPatientTable", Schema = "dbo")]
+    [Table("ViewPatientDemographicDetails", Schema = "dbo")]
     public class Patient
     {
         [Key]
@@ -129,7 +139,31 @@ namespace CPTest.Models
         public int INTID { get; set; }
         public string? FIRSTNAME { get; set; }
         public string? LASTNAME { get; set; }
+        public string? PtAKA { get; set; }
         public string? CGU_No { get; set; }
+        public string PtLetterAddressee {  get; set; }
+        public string SALUTATION { get; set; }
+        public string ADDRESS1 { get; set; }
+        public string? ADDRESS2 { get; set; }
+        public string? ADDRESS3 { get; set; }
+        public string ADDRESS4 { get; set; }
+        public string POSTCODE {  get; set; }
+        public string SOCIAL_SECURITY { get; set; }
+        public DateTime DOB {  get; set; }
+        public string PrimaryLanguage { get; set; }
+        public string IsInterpreterReqd { get; set; }
+        public string? Ethnic {  get; set; }
+        public string? GP {  get; set; }
+    }
+
+    [Table("MasterClinicianTable", Schema = "dbo")]
+    public class ExternalClinician
+    {
+        [Key]
+        public string MasterClinicianCode { get; set; }
+        public string? TITLE { get; set; }
+        public string? FIRST_NAME { get; set; }
+        public string? NAME { get; set; }
     }
 
     //For the "list of appointment types" menu
@@ -207,7 +241,7 @@ namespace CPTest.Models
         public bool IsActive { get; set; }
     }
 
-    [Table("Notifications")]
+    [Table("Notifications", Schema = "dbo")]
     public class Notifications
     {
         [Key]
@@ -216,6 +250,35 @@ namespace CPTest.Models
         public string Message { get; set; }
         public bool IsActive { get; set; }
     }
+
+    [Table("Constants", Schema = "dbo")]
+    public class Constants
+    {
+        [Key]
+        public string ConstantCode { get; set; }
+        public string ConstantValue { get; set; }
+    }
+
+    [Table("ListDocumentsContent", Schema = "wmfacs_user")]
+    public class DocumentsContent
+    {
+        [Key]
+        public int DocContentID { get; set; }
+        public string DocCode { get; set; }
+        public string? Para1 { get; set; }
+        public string? Para2 { get; set; }
+        public string? Para3 { get; set; }
+        public string? Para4 { get; set; }
+        public string? Para5 { get; set; }
+        public string? Para6 { get; set; }
+        public string? Para7 { get; set; }
+        public string? Para8 { get; set; }
+        public string? Para9 { get; set; }
+        public string? Para11 { get; set; }
+        public string? Para12 { get; set; }
+        public string? Para13 { get; set; }
+    }
+
 }
 
 

@@ -6,6 +6,7 @@ namespace CPTest.Connections
     interface IReferralData
     {
         public List<Referral> GetReferralsList(int mpi);
+        public Referral GetReferralDetails(int refID);
     }
     public class ReferralData : IReferralData
     {
@@ -19,6 +20,12 @@ namespace CPTest.Connections
         {
             var refs = _context.Referrals.Where(r => r.MPI == mpi & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate).ToList();
             return refs;
+        }
+
+        public Referral GetReferralDetails(int refID)
+        {
+            var referral = _context.Referrals.FirstOrDefault(r => r.RefID == refID);
+            return referral;
         }
     }
 }

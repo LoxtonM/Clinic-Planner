@@ -4,7 +4,12 @@
 }
 
 <div class="container">
-    <h1>Open slot for @Model.staffMember.NAME at @Model.clinicVenue.NAME, @Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
+    <div class="row">
+        <h1 class="text-center">Open slot for @Model.staffMember.NAME at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h1>
+        <h1 class="text-center">on @Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
+    </div>
+    <br />
+    <br />
     <form method="post">
         <div class="row mb-5 g-5" hidden="true">
             <input name="slotID" value=@Model.slotID />
@@ -43,17 +48,16 @@
         </div>
 
         <div class="row mb-5 g-5">
-            <div class="col-md-6">
+            <div class="col-md-6 text-center">
                 <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-6 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
             </div>
         </div>
     </form>
 
-    <div class="row mb-5 g-5">
-        <div class="col-md-6">
-            <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
-        </div>
-    </div>
+    
 </div>
 
 <script>

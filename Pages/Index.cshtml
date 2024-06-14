@@ -135,12 +135,13 @@
                             }
                             <div>@item.CGU_No</div>
                             <div>@item.FIRSTNAME @item.LASTNAME</div>                            
-                            <div>@item.ClinicianID</div>
-                            <div>@item.ClinicID</div>
+                            <div>@item.ClinicianName</div>
+                            <div>@item.ClinicName (@item.ClinicID)</div>
                             @if (item.Duration != null)
                             {
                                 <div>Duration: @item.Duration mins</div>
                             }
+                            <div>Added: @item.AddedDate.Value.ToString("dd/MM/yyyy")</div>
                         </div>
                     }
                 }
@@ -258,6 +259,21 @@
                 window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
             }
         }
+        if (ev.target.innerHTML.includes("For ") && ev.target.innerHTML.includes(" only")) 
+        {            
+            const userName = "@Model.userStaffCode";
+            const bookableName = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('For ') + 4, ev.target.innerHTML.indexOf(' only'));
+            
+            if (userName != bookableName) 
+            {
+                window.alert("Only " + bookableName + " can book this.");
+                ev.currentTarget.classList.remove("selecteditem");
+            }
+            else    
+            {
+                window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
+            }
+        }
 
     }
     //Sets highlight colours for drag/drop
@@ -265,8 +281,8 @@
     {
        ev.preventDefault();
        
-        if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved")) 
-        {            
+        if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved") || (ev.currentTarget.innerHTML.includes("For ") && ev.currentTarget.innerHTML.includes(" only")))
+            {            
             ev.currentTarget.classList.add("selecteditem");
         }       
     }
@@ -275,14 +291,14 @@
     {
         ev.preventDefault();
 
-        if (ev.currentTarget.innerHTML.includes("Free")) 
+        if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved") || (ev.currentTarget.innerHTML.includes("For ") && ev.currentTarget.innerHTML.includes(" only")))
         {
             ev.currentTarget.classList.remove("selecteditem");            
         }
-        else if (ev.currentTarget.innerHTML.includes("Reserved")) 
-        {
-            ev.currentTarget.classList.remove("selecteditem");            
-        }
+        //else if (ev.currentTarget.innerHTML.includes("Reserved")) 
+       // {
+       //     ev.currentTarget.classList.remove("selecteditem");            
+       // }
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
@@ -310,6 +326,22 @@
             //window.alert(sSID);
             window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
         }
+        else if (str.includes("For ") && str.includes(" only"))
+        {            
+            const userName = "@Model.userStaffCode";
+            const bookableName = str.slice(str.indexOf('For ') + 4, str.indexOf(' only'));
+                      
+            if (userName != bookableName) 
+            {
+                window.alert("Only " + bookableName + " can modify this.");                
+            }
+            else 
+            {
+                const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
+                window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
+            }
+        }
+
         else if (str.includes("PAST")) 
         {
             window.alert("This is in the past, you cannot edit this.");            
@@ -323,7 +355,7 @@
 
     //Called at the start - sets the clinic matrix view
     function LoadClinics()
-    {      
+    {        
         var cMatrix = document.getElementById("ClinicMatrix");
         var timeArray = [];
         var dateArray = [];
@@ -341,7 +373,8 @@
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
-        var CGUNoArray = [];
+        var CGUNoArray = [];       
+        var ClinicLetterDateArray = [];
         
         const today = new Date();
         //const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -361,7 +394,7 @@
                 @:statusArray.push("@item.SlotStatus");
                 @:pednumArray.push("@item.PedNum");
                 @:slotIDArray.push("@item.SlotID");
-        //we need to create the arrays like this because we can't access the data otherwise
+                //we need to create the arrays like this because we can't access the data otherwise
             }
         }
             
@@ -376,7 +409,8 @@
                 @:apptClinicianArray.push("@item.Clinician");
                 @:CGUNoArray.push("@item.CGU_No");
                 @:apptOutcomeArray.push("@item.Attendance");
-                @:apptRefIDArray.push("@item.RefID");                
+                @:apptRefIDArray.push("@item.RefID");   
+                @:ClinicLetterDateArray.push("@item.LetterPrintedDate");
             }
         }
 
@@ -495,7 +529,7 @@
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " + 
                                                     apptClinicArray[k] + "</br>" + 
-                                                    //apptOutcomeArray[k] + "</br>R:" +
+                                                    ClinicLetterDateArray[k] + "</br>" +
                                                     CGUNoArray[k] + "</br><span hidden='true'>R:" +
                                                     apptRefIDArray[k].toString() + "</span>";
                                                 }

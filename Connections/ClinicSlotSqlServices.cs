@@ -86,8 +86,15 @@ namespace CPTest.Connections
             }
             else if (action == "ForMeOnly")
             {
-                //todo
-               
+                SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+                con.Open();
+                SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerSetForMeOnly]", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;                
+                cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = staffCode;
+                cmd.ExecuteNonQuery();
+                con.Close();
+
             }
         }
 

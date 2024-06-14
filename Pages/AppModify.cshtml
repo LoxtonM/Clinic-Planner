@@ -3,11 +3,15 @@
 @{
 }
 <div class="container">
-    <h1 class="text-center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
-
-    <div class="row mb-5 g-5" class="text-center">
-        <h2>@Model.staffMember.NAME, @Model.clinicVenue.NAME, @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+    <div class="row mb-5 g-5">
+        <h1 class="text-center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
     </div>
+    
+    <div class="row mb-5 g-5">
+        <h2 class="text-center">@Model.staffMember.NAME, @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
+        <h2 class="text-center">@Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+    </div>
+    
     <form method="post">
         <div class="row mb-5 g-5">
             <div class="col-md-2">

@@ -5,13 +5,46 @@
 
 <div class="container">
 
-    <div class="row mb-5 g-5">
+    <div class="row">
         @if(Model.patient != null)
         {
-            <h1 class="text-center">Modify Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+            <h1 class="text-center">Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
         }
     </div>
+    <div class="row">
+        <div class="text-center">
+            <h2>DOB: @Model.patient.DOB.ToString("dd/MM/yyyy")</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-center">
+            <h3>GP: @Model.patient.GP</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        @if (Model.patient.PtAKA != null)
+        {
+            <div class="text-center">
+                <h3>Preferred Name: @Model.patient.PtAKA</h3>
+            </div>
+        }
+    </div>
+    <div class="row">
+        @if (Model.patient.IsInterpreterReqd == "Yes")
+        {
+            <div class="text-center">
+                <h3>@Model.patient.PrimaryLanguage interpreder required</h3>
+            </div>
+        }
+    </div>
+    <br />
+    <br />
+
     <form method="post">
+        <div class="row mb-5 g-5">
+            <h2 class="text-center">Modify Waiting List Entry:</h2>
+        </div>
         <div class="row mb-5 g-5">
             <div class="col-md-2">
                 <label>New Clinician:</label>
