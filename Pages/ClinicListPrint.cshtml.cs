@@ -1,33 +1,31 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
 {
-    public class ClinicLetterPrintModel : PageModel
+    public class ClinicListPrintModel : PageModel
     {
-        private readonly IDocumentController _doc;
+        private readonly DocumentController _doc;
         private readonly DataContext _context;
-        private readonly IConfiguration _config;
-        private readonly IClinicLetterSqlServices _letter;
-        public ClinicLetterPrintModel(DataContext context, IConfiguration config)
+        private readonly IConfiguration _config;     
+
+        public ClinicListPrintModel(DataContext context, IConfiguration config)
         {
             _context = context;
             _doc = new DocumentController(_context);
-            _config = config;
-            _letter = new ClinicLetterSqlServices(_config);
+            _config = config;  
         }
-        public void OnGet(int refID, bool isEmailOnly)
+        public void OnGet(int refID)
         {
             try
             {
-                if (_doc.ClinicLetter(refID) == 1)
-                {
-                    _letter.UpdateClinicLetter(refID, User.Identity.Name);
-                    
-                    Response.Redirect(@Url.Content(@"~/letter.pdf"));                    
+                if (_doc.ClinicList(refID) == 1)
+                {                   
+
+                    Response.Redirect(@Url.Content(@"~/cliniclist.pdf"));
                 }
                 else
                 {

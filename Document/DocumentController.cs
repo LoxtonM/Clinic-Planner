@@ -1,5 +1,7 @@
-﻿using CPTest.Connections;
+﻿using Azure;
+using CPTest.Connections;
 using CPTest.Data;
+using CPTest.Models;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
@@ -9,7 +11,12 @@ using System.Net.Mail; //must use an older version as 10.2 doesn't work with .NE
 
 namespace CPTest.Document
 {
-    public class DocumentController
+    interface IDocumentController
+    {
+        public int ClinicLetter(int refID);
+        public int ClinicList(int refID);
+    }
+    public class DocumentController : IDocumentController
     {
         private readonly DataContext _context;
         private readonly IPatientData _patient;
@@ -20,6 +27,7 @@ namespace CPTest.Document
         private readonly IConstantData _constant;
         private readonly IExternalClinicianData _externalClinician;
         private readonly IDocumentsContentData _docContent;
+        private readonly IClinicDetailsData _clinicDetails;
 
 
         public DocumentController(DataContext context)
@@ -33,8 +41,9 @@ namespace CPTest.Document
             _constant = new ConstantData(_context);
             _externalClinician = new ExternalClinicianData(_context);
             _docContent = new DocumentsContentData(_context);
+            _clinicDetails = new ClinicDetailsData(_context);
         }
-        public int ClinicLetter(int refID, bool isEmailOnly)
+        public int ClinicLetter(int refID)
         {
             try
             {
@@ -49,7 +58,7 @@ namespace CPTest.Document
                     extClinician = _externalClinician.GetClinicianDetails("Unknown"); //because of course there are nulls.
                 }
                 var docContent = _docContent.GetDocumentContent(164);
-                int totalLength = 200;
+                int totalLength = 50;
 
                 PdfSharpCore.Pdf.PdfDocument document = new PdfSharpCore.Pdf.PdfDocument();
                 PdfPage page = document.AddPage();
@@ -64,11 +73,16 @@ namespace CPTest.Document
                 //Load the image for the letter head            
                 XImage image = XImage.FromFile(@"wwwroot\Images\Letterhead.jpg");
                 gfx.DrawImage(image, 350, 20, image.PixelWidth / 2, image.PixelHeight / 2);
-                tf.DrawString("Consultant: " + referral.LeadClinician, font, XBrushes.Black, new XRect(50, 100, 500, 10));
-                tf.DrawString("GC: " + referral.GC, font, XBrushes.Black, new XRect(50, 115, 500, 10));
-                tf.DrawString("NHS No: " + pat.SOCIAL_SECURITY, font, XBrushes.Black, new XRect(50, 130, 500, 10));
-                tf.DrawString("Please quote our reference number on all correspondence: " + pat.CGU_No, font, XBrushes.Black, new XRect(50, 145, 500, 10));
-                tf.DrawString(DateTime.Today.ToString("dd MMMM yyyy"), font, XBrushes.Black, new XRect(50, 160, 500, 10)); //today's date
+                tf.DrawString("Consultant: " + referral.LeadClinician, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString("GC: " + referral.GC, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString("NHS No: " + pat.SOCIAL_SECURITY, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString("Please quote our reference number on all correspondence: " + pat.CGU_No, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString(DateTime.Today.ToString("dd MMMM yyyy"), font, XBrushes.Black, new XRect(50, totalLength, 500, 10)); //today's date
+                totalLength = totalLength + 30;
 
                 tf.Alignment = XParagraphAlignment.Right;
                 //Our address and contact details
@@ -104,7 +118,9 @@ namespace CPTest.Document
                 address = address + pat.POSTCODE;
 
                 tf.DrawString(address, font, XBrushes.Black, new XRect(50, totalLength, 250, address.Length * 2));
-                totalLength = totalLength + address.Length * 2;
+                totalLength = totalLength + address.Length;
+
+                totalLength = totalLength + 20; //because we can't get the address to work just by its length
 
                 //Date letter created
 
@@ -137,8 +153,8 @@ namespace CPTest.Document
 
                 if (clinic.NOTES != null && clinic.NOTES != "") //special instructions that may or mat not be present
                 {
-                    tf.DrawString(clinic.NOTES, font, XBrushes.Black, new XRect(50, totalLength, 500, clinic.NOTES.Length / 4));
-                    totalLength = totalLength + clinic.NOTES.Length / 4;
+                    tf.DrawString(clinic.NOTES, font, XBrushes.Black, new XRect(50, totalLength, 500, clinic.NOTES.Length / 2));
+                    totalLength = totalLength + clinic.NOTES.Length / 2;
                 }
 
                 tf.DrawString(docContent.Para3, fontBold, XBrushes.Black, new XRect(50, totalLength, 500, 10)); //"What if I can't attend?"
@@ -160,33 +176,139 @@ namespace CPTest.Document
 
                 tf.DrawString("Clinical Genetics Booking Centre", font, XBrushes.Black, new XRect(50, totalLength, 500, 20));
 
-
-                document.Save("letter.pdf");
-
-                if (!isEmailOnly)
+                if (File.Exists(@"wwwroot/letter.pdf"))
                 {
-                    Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument("letter.pdf");
-                    doc.Print();
-                }
-                else
-                {
-
+                    File.Delete(@"wwwroot/letter.pdf");
                 }
 
+                document.Save(@"wwwroot/letter.pdf");
+                                
+                //we can't print, it will only print to the server (and fail). We can't print it to a local printer. :(
                 return 1;
             }
             catch (Exception ex)
-            {
+            {                
                 return 0;
             }
         }
 
 
-        public int ClinicList(string clinicID, DateTime clinicDate, bool isEmailOnly)
+        public int ClinicList(int refID)
         {
             try
             {
+                PdfSharpCore.Pdf.PdfDocument document = new PdfSharpCore.Pdf.PdfDocument();
+                PdfPage page = document.AddPage();
+                page.Orientation = PdfSharpCore.PageOrientation.Landscape;
 
+                XGraphics gfx = XGraphics.FromPdfPage(page);
+                var tf = new XTextFormatter(gfx);
+                //set the fonts used for the letters
+                XFont font = new XFont("Arial", 12, XFontStyle.Regular);
+                XFont fontSmall = new XFont("Arial", 10, XFontStyle.Regular);
+                XFont fontBold = new XFont("Arial", 12, XFontStyle.Bold);
+                XFont fontBoldUnderlined = new XFont("Arial", 12, XFontStyle.Underline | XFontStyle.Bold);
+                //Load the image for the letter head            
+                XImage image = XImage.FromFile(@"wwwroot\Images\Letterhead.jpg");
+                tf.Alignment = XParagraphAlignment.Right;
+                gfx.DrawImage(image, 575, 20, image.PixelWidth / 2, image.PixelHeight / 2);
+                tf.DrawString("WEST MIDLANDS REGIONAL CLINICAL GENETICS SERVICE", fontBold, XBrushes.Black, new XRect(325, 130, 500, 10));
+
+                int totalLength = 50;
+                tf.Alignment = XParagraphAlignment.Left;
+
+                var appt = _appointment.GetAppointmentDetails(refID);
+                var clinician = _staff.GetStaffDetails(appt.STAFF_CODE_1);
+                var clinic = _clinic.GetVenueDetails(appt.FACILITY);
+                var clinicList = _appointment.GetAppointmentsForADay(appt.BOOKED_DATE.GetValueOrDefault(), clinician.STAFF_CODE, clinic.FACILITY);
+                var clinicDetails = _clinicDetails.GetClinicDetails(clinic.FACILITY);
+
+                tf.DrawString(clinician.NAME, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString(clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 40;
+
+                string addressee = clinicDetails.Addressee;
+                if(clinicDetails.Position != null)
+                {
+                    addressee = addressee + ", " + clinicDetails.Position + System.Environment.NewLine;
+                }
+                addressee = addressee + clinicDetails.A_Address + System.Environment.NewLine;
+                addressee = addressee + clinicDetails.A_Town + System.Environment.NewLine;
+                addressee = addressee + clinicDetails.A_PostCode;
+                tf.DrawString(addressee, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
+                totalLength = totalLength + 100;
+
+                tf.DrawString(clinicDetails.A_Salutation + ", ", font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                totalLength = totalLength + 15;
+                string clinicDetail = "RE: " + clinic.NAME + " - " +  clinicDetails.ClinicSite + " on " + appt.BOOKED_DATE.Value.ToString("dddd mmmm yyyy") + System.Environment.NewLine;
+                clinicDetail = clinicDetail + "To be held by " + clinician.NAME + ", " + clinician.POSITION;
+                tf.DrawString(clinicDetail, font, XBrushes.Black, new XRect(50, totalLength, 500, 40));
+                totalLength = totalLength + 40;
+                tf.DrawString(clinicDetails.Preamble + ", ", font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
+
+
+                totalLength = totalLength + 40; //appointments list
+
+                tf.DrawString("Time", fontBold, XBrushes.Black, new XRect(20, totalLength, 500, 10));
+                tf.DrawString("Patient", fontBold, XBrushes.Black, new XRect(70, totalLength, 500, 10));
+                tf.DrawString("Refs", fontBold, XBrushes.Black, new XRect(250, totalLength, 500, 10));
+                tf.DrawString("GP", fontBold, XBrushes.Black, new XRect(400, totalLength, 500, 10));
+                tf.DrawString("Referred by", fontBold, XBrushes.Black, new XRect(500, totalLength, 500, 10));
+                tf.DrawString("Instructions (post clinic)", fontBold, XBrushes.Black, new XRect(600, totalLength, 500, 10));
+
+                foreach (var item in clinicList)
+                {
+                    totalLength = totalLength + 15;
+                    tf.DrawString(item.BOOKED_TIME.Value.ToString("HH:mm"), font, XBrushes.Black, new XRect(20, totalLength, 500, 10));
+                    var pat = _patient.GetPatientDetails(item.MPI);
+                    string address = pat.ADDRESS1 + ", ";
+                    if(pat.ADDRESS2 != null)
+                    {
+                        address = address + pat.ADDRESS2 + ", ";
+                    }
+                    address = address + pat.ADDRESS3 + ", ";
+                    address = address + pat.ADDRESS4 + System.Environment.NewLine;
+                    address = address + pat.POSTCODE;
+                    string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.ToString("dd/MM/yyyy") + System.Environment.NewLine + address;
+                    tf.DrawString(patient, font, XBrushes.Black, new XRect(70, totalLength, 200, 80)); //patient demographics
+                    string ourrefs = "Our ref: " + pat.CGU_No + System.Environment.NewLine + "NHS No: " + pat.SOCIAL_SECURITY;
+                    tf.DrawString(ourrefs, font, XBrushes.Black, new XRect(250, totalLength, 150, 30)); //CGU and NHS numbers
+                    string gpName = "Unknown";
+                    if (pat.GP != null) //because there are ALWAYS nulls somewhere!
+                    {
+                        gpName = pat.GP + System.Environment.NewLine + pat.GP_Facility; ;
+                    }                        
+                    tf.DrawString(gpName, font, XBrushes.Black, new XRect(400, totalLength, 100, 30)); //GP
+                    var referral = _referral.GetReferralDetails(item.ReferralRefID);
+                    
+                    string referrerName = "Unknown";
+                    if (referral.ReferringClinician != null)
+                    {
+                        referrerName = referral.ReferringClinician + System.Environment.NewLine + referral.ReferringFacility;
+                    }
+                    tf.DrawString(referrerName, font, XBrushes.Black, new XRect(500, totalLength, 100, 30));
+
+                }
+                totalLength = totalLength + 100;
+
+                tf.DrawString(clinicDetails.Postlude, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
+                totalLength = totalLength + 15;
+                
+                tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
+                totalLength = totalLength + 50;
+                tf.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength, 100, 10));
+                totalLength = totalLength + 15;
+                tf.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 30));
+                totalLength = totalLength + 15;
+                //copies to etc
+
+
+                if (File.Exists(@"wwwroot/cliniclist.pdf"))
+                {
+                    File.Delete(@"wwwroot/cliniclist.pdf");
+                }
+                document.Save(@"wwwroot/cliniclist.pdf");
 
                 return 1;
             }

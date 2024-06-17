@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Images\letter.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\WebServerDeployment.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\WebServerStaging.pubxml" />
   </ItemGroup>

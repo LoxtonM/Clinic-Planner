@@ -10,20 +10,20 @@
 
     <div class="row mb-5 g-5">
         <div class="col-md-6">
-            <a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@Model.appointment.RefID asp-route-isEmailOnly=false>Print Letter to Patient</a>
+            <a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@Model.appointment.RefID>Create Letter to Patient</a>
         </div>
-        <div class="col-md-6">
+        @*<div class="col-md-6">
             <a type="button" class="btn btn-success" asp-page="WIP">Email Letter to Patient (WIP)</a>
-        </div>
+        </div>*@
     </div>
 
     <div class="row mb-5 g-5">
         <div class="col-md-6">
-            <a type="button" class="btn btn-success" asp-page="WIP">Print Clinic List (WIP)</a>
+            <a type="button" class="btn btn-success" asp-page="ClinicListPrint" asp-route-refID=@Model.appointment.RefID>Create Clinic List</a>
         </div>
-        <div class="col-md-6">
-            <a type="button" class="btn btn-success" asp-page="WIP">Email Clinic List (WIP)</a>
-        </div>
+        @*<div class="col-md-6">
+            <a type="button" class="btn btn-success" asp-page="WIP">Email Clinic List (WIP)</a> 
+        </div>*@
     </div>
 
 

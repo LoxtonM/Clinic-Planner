@@ -154,6 +154,9 @@ namespace CPTest.Models
         public string IsInterpreterReqd { get; set; }
         public string? Ethnic {  get; set; }
         public string? GP {  get; set; }
+        public string? GP_CODE { get; set; }
+        public string? GP_Facility { get; set; }
+        public string? GP_Facility_Code { get; set; }
     }
 
     [Table("MasterClinicianTable", Schema = "dbo")]
@@ -213,6 +216,25 @@ namespace CPTest.Models
         public int ID { get; set; }
     }
 
+    [Table("Clinicians_Clinics", Schema = "dbo")]
+    public class ClinicDetails
+    {
+        [Key]
+        public string Facility { get; set; }
+        public string? Addressee { get; set; }
+        public string? Position { get; set; }
+        public string? A_Address { get; set; }
+        public string? A_Town { get; set; }
+        public string? A_PostCode { get; set; }
+        public string? A_Salutation { get; set; }
+        public string? Preamble { get; set; }
+        public string? Postlude { get; set; }
+        public string? Copies_To { get; set; }
+        public string? ClinicSite { get; set; }
+        public string? TelNo { get; set; }
+        public string? Initials { get; set; }
+        public string? Secretary { get; set; }
+    }
 
     [Table("ListDates", Schema = "dbo")]
     [Keyless]
