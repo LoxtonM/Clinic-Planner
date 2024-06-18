@@ -1,0 +1,227 @@
+﻿@page
+@model BWHDayViewModel
+@{
+    ViewData["Title"] = "Clinic Day View";
+}
+
+<div class="container">
+
+    <div class="row mb-5 g-5">
+        @*Header only - appears if clinician and/or clinic selected*@
+        <div class="col-md-2" id="holding"></div>
+        <h1>BWH Clinics</h1>
+    </div>
+
+
+    <form id="ClinicSelect">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2" align="right">
+                <label>Week Commencing:</label> @*used to set the week view*@
+            </div>
+            <div class="col-md-4">
+                <input id="wcDate" name="dClinicDate" type="date" asp-for=@Model.dDate onchange="RefreshForm()" />
+            </div>
+        </div>
+
+        
+    </form>
+
+
+    <div class="row">        
+
+        <div class="col-md-12">
+            <form id="ClinicForm" method="post">
+                <table id="ClinicMatrix" class="table table-bordered">
+                    <thead>
+                    <th>Time:</th>
+                    @foreach(var item in Model.ClinicArray)
+                    {
+                        <th>@item</th>
+                    }
+                    
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TimeArray)
+                        {
+                            <tr id=@item.ToString("HH:mm")>
+                                <th scope="row">@item.ToString("HH:mm")</th>
+                                @foreach (var header in Model.ClinicArray)
+                                {
+                                    <td id="@(@item.ToString("HH:mm")) + ' ' + @header)" class="whitetext" ondblclick="OnDoubleClickAP(id)"></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.onload(LoadClinics());
+        
+    
+    //Clear/reset the select menus
+    function Clear() //called by btnClear
+    {
+        document.getElementById("ddlClinician").value = ""
+        document.getElementById("ddlClinic").value = ""
+        RefreshForm()
+    }
+
+    function RefreshForm() {
+        document.getElementById("ClinicSelect").submit();
+    }
+        
+    //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
+    
+    function OnDoubleClickAP(id) {
+        if (document.getElementById(id).innerHTML.includes("Booked")) {
+            const str = document.getElementById(id).innerHTML;
+            const sRID = str.slice(str.indexOf('R:') + 2);
+
+            //window.open("AppModify?sRefID=" + sRID);
+            window.location.replace("AppModify?sRefID=" + sRID);
+        }
+        else if (document.getElementById(id).innerHTML.includes("Free")) {
+            window.open("WIP");
+        }
+        else if (document.getElementById(id).innerHTML.includes("PAST")) {
+            window.alert("This is in the past, you cannot edit this.");
+        }
+    }
+    
+    //Called at the start - sets the clinic matrix view
+    function LoadClinics() {
+        var cMatrix = document.getElementById("ClinicMatrix");
+        var timeArray = [];
+        var dateArray = [];
+        var durationArray = [];
+        var clinicArray = [];
+        var clinicianArray = [];
+        var statusArray = [];
+        var apptDateArray = [];
+        var apptTimeArray = [];
+        var apptDurationArray = [];
+        var apptClinicArray = [];
+        var apptClinicianArray = [];
+        var apptOutcomeArray = [];
+        var apptRefIDArray = [];
+        var CGUNoArray = [];
+
+        const today = new Date();
+        const rightnow = today.getHours() + ":" + today.getMinutes();
+        today.setHours(0, 0, 0, 0);
+
+    @if (Model.clinicSlotList != null) //set up all the clinic slots first
+    {
+        @foreach (var item in Model.clinicSlotList)
+        {
+            @:dateArray.push("@item.SlotDate");
+            @:timeArray.push("@item.SlotTime");
+            @:durationArray.push("@item.duration");
+            @:clinicArray.push("@item.ClinicID");
+            @:clinicianArray.push("@item.ClinicianID");
+            @:statusArray.push("@item.SlotStatus");
+            //we need to create the arrays like this because we can't access the data otherwise
+        }
+    }
+
+    @if (Model.appointmentList != null) //then set up all the appointments
+    {
+        @foreach (var item in Model.appointmentList)
+        {
+            @:apptDateArray.push("@item.BOOKED_DATE");
+            @:apptTimeArray.push("@item.BOOKED_TIME");
+            @:apptDurationArray.push("@item.Duration");
+            @:apptClinicArray.push("@item.FACILITY");
+            @:apptClinicianArray.push("@item.Clinician");
+            @:CGUNoArray.push("@item.CGU_No");
+            @:apptOutcomeArray.push("@item.Attendance");
+            @:apptRefIDArray.push("@item.RefID");
+        }
+    } 
+        //now do the same but with the appointments
+        if (apptClinicArray.length != 0 && apptTimeArray.length != 0) {
+            
+            for (var i = 0, row; row = cMatrix.rows[i]; i++) {
+                
+                if (i > 0) {
+                    for (var j = 0, col; col = row.cells[j]; j++) {
+                        
+                        if (j > 0) {
+                            //var theDate = col.id.substring(0, 10);
+                            var theTime = col.id.substring(0, 5);
+                            var theClinic = col.id.substring(14, col.id.length-1);
+                            //const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
+                            //window.alert(theTime);
+                            //window.alert(theClinic);
+                            //for (var k = 0; k < apptDateArray.length; k++) {
+                            for (var k = 0; k < apptClinicArray.length; k++) {
+                                //const myDate = new Date(apptDateArray[k].substring(6, 10) + "-" + apptDateArray[k].substring(3, 5) + "-" + apptDateArray[k].substring(0, 2) + "T00:00:00");
+
+                                if (theClinic == apptClinicArray[k]) 
+                                {
+
+                                    for (var l = 0; l < apptTimeArray.length; l++) {
+                                        const myTime = apptTimeArray[k].substring(11, 16);
+                                        var strApptDetail;
+                                        if (myTime == theTime) {
+                                            if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional") {
+                                                //we have to do this here, because the C# throws a fit if we get nulls
+                                                //if (colDate < today || theTime < rightnow)  //past appointments
+                                                //{
+                                                 //   document.getElementById(col.id).style.backgroundColor = "purple";
+                                                 //   strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                 //       apptClinicianArray[k] + "</br> " +
+                                                 //       apptClinicArray[k] + "</br>" +
+                                                 //       //apptOutcomeArray[k] + "</br>R:" +
+                                                 //       CGUNoArray[k] + "</br>R:" +
+                                                 //       apptRefIDArray[k].toString();
+                                               // }
+                                               // else //current/future appointments
+                                                //{
+                                                    document.getElementById(col.id).style.backgroundColor = "blue";
+                                                    strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                        apptClinicianArray[k] + "</br> " +
+                                                        apptClinicArray[k] + "</br>" +
+                                                        //apptOutcomeArray[k] + "</br>R:" +
+                                                        CGUNoArray[k] + "</br>R:" +
+                                                        apptRefIDArray[k].toString();
+                                                //}
+                                                document.getElementById(col.id).innerHTML = strApptDetail;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        //finally, hide all empty rows
+        for (var i = 0, row; row = cMatrix.rows[i]; i++) {
+            var colcount = 0
+            if (i > 0) {
+                for (var j = 0, col; col = row.cells[j]; j++) {
+                    if (j > 0) {
+                        if (col.innerHTML == "") {
+                            colcount++;
+                        }
+                    }
+                }
+                if (colcount >= 5) {
+                    row.hidden = true;
+                }
+            }
+        }
+    }
+
+
+
+</script>

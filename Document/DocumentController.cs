@@ -223,10 +223,10 @@ namespace CPTest.Document
                 var clinicList = _appointment.GetAppointmentsForADay(appt.BOOKED_DATE.GetValueOrDefault(), clinician.STAFF_CODE, clinic.FACILITY);
                 var clinicDetails = _clinicDetails.GetClinicDetails(clinic.FACILITY);
 
-                tf.DrawString(clinician.NAME, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString(clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 40;
+                //tf.DrawString(clinician.NAME, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                //totalLength = totalLength + 15;
+                //tf.DrawString(clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
+                //totalLength = totalLength + 40;
 
                 string addressee = clinicDetails.Addressee;
                 if(clinicDetails.Position != null)
@@ -241,11 +241,11 @@ namespace CPTest.Document
 
                 tf.DrawString(clinicDetails.A_Salutation + ", ", font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
                 totalLength = totalLength + 15;
-                string clinicDetail = "RE: " + clinic.NAME + " - " +  clinicDetails.ClinicSite + " on " + appt.BOOKED_DATE.Value.ToString("dddd mmmm yyyy") + System.Environment.NewLine;
-                clinicDetail = clinicDetail + "To be held by " + clinician.NAME + ", " + clinician.POSITION;
-                tf.DrawString(clinicDetail, font, XBrushes.Black, new XRect(50, totalLength, 500, 40));
-                totalLength = totalLength + 40;
-                tf.DrawString(clinicDetails.Preamble + ", ", font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
+                string clinicDetail = "RE: " + clinic.NAME + " - " + clinicDetails.ClinicSite + " on " + appt.BOOKED_DATE.Value.ToString("dddd MMMM yyyy");
+                clinicDetail = clinicDetail + " To be held by " + clinician.NAME + ", " + clinician.POSITION;
+                tf.DrawString(clinicDetail, font, XBrushes.Black, new XRect(50, totalLength, 800, 40));
+                totalLength = totalLength + 25;
+                tf.DrawString(clinicDetails.Preamble + ", ", font, XBrushes.Black, new XRect(50, totalLength, 800, 100));
 
 
                 totalLength = totalLength + 40; //appointments list
@@ -270,7 +270,7 @@ namespace CPTest.Document
                     address = address + pat.ADDRESS3 + ", ";
                     address = address + pat.ADDRESS4 + System.Environment.NewLine;
                     address = address + pat.POSTCODE;
-                    string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.ToString("dd/MM/yyyy") + System.Environment.NewLine + address;
+                    string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.ToString("dd/MM/yyyy") + System.Environment.NewLine + pat.POSTCODE;
                     tf.DrawString(patient, font, XBrushes.Black, new XRect(70, totalLength, 200, 80)); //patient demographics
                     string ourrefs = "Our ref: " + pat.CGU_No + System.Environment.NewLine + "NHS No: " + pat.SOCIAL_SECURITY;
                     tf.DrawString(ourrefs, font, XBrushes.Black, new XRect(250, totalLength, 150, 30)); //CGU and NHS numbers
@@ -290,10 +290,10 @@ namespace CPTest.Document
                     tf.DrawString(referrerName, font, XBrushes.Black, new XRect(500, totalLength, 100, 30));
 
                 }
-                totalLength = totalLength + 100;
+                totalLength = 450;
 
                 tf.DrawString(clinicDetails.Postlude, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
-                totalLength = totalLength + 15;
+                totalLength = totalLength + 20;
                 
                 tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
                 totalLength = totalLength + 50;

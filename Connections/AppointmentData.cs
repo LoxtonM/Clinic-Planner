@@ -8,6 +8,7 @@ namespace CPTest.Connections
         public Appointment GetAppointmentDetails(int refID);
         public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic);
         public IEnumerable<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician, string? clinic);
+        public IEnumerable<Appointment> GetAppointmentsForBWH(DateTime clinicDate);
     }
     public class AppointmentData : IAppointmentData
     {
@@ -57,6 +58,17 @@ namespace CPTest.Connections
                 appts = appts.Where(l => l.FACILITY == clinic).ToList();
             }
             
+            return appts;
+        }
+
+        public IEnumerable<Appointment> GetAppointmentsForBWH(DateTime clinicDate)
+        {
+            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate
+            & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional"
+                    & a.Attendance != "Cancelled by patient").ToList();
+
+            appts = appts.Where(l => l.FACILITY.Contains("BWH")).ToList();
+                                 
             return appts;
         }
     }

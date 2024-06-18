@@ -1,12 +1,11 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
 {
-    public class ClinicianDayViewModel : PageModel
+    public class BWHDayViewModel : PageModel
     {
         private readonly DataContext _context;
         private readonly IStaffData _staffData;
@@ -14,7 +13,7 @@ namespace CPTest.Pages
         private readonly IAppointmentData _appointmentData;
         private readonly ICliniciansClinicData _cliniciansClinicData;
 
-        public ClinicianDayViewModel(DataContext context)
+        public BWHDayViewModel(DataContext context)
         {
             _context = context;
             _staffData = new StaffData(_context);
@@ -35,14 +34,12 @@ namespace CPTest.Pages
         public IEnumerable<Appointment?> appointmentList { get; set; }
 
         public DateTime[] TimeArray = new DateTime[120];
-        public string[] ClinicianArray;
+        public string[] ClinicArray;
 
         //public string wcDateString = new string("");
-        public DateTime dDate;
-        public string clinician = new string("");
-        public string clinic = new string("");
+        public DateTime dDate;       
 
-        public void OnGet(string? clinician, string? clinic, DateTime dClinicDate)
+        public void OnGet(DateTime dClinicDate)
         {
             try
             {
@@ -60,9 +57,7 @@ namespace CPTest.Pages
                 clinicVenueList = _clinicVenueData.GetVenueList();
 
                 dDate = dClinicDate;
-
-                clinician = clinician;
-                clinic = clinic;
+               
                 DateTime initTime = dClinicDate.Add(new TimeSpan(8, 0, 0));
 
                 for (int i = 0; i < 120; i++)
@@ -70,37 +65,20 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate, clinician, clinic);
+                appointmentList = _appointmentData.GetAppointmentsForBWH(dClinicDate);
 
                 //ClinicArray = new string[appointmentList.Count()];
-                List<string> clinicianList = new List<string>();
+                List<string> clinicList = new List<string>();
 
                 foreach (var item in appointmentList)
                 {
-                    clinicianList.Add(item.STAFF_CODE_1);
-                    
-                }
-                //clinicSlotList = _dc.GetClinicSlots(dClinicDate, , clinician, clinic);
+                    //ClinicArray.Append(item.FACILITY);
+                    clinicList.Add(item.FACILITY);
+                }                
 
-                clinicianList = clinicianList.Distinct().ToList();
-                ClinicianArray = clinicianList.ToArray();
-
-                if (clinic != null)
-                {
-                    clinicVenue = _clinicVenueData.GetVenueDetails(clinic);
-                }
-
-                if (clinician != null)
-                {
-                    staffMember = _staffData.GetStaffDetails(clinician);
-                    var Clinics = new List<CliniciansClinics>();
-                    Clinics = _cliniciansClinicData.GetCliniciansClinics(clinician);
-
-                    clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
-                }
-
-                    //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                    //openSlotList = _dc.GetOpenSlots(clinicSlotList);                
+                clinicList = clinicList.Distinct().ToList();
+                ClinicArray = clinicList.ToArray();                        
+                
             }
             catch (Exception ex)
             {
@@ -108,7 +86,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(string? clinician, string? clinic, DateTime dClinicDate)
+        public void OnPost(DateTime dClinicDate)
         {
 
         }

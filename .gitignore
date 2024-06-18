@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 \secrets.json
+\wwwroot\letters.pdf
+\wwwroot\cliniclist.pdf
