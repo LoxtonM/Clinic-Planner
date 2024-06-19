@@ -146,7 +146,7 @@ namespace CPTest.Models
         public string ADDRESS1 { get; set; }
         public string? ADDRESS2 { get; set; }
         public string? ADDRESS3 { get; set; }
-        public string ADDRESS4 { get; set; }
+        public string? ADDRESS4 { get; set; }
         public string POSTCODE {  get; set; }
         public string SOCIAL_SECURITY { get; set; }
         public DateTime DOB {  get; set; }

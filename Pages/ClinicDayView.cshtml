@@ -6,85 +6,17 @@
 
 <div class="container">
 
-    <div class="row mb-5 g-5">
-        @*Header only - appears if clinician and/or clinic selected*@
-        <div class="col-md-2" id="holding"></div>
-        @if (Model.clinicVenue != null)
-        {
-            <div class="col-md-5"><h1>@Model.clinicVenue.NAME</h1></div>
-        }
-        @if (Model.staffMember != null)
-        {
-            <div class="col-md-5"><h1>@Model.staffMember.NAME</h1></div>
-        }
-    </div>
-
-
     <form id="ClinicSelect">
         <div class="row mb-5 g-5">
             <div class="col-md-2" align="right">
-                <label>Week Commencing:</label> @*used to set the week view*@
+                <label>Clinic Date:</label> @*used to set the week view*@
             </div>
             <div class="col-md-4">
                 <input id="wcDate" name="dClinicDate" type="date" asp-for=@Model.dDate onchange="RefreshForm()" />
             </div>
         </div>
 
-        <div class="row mb-5 g-5">
-            <div class="col-md-2" align="right">
-                <label>Clinician:</label>
-            </div>
-            <div class="col-md-4">
-                @*Clinician select*@
-                <select id="ddlClinician" name="clinician" asp-for=@Model.clinician onchange="RefreshForm()">
-                    @if (Model.staffMember != null)
-                    {
-                        <option value="@Model.staffMember" selected>@Model.staffMember.NAME</option>
-                    }
-                    else
-                    {
-                        <option value="" selected></option>
-                    }
-                    @if (Model.staffMemberList != null)
-                    {
-                        @foreach (var item in Model.staffMemberList)
-                        {
-                            <option value=@item.STAFF_CODE>@item.NAME</option>
-                        }
-                    }
-                </select>
-            </div>
-            <div class="col-md-2" align="right">
-                <label>Clinic:</label>
-            </div>
-            <div class="col-md-4">
-                @*Clinic select*@
-                <select id="ddlClinic" name="clinic" asp-for=@Model.clinic onchange="RefreshForm()">
-                    @if (Model.clinicVenue != null)
-                    {
-                        <option value="@Model.clinicVenue" selected>@Model.clinicVenue.NAME</option>
-                    }
-                    else
-                    {
-                        <option value="" selected></option>
-                    }
-                    @if (Model.clinicVenueList != null)
-                    {
-                        @foreach (var item in Model.clinicVenueList)
-                        {
-                            <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
-                        }
-                    }
-                </select>
-            </div>
-            <div class="col-md-3"></div>
-            <div class="col-md-1" align="right">
-                @*<input class="btn-success" type="submit" value="Select" />*@
-            </div>
-            <div class="col-md-1" align="right">
-                <input class="btn-success" type="button" id="btnClear" value="Clear" onclick="Clear()" />
-            </div>
-        </div>
+        
     </form>
 
 
@@ -123,46 +55,32 @@
 
     document.onload(LoadClinics());
         
-    
-    //Clear/reset the select menus
-    function Clear() //called by btnClear
+    function RefreshForm() 
     {
-        document.getElementById("ddlClinician").value = ""
-        document.getElementById("ddlClinic").value = ""
-        RefreshForm()
-    }
-
-    function RefreshForm() {
         document.getElementById("ClinicSelect").submit();
     }
         
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     
-    function OnDoubleClickAP(id) {
-        if (document.getElementById(id).innerHTML.includes("Booked")) {
+    function OnDoubleClickAP(id) 
+    {
+        if (document.getElementById(id).innerHTML.includes("Booked")) 
+        {
             const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2);
-
-            //window.open("AppModify?sRefID=" + sRID);
-            window.location.replace("AppModify?sRefID=" + sRID);
+            //window.location.replace("AppModify?refID=" + sRID);
+            window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
-        else if (document.getElementById(id).innerHTML.includes("Free")) {
-            window.open("WIP");
-        }
-        else if (document.getElementById(id).innerHTML.includes("PAST")) {
+        else if (document.getElementById(id).innerHTML.includes("PAST")) 
+        {
             window.alert("This is in the past, you cannot edit this.");
         }
     }
     
     //Called at the start - sets the clinic matrix view
-    function LoadClinics() {
+    function LoadClinics() 
+    {
         var cMatrix = document.getElementById("ClinicMatrix");
-        var timeArray = [];
-        var dateArray = [];
-        var durationArray = [];
-        var clinicArray = [];
-        var clinicianArray = [];
-        var statusArray = [];
         var apptDateArray = [];
         var apptTimeArray = [];
         var apptDurationArray = [];
@@ -175,83 +93,54 @@
         const today = new Date();
         const rightnow = today.getHours() + ":" + today.getMinutes();
         today.setHours(0, 0, 0, 0);
-
-    @if (Model.clinicSlotList != null) //set up all the clinic slots first
-    {
-        @foreach (var item in Model.clinicSlotList)
-        {
-            @:dateArray.push("@item.SlotDate");
-            @:timeArray.push("@item.SlotTime");
-            @:durationArray.push("@item.duration");
-            @:clinicArray.push("@item.ClinicID");
-            @:clinicianArray.push("@item.ClinicianID");
-            @:statusArray.push("@item.SlotStatus");
-            //we need to create the arrays like this because we can't access the data otherwise
-        }
-    }
-
-    @if (Model.appointmentList != null) //then set up all the appointments
-    {
-        @foreach (var item in Model.appointmentList)
-        {
-            @:apptDateArray.push("@item.BOOKED_DATE");
-            @:apptTimeArray.push("@item.BOOKED_TIME");
-            @:apptDurationArray.push("@item.Duration");
-            @:apptClinicArray.push("@item.FACILITY");
-            @:apptClinicianArray.push("@item.Clinician");
-            @:CGUNoArray.push("@item.CGU_No");
-            @:apptOutcomeArray.push("@item.Attendance");
-            @:apptRefIDArray.push("@item.RefID");
-        }
-    } 
-        //now do the same but with the appointments
-        if (apptClinicArray.length != 0 && apptTimeArray.length != 0) {
             
-            for (var i = 0, row; row = cMatrix.rows[i]; i++) {
-                
-                if (i > 0) {
-                    for (var j = 0, col; col = row.cells[j]; j++) {
-                        
-                        if (j > 0) {
-                            //var theDate = col.id.substring(0, 10);
+
+        @if (Model.appointmentList != null) 
+        {
+            @foreach (var item in Model.appointmentList)
+            {
+                @:apptDateArray.push("@item.BOOKED_DATE");
+                @:apptTimeArray.push("@item.BOOKED_TIME");
+                @:apptDurationArray.push("@item.Duration");
+                @:apptClinicArray.push("@item.FACILITY");
+                @:apptClinicianArray.push("@item.Clinician");
+                @:CGUNoArray.push("@item.CGU_No");
+                @:apptOutcomeArray.push("@item.Attendance");
+                @:apptRefIDArray.push("@item.RefID");
+            }
+        } 
+        if (apptClinicArray.length != 0 && apptTimeArray.length != 0) 
+        {            
+            for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+            {
+                if (i > 0) 
+                {
+                    for (var j = 0, col; col = row.cells[j]; j++) 
+                    {                        
+                        if (j > 0) 
+                        {
                             var theTime = col.id.substring(0, 5);
                             var theClinic = col.id.substring(14, col.id.length-1);
-                            //const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
-                            //window.alert(theTime);
-                            //window.alert(theClinic);
-                            //for (var k = 0; k < apptDateArray.length; k++) {
-                            for (var k = 0; k < apptClinicArray.length; k++) {
-                                //const myDate = new Date(apptDateArray[k].substring(6, 10) + "-" + apptDateArray[k].substring(3, 5) + "-" + apptDateArray[k].substring(0, 2) + "T00:00:00");
-
+                            
+                            for (var k = 0; k < apptClinicArray.length; k++) 
+                            {
                                 if (theClinic == apptClinicArray[k]) 
                                 {
-
-                                    for (var l = 0; l < apptTimeArray.length; l++) {
+                                    for (var l = 0; l < apptTimeArray.length; l++) 
+                                    {
                                         const myTime = apptTimeArray[k].substring(11, 16);
                                         var strApptDetail;
-                                        if (myTime == theTime) {
-                                            if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional") {
-                                                //we have to do this here, because the C# throws a fit if we get nulls
-                                                //if (colDate < today || theTime < rightnow)  //past appointments
-                                                //{
-                                                 //   document.getElementById(col.id).style.backgroundColor = "purple";
-                                                 //   strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                 //       apptClinicianArray[k] + "</br> " +
-                                                 //       apptClinicArray[k] + "</br>" +
-                                                 //       //apptOutcomeArray[k] + "</br>R:" +
-                                                 //       CGUNoArray[k] + "</br>R:" +
-                                                 //       apptRefIDArray[k].toString();
-                                               // }
-                                               // else //current/future appointments
-                                                //{
-                                                    document.getElementById(col.id).style.backgroundColor = "blue";
-                                                    strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                        apptClinicianArray[k] + "</br> " +
-                                                        apptClinicArray[k] + "</br>" +
-                                                        //apptOutcomeArray[k] + "</br>R:" +
-                                                        CGUNoArray[k] + "</br>R:" +
-                                                        apptRefIDArray[k].toString();
-                                                //}
+                                        if (myTime == theTime) 
+                                        {
+                                            if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional") 
+                                            {
+                                                document.getElementById(col.id).style.backgroundColor = "blue";
+                                                strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                apptClinicianArray[k] + "</br> " +
+                                                apptClinicArray[k] + "</br>" +
+                                                //apptOutcomeArray[k] + "</br>R:" +
+                                                CGUNoArray[k] + "</br>R:" +
+                                                apptRefIDArray[k].toString();
                                                 document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }
@@ -260,24 +149,6 @@
                             }
                         }
                     }
-                }
-            }
-
-        }
-
-        //finally, hide all empty rows
-        for (var i = 0, row; row = cMatrix.rows[i]; i++) {
-            var colcount = 0
-            if (i > 0) {
-                for (var j = 0, col; col = row.cells[j]; j++) {
-                    if (j > 0) {
-                        if (col.innerHTML == "") {
-                            colcount++;
-                        }
-                    }
-                }
-                if (colcount >= 5) {
-                    row.hidden = true;
                 }
             }
         }

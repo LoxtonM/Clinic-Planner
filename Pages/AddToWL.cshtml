@@ -11,18 +11,18 @@
     <form id="ApptForm" method="post">
         <div class="row mb-5 g-5">
             <div class="col-md-2 text-right">
-                <label>CGU Number (including point):</label>
+                <label class="w-100">CGU Number (including point):</label>
             </div>
             <div class="col-md-2 text-right">
-                <input type="text" id="txtCGUNo" name="cgu" asp-for=@Model.Patient.CGU_No />
+                <input type="text" class="w-100" id="txtCGUNo" name="cgu" asp-for=@Model.Patient.CGU_No />
             </div>
             @if(Model.Patient != null)
             {
                <div class="col-md-2">
-                    <label>Linked Referral:</label>
+                    <label class="w-100">Linked Referral:</label>
                 </div>
                 <div class="col-md-2">
-                    <select id="ddlRef" name="linkedRef">
+                    <select class="w-100" id="ddlRef" name="linkedRef">
                         <option value="" selected></option>
                         @if (Model.referralList != null)
                         {
@@ -37,10 +37,10 @@
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-2 text-right">
-                <label>Clinician:</label>
+                <label class="w-100">Clinician:</label>
             </div>
             <div class="col-md-2 text-right">
-                <select id="ddlClin" name="clin" />                
+                <select class="w-100" id="ddlClin" name="clin" />                
                     <option value="" selected></option>
                     @if (Model.staffMemberList != null)
                     {

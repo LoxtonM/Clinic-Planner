@@ -17,11 +17,12 @@
         <div class="col-md-4 text-center">
             <a type="button" id="btnLetters" class="btn btn-success" asp-page="ClinicLettersAndLists" asp-route-refID=@Model.refID>Print Letters/Clinic Lists</a>
         </div>        
-    
-        <div class="col-md-4 text-center">
-            <a type="button" id="btnModify" class="btn btn-success" asp-page="AppModify" asp-route-refID=@Model.refID>Modify Appointment</a>
-        </div>
-          
+        @if (Model.appointment.BOOKED_DATE > DateTime.Today || (Model.appointment.BOOKED_DATE == DateTime.Today && DateTime.Now.Hour <= Model.appointment.BOOKED_TIME.Value.Hour))
+        {
+            <div class="col-md-4 text-center">
+                <a type="button" id="btnModify" class="btn btn-success" asp-page="AppModify" asp-route-refID=@Model.refID>Modify Appointment</a>
+            </div>
+        } 
         <div class="col-md-4 text-center">
             <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
         </div>        

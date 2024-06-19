@@ -25,9 +25,7 @@ namespace CPTest.Pages
         public IEnumerable<Outcome> outcomes { get; set; }
         public IEnumerable<WaitingList> waitingList { get; set; }
         public ClinicVenue? clinicVenue { get; set; }
-        public List<ClinicVenue> clinicVenueList { get; set; }
         public StaffMember? staffMember { get; set; }
-        public List<StaffMember> staffMemberList { get; set; }
         public IEnumerable<ClinicSlot> clinicSlotList { get; set; }
         public IEnumerable<ClinicSlot> openSlotList { get; set; }
         public IEnumerable<Patient> patientList { get; set; }
@@ -38,10 +36,9 @@ namespace CPTest.Pages
 
         //public string wcDateString = new string("");
         public DateTime dDate;
-        public string clinician = new string("");
-        public string clinic = new string("");
+        
 
-        public void OnGet(string? clinician, string? clinic, DateTime dClinicDate)
+        public void OnGet(DateTime dClinicDate)
         {
             try
             {
@@ -55,13 +52,9 @@ namespace CPTest.Pages
                     dClinicDate = DateTime.Today;
                 }
 
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
-
+                
                 dDate = dClinicDate;
-
-                clinician = clinician;
-                clinic = clinic;
+                                
                 DateTime initTime = dClinicDate.Add(new TimeSpan(8, 0, 0));
 
                 for (int i = 0; i < 120; i++)
@@ -69,7 +62,7 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate, clinician, clinic);
+                appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate);
 
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicList = new List<string>();
@@ -84,20 +77,7 @@ namespace CPTest.Pages
                 clinicList = clinicList.Distinct().ToList();
                 ClinicArray = clinicList.ToArray();
 
-                if (clinic != null)
-                {
-                    clinicVenue = _clinicVenueData.GetVenueDetails(clinic);
-                }
-
-                if (clinician != null)
-                {
-                    staffMember = _staffData.GetStaffDetails(clinician);
-                    var Clinics = new List<CliniciansClinics>();
-                    Clinics = _cliniciansClinicData.GetCliniciansClinics(clinician);
-
-                    clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
-                }
-
+                
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
                 //openSlotList = _dc.GetOpenSlots(clinicSlotList);              
                 
@@ -108,7 +88,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(string? clinician, string? clinic, DateTime dClinicDate)
+        public void OnPost(DateTime dClinicDate)
         {
 
         }

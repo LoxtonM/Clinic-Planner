@@ -75,7 +75,7 @@ namespace CPTest.Pages
                     if (isApplyClinic.GetValueOrDefault())
                     {
                         List<ClinicSlot> slotsForDay = new List<ClinicSlot>();
-                        slotsForDay = _slotData.GetDaySlots(slot.ClinicianID, slot.ClinicID, slot.SlotDate).ToList();
+                        slotsForDay = _slotData.GetDaySlots(slot.SlotDate, slot.ClinicianID, slot.ClinicID).ToList();
                         foreach(var slot in slotsForDay)
                         {
                             _ss.ModifyClinicSlot(slot.SlotID, staffCode, sAction, detail);

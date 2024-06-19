@@ -61,17 +61,11 @@
 <script>
 
     document.onload(LoadClinics());
-        
-    
+            
     //Clear/reset the select menus
-    function Clear() //called by btnClear
+    
+    function RefreshForm() 
     {
-        document.getElementById("ddlClinician").value = ""
-        document.getElementById("ddlClinic").value = ""
-        RefreshForm()
-    }
-
-    function RefreshForm() {
         document.getElementById("ClinicSelect").submit();
     }
         
@@ -81,9 +75,7 @@
         if (document.getElementById(id).innerHTML.includes("Booked")) {
             const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2);
-
-            //window.open("AppModify?sRefID=" + sRID);
-            window.location.replace("AppModify?sRefID=" + sRID);
+            window.location.replace("AppModify?refID=" + sRID);
         }
         else if (document.getElementById(id).innerHTML.includes("Free")) {
             window.open("WIP");

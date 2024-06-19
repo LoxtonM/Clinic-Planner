@@ -316,7 +316,6 @@
         {
             //const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
-            
             //window.open("AppModify?sRefID=" + sRID);
             window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
@@ -515,12 +514,13 @@
                                                 if (colDate < today || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))  //past appointments
                                                 {                                                    
                                                     document.getElementById(col.id).classList.add("pastappt");
-                                                    strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
+                                                    
+                                                    strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " +
                                                     apptClinicArray[k] + "</br>" +
                                                     apptOutcomeArray[k] + "</br>" +
-                                                    CGUNoArray[k];// + "</br>R:" +
-                                                    //apptRefIDArray[k].toString();
+                                                    CGUNoArray[k] + "</br><span hidden='true'>R:" +
+                                                    apptRefIDArray[k].toString() + "</span>";
                                                 }
                                                 else //current/future appointments
                                                 {

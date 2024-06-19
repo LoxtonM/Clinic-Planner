@@ -8,7 +8,7 @@ namespace CPTest.Connections
         public IEnumerable<ClinicSlot> GetClinicSlots(DateTime dFrom, DateTime dTo, string? clinician, string? clinic);
         public IEnumerable<ClinicSlot> GetOpenSlots(IEnumerable<ClinicSlot> clinicSlots);
         public IEnumerable<ClinicSlot> GetMatchingSlots(string clinician, string clinic, DateTime slotdate, int starthr, int startmin, int duration);
-        public IEnumerable<ClinicSlot> GetDaySlots(string clinician, string clinic, DateTime slotdate);
+        public IEnumerable<ClinicSlot> GetDaySlots(DateTime slotdate, string? clinician=null, string? clinic=null);
         public ClinicSlot GetSlotDetails(int slotID);
     }
     public class ClinicSlotData : IClinicSlotData
@@ -50,12 +50,23 @@ namespace CPTest.Connections
             return slots;
         }
 
-        public IEnumerable<ClinicSlot> GetDaySlots(string clinician, string clinic, DateTime slotdate)
+        public IEnumerable<ClinicSlot> GetDaySlots(DateTime slotdate, string? clinician = null, string? clinic = null)
         {
-            var slots = _context.ClinicSlots.Where(l => l.SlotDate == slotdate && l.ClinicianID == clinician && l.ClinicID == clinic).ToList();
+            var slots = _context.ClinicSlots.Where(l => l.SlotDate == slotdate);
 
-            return slots;
+            if(clinician != null)
+            {
+                slots = slots.Where(l => l.ClinicianID == clinician);
+            }
+
+            if(clinic != null)
+            {
+                slots = slots.Where(l => l.ClinicID == clinic);
+            }
+
+            return slots.ToList();
         }
+
 
         public ClinicSlot GetSlotDetails(int slotID)
         {
