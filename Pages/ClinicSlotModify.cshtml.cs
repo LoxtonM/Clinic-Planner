@@ -14,6 +14,7 @@ namespace CPTest.Pages
         private readonly IClinicSlotData _slotData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IClinicSlotSqlServices _ss;
+        private readonly IAuditSqlServices _audit;
 
         public ClinicSlotModifyModel(DataContext context, IConfiguration config)
         {
@@ -23,6 +24,7 @@ namespace CPTest.Pages
             _slotData = new ClinicSlotData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _ss = new ClinicSlotSqlServices(_config);
+            _audit = new AuditSqlServices(_config);
         }
 
         public StaffMember staffMember { get; set; }
@@ -44,6 +46,8 @@ namespace CPTest.Pages
                 slot = _slotData.GetSlotDetails(slotID);
                 clinicVenue = _clinicVenueData.GetVenueDetails(slot.ClinicID);
                 staffMember = _staffData.GetStaffDetails(slot.ClinicianID);
+
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Slot Modify", "SlotID=" + sSlotID);
             }
             catch (Exception ex)
             {

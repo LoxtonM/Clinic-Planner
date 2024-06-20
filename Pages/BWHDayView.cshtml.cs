@@ -8,18 +8,22 @@ namespace CPTest.Pages
     public class BWHDayViewModel : PageModel
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAppointmentData _appointmentData;
         private readonly ICliniciansClinicData _cliniciansClinicData;
+        private readonly IAuditSqlServices _audit;
 
-        public BWHDayViewModel(DataContext context)
+        public BWHDayViewModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_context);
+            _audit = new AuditSqlServices(_config);
         }
 
         public IEnumerable<Outcome> outcomes { get; set; }
@@ -77,8 +81,9 @@ namespace CPTest.Pages
                 }                
 
                 clinicList = clinicList.Distinct().ToList();
-                ClinicArray = clinicList.ToArray();                        
-                
+                ClinicArray = clinicList.ToArray();
+
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "BWH Day View", "");
             }
             catch (Exception ex)
             {

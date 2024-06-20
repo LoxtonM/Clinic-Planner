@@ -8,18 +8,22 @@ namespace CPTest.Pages
     public class ClinicDayViewModel : PageModel
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAppointmentData _appointmentData;
         private readonly ICliniciansClinicData _cliniciansClinicData;
+        private readonly IAuditSqlServices _audit;
 
-        public ClinicDayViewModel(DataContext context)
+        public ClinicDayViewModel(DataContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
-            _cliniciansClinicData = new CliniciansClinicData(_context);
+            _cliniciansClinicData = new CliniciansClinicData(_context);            
+            _audit = new AuditSqlServices(_config);
         }
 
         public IEnumerable<Outcome> outcomes { get; set; }
@@ -77,10 +81,10 @@ namespace CPTest.Pages
                 clinicList = clinicList.Distinct().ToList();
                 ClinicArray = clinicList.ToArray();
 
-                
+
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
                 //openSlotList = _dc.GetOpenSlots(clinicSlotList);              
-                
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Day View", "");
             }
             catch (Exception ex)
             {

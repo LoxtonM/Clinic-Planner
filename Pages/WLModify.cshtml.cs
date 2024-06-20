@@ -16,6 +16,7 @@ namespace CPTest.Pages
         private readonly IClinicVenueData _clinicalVenueData;
         private readonly IWaitingListData _waitingListData;        
         private readonly IWaitingListSqlServices _ss;
+        private readonly IAuditSqlServices _audit;
 
         public WLModifyModel(DataContext context, IConfiguration config)
         {
@@ -26,6 +27,7 @@ namespace CPTest.Pages
             _staffData = new StaffData(_context);
             _clinicalVenueData = new ClinicVenueData(_context);
             _waitingListData = new WaitingListData(_context);
+            _audit = new AuditSqlServices(_config);
         }
 
         public Patient patient { get; set; }
@@ -67,6 +69,8 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
+
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Waiting List Modify", "IntID=" + intID.ToString());
             }
             catch (Exception ex)
             {

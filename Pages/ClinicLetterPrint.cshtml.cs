@@ -8,16 +8,20 @@ namespace CPTest.Pages
 {
     public class ClinicLetterPrintModel : PageModel
     {
-        private readonly IDocumentController _doc;
         private readonly DataContext _context;
+        private readonly IDocumentController _doc;        
         private readonly IConfiguration _config;
         private readonly IClinicLetterSqlServices _letter;
+        private readonly IStaffData _staffData;
+        private readonly IAuditSqlServices _audit;
         public ClinicLetterPrintModel(DataContext context, IConfiguration config)
         {
             _context = context;
-            _doc = new DocumentController(_context);
             _config = config;
+            _doc = new DocumentController(_context);
+            _staffData = new StaffData(_context);
             _letter = new ClinicLetterSqlServices(_config);
+            _audit = new AuditSqlServices(_config);
         }
         public void OnGet(int refID, bool isEmailOnly)
         {
@@ -26,8 +30,8 @@ namespace CPTest.Pages
                 if (_doc.ClinicLetter(refID) == 1)
                 {
                     _letter.UpdateClinicLetter(refID, User.Identity.Name);
-                    
-                    Response.Redirect(@Url.Content(@"~/letter.pdf"));                    
+                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString());
+                    Response.Redirect(@Url.Content(@"~/letter.pdf"));
                 }
                 else
                 {

@@ -19,6 +19,7 @@ namespace CPTest.Pages
         private readonly IClinicSlotData _slotData;
         private readonly ICliniciansClinicData _cliniciansClinicData;
         private readonly INotificationData _note;
+        private readonly IAuditSqlServices _audit;
 
         public IndexModel(DataContext context, IConfiguration config)
         {
@@ -31,6 +32,7 @@ namespace CPTest.Pages
             _slotData = new ClinicSlotData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_context);
             _note = new NotificationData(_context);            
+            _audit = new AuditSqlServices(config);
         }
         public IEnumerable<Outcome> outcomes { get; set; }
         public IEnumerable<WaitingList> waitingList { get; set; }
@@ -69,7 +71,7 @@ namespace CPTest.Pages
                     notificationMessage = _note.GetMessage();
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
-                    
+                    _audit.CreateAudit(userStaffCode, "Main Form", "");
                 }
             }
             catch (Exception ex)

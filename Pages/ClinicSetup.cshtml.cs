@@ -15,6 +15,7 @@ namespace CPTest.Pages
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IClinicPatternSqlServices _ssPat;
         private readonly IAdHocClinicSqlServices _ssAdHoc;
+        private readonly IAuditSqlServices _audit;
 
         public ClinicSetupModel(DataContext context, IConfiguration config)
         {
@@ -24,6 +25,7 @@ namespace CPTest.Pages
             _ssAdHoc = new AdHocClinicSqlServices(_context, _config);
             _staffData = new StaffData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
+            _audit = new AuditSqlServices(_config);
         }
         public List<StaffMember> staffMemberList { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }
@@ -38,11 +40,10 @@ namespace CPTest.Pages
                 if (User.Identity.Name is null)
                 {
                     Response.Redirect("Login");
-                }
-                
+                }                
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
-                
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Setup", "");
             }
             catch (Exception ex)
             {
