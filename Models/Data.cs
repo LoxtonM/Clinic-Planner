@@ -109,6 +109,8 @@ namespace CPTest.Models
         //public string? TYPE { get; set; }
         public string? AppType { get; set; }
         public string? Clinician { get; set; }
+        public string? Clinician2 { get; set; }
+        public string? Clinician3 { get; set; }
         public string? Clinic {  get; set; }
         public int ReferralRefID { get; set; }
         public string? LetterPrintedDate { get; set; }

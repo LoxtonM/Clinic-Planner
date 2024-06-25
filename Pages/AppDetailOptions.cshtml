@@ -5,13 +5,37 @@
 
 <div class="container">
     <div class="row mb-5 g-5" class="text-center">
-        <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+        <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.ToString("dd/MM/yyyy")</h1>
     </div>
-
+        
     <div class="row mb-5 g-5">
-        <h2 class="text-center">@Model.staffMember.NAME, @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
-        <h2 class="text-center">@Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+        <h2 class="text-center">To see @Model.appointment.Clinician at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
+        <h2 class="text-center">On the @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
     </div>
+    <br />
+    <br />
+
+    @if (Model.appointment.Clinician2 != null)
+    {
+        <div class="row mb-5 g-5">
+            <div class="row mb-2">
+                <h2 class="text-center">Additional clinicians/observers:</h2>
+            </div>
+            <div class="row mb-2">
+                    <h2 class="text-center">@Model.appointment.Clinician2</h2>
+            </div>
+                @if (Model.appointment.Clinician3 != null)
+                {
+                    <div class="row mb-2">
+                        <h2 class="text-center">@Model.appointment.Clinician3</h2>
+                    </div>
+                }
+        </div>
+    }
+    <br />
+    <br />
+
+
     
     <div class="row mb-5 g-5">        
         <div class="col-md-4 text-center">
