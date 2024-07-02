@@ -8,12 +8,12 @@ namespace CPTest.Pages
     public class PatientNotFoundModel : PageModel
     {
         private readonly IConfiguration _config;
-        private readonly IWaitingListSqlServices _ss;
+        //private readonly IWaitingListSqlServices _ss;
 
         public PatientNotFoundModel(IConfiguration config)
         {
             _config = config;
-            _ss = new WaitingListSqlServices(_config);
+            //_ss = new WaitingListSqlServices(_config);
         }
 
         public int wlIntID { get; set; }
@@ -34,7 +34,7 @@ namespace CPTest.Pages
 
         public void OnPost(int intID, string clinicianID, string clinicID)
         {
-            _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, "", "", "", true);
+            //_ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, "", "", "", true);
 
             Response.Redirect("Index");
         }

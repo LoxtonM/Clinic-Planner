@@ -7,6 +7,7 @@ namespace CPTest.Connections
     interface IAuditSqlServices
     {
         public void CreateAudit(string staffCode, string formName, string searchTerm);
+        public void WriteAuditUpdate(string staffCode, string formName, string recordKey, string tableName, string oldValue, string newValue);
     }
     public class AuditSqlServices : IAuditSqlServices
     {

@@ -17,7 +17,8 @@ namespace CPTest.Connections
         
         public List<Priority> GetPriorityList() 
         {            
-            var prList = _context.Priority.Where(p => p.IsActive == true).OrderBy(p => p.PriorityLevel);
+            IQueryable<Priority> prList = _context.Priority.Where(p => p.IsActive == true).OrderBy(p => p.PriorityLevel);
+            
             return prList.ToList();
         }        
     }

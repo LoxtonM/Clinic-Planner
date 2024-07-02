@@ -61,11 +61,7 @@
                 <label>New clinic:</label>
             </div>
             <div class="col-md-3">
-                <select id="ddlClinic" name="clinicID" asp-for=@Model.clinicVenue.FACILITY>
-                    @*@if (Model.ClinicVenue != null)
-                    {
-                        <option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>
-                    }*@
+                <select id="ddlClinic" name="clinicID" asp-for=@Model.clinicVenue.FACILITY>                   
                     @foreach (var item in Model.clinicVenueList)
                     {
                         <option value=@item.FACILITY>@item.NAME</option>
@@ -73,6 +69,20 @@
                 </select>
             </div>
             <div class="col-md-2"></div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-4">
+                <label>New Priority</label>
+            </div>
+            <div class="col-md-4">
+                <select id="ddlPriority" name="priorityLevel" asp-for=@Model.waitingList.PriorityLevel>
+                    @foreach (var item in Model.priorityList)
+                    {
+                        <option value=@item.PriorityLevel>@item.CLASS</option>
+                    }
+                </select>
+            </div>
+
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-4">
@@ -86,6 +96,7 @@
                 <input type="text" name="mpi" asp-for=@Model.patient.MPI />
                 <input type="text" name="oldClinicianID" asp-for=@Model.staffMember.STAFF_CODE />
                 <input type="text" name="oldClinicID" asp-for=@Model.clinicVenue.FACILITY />
+                <input type="text" name="oldPriorityLevel" asp-for=@Model.waitingList.PriorityLevel />
             </div>
         </div>
         

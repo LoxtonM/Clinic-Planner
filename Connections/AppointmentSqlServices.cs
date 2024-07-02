@@ -41,7 +41,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@MPI", SqlDbType.BigInt).Value = mpi;
             cmd.Parameters.Add("@ApptType", SqlDbType.VarChar).Value = appType;
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
-            cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = sStaffCode;
+            cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;            
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
             cmd.ExecuteNonQuery();
             con.Close();
@@ -66,10 +66,11 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@ApptWith1", SqlDbType.VarChar).Value = appWith1;
             cmd.Parameters.Add("@ApptWith2", SqlDbType.VarChar).Value = appWith2;
             cmd.Parameters.Add("@ApptWith3", SqlDbType.VarChar).Value = appWith3;
-            cmd.Parameters.Add("@ApptLocation", SqlDbType.VarChar).Value = appLocation;            
+            cmd.Parameters.Add("@ApptLocation", SqlDbType.VarChar).Value = appLocation;
             cmd.Parameters.Add("@ApptType", SqlDbType.VarChar).Value = appType;
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
-            cmd.Parameters.Add("@Username", SqlDbType.VarChar).Value = sStaffCode;
+            cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;
+            cmd.Parameters.Add("@MachineName", SqlDbType.VarChar).Value = System.Environment.MachineName;
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
             cmd.Parameters.Add("@cancellation", SqlDbType.VarChar).Value = sCancellation;
             cmd.ExecuteNonQuery();
