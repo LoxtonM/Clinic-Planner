@@ -18,7 +18,7 @@ namespace CPTest.Connections
         
         public List<CliniciansClinics> GetCliniciansClinics(string clinician)
         {
-            var clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == clinician).ToList();
+            List<CliniciansClinics> clinics = _context.CliniciansClinics.Where(c => c.STAFF_CODE == clinician).ToList();
             return clinics;
         }
     }

@@ -6,9 +6,9 @@ namespace CPTest.Connections
     interface IAppointmentData
     {
         public Appointment GetAppointmentDetails(int refID);
-        public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic);
-        public IEnumerable<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician = null , string? clinic = null);
-        public IEnumerable<Appointment> GetAppointmentsForBWH(DateTime clinicDate);
+        public List<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic);
+        public List<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician = null , string? clinic = null);
+        public List<Appointment> GetAppointmentsForBWH(DateTime clinicDate);
     }
     public class AppointmentData : IAppointmentData
     {
@@ -21,55 +21,55 @@ namespace CPTest.Connections
 
         public Appointment GetAppointmentDetails(int refID)
         {
-            var appt = _context.Appointments.FirstOrDefault(a => a.RefID == refID);
+            Appointment appt = _context.Appointments.FirstOrDefault(a => a.RefID == refID);
             return appt;
         }
 
-        public IEnumerable<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic)
+        public List<Appointment> GetAppointments(DateTime dFrom, DateTime dTo, string? clinician, string? clinic)
         {            
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & 
+            IQueryable<Appointment> appts = _context.Appointments.Where(a => a.BOOKED_DATE >= dFrom & 
                     a.BOOKED_DATE <= dTo & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional" 
-                    & a.Attendance != "Cancelled by patient").ToList();
+                    & a.Attendance != "Cancelled by patient");
 
             if (clinician != null)
             {
-                appts = appts.Where(l => l.STAFF_CODE_1 == clinician).ToList();
+                appts = appts.Where(l => l.STAFF_CODE_1 == clinician);
             }
             if (clinic != null)
             {
-                appts = appts.Where(l => l.FACILITY == clinic).ToList();
+                appts = appts.Where(l => l.FACILITY == clinic);
             }
             
-            return appts;
+            return appts.ToList();
         }
 
-        public IEnumerable<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician = null, string? clinic = null)
+        public List<Appointment> GetAppointmentsForADay(DateTime clinicDate, string? clinician = null, string? clinic = null)
         {
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate 
+            IQueryable<Appointment> appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate 
             & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional"
-                    & a.Attendance != "Cancelled by patient").ToList();
+                    & a.Attendance != "Cancelled by patient");
 
             if (clinician != null)
             {
-                appts = appts.Where(l => l.STAFF_CODE_1 == clinician).ToList();
+                appts = appts.Where(l => l.STAFF_CODE_1 == clinician);
             }
             if (clinic != null)
             {
-                appts = appts.Where(l => l.FACILITY == clinic).ToList();
+                appts = appts.Where(l => l.FACILITY == clinic);
             }
             
-            return appts;
+            return appts.ToList();
         }
 
-        public IEnumerable<Appointment> GetAppointmentsForBWH(DateTime clinicDate)
+        public List<Appointment> GetAppointmentsForBWH(DateTime clinicDate)
         {
-            var appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate
+            IQueryable<Appointment> appts = _context.Appointments.Where(a => a.BOOKED_DATE == clinicDate
             & a.Attendance != "Declined" & a.Attendance != "Cancelled by professional"
-                    & a.Attendance != "Cancelled by patient").ToList();
+                    & a.Attendance != "Cancelled by patient");
 
-            appts = appts.Where(l => l.FACILITY.Contains("BWH")).ToList();
+            appts = appts.Where(l => l.FACILITY.Contains("BWH"));
                                  
-            return appts;
+            return appts.ToList();
         }
     }
 }

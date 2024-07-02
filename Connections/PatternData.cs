@@ -24,7 +24,7 @@ namespace CPTest.Connections
         
         public ClinicPattern GetPatternDetails(int patID) 
         {
-            var pat = _context.ClinicPattern.FirstOrDefault(p => p.PatternID == patID);
+            ClinicPattern pat = _context.ClinicPattern.FirstOrDefault(p => p.PatternID == patID);
             return pat;
         }
 
@@ -32,7 +32,7 @@ namespace CPTest.Connections
                 string sMonthofYear, int numSlots, int duration, int startHour, int startMin,
                 DateTime dStartDate, DateTime? dEndDate)
         {
-            var pat = _context.ClinicPattern.FirstOrDefault(p => p.StaffID == clinicianID && p.Clinic == clinicID && p.DyOfWk == dayofWeek &&
+            ClinicPattern pat = _context.ClinicPattern.FirstOrDefault(p => p.StaffID == clinicianID && p.Clinic == clinicID && p.DyOfWk == dayofWeek &&
                     p.WkOfMth == weekofMonth && p.MthOfYr == sMonthofYear && p.NumSlots == numSlots && p.Duration == duration &&
                     p.StartHr == startHour && p.StartMin == startMin && p.startDate == dStartDate && p.endDate == dEndDate);
             return pat;
@@ -40,8 +40,9 @@ namespace CPTest.Connections
 
         public List<ClinicPattern> GetPatternList(string clinID)
         {
-            var patterns = _context.ClinicPattern.Where(p => p.StaffID == clinID).ToList();
-            return patterns;
+            IQueryable<ClinicPattern> patterns = _context.ClinicPattern.Where(p => p.StaffID == clinID);
+            
+            return patterns.ToList();
         }
         
     }

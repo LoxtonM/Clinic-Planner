@@ -18,13 +18,13 @@ namespace CPTest.Connections
 
         public ClinicVenue GetVenueDetails(string ven)
         {
-            var clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == ven);
+            ClinicVenue clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == ven);
             return clin;
         }
 
         public List<ClinicVenue> GetVenueList() 
         {
-            var venuelist = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
+            IQueryable<ClinicVenue> venuelist = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
             return venuelist.ToList();
         }       
     }

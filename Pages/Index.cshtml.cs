@@ -34,16 +34,16 @@ namespace CPTest.Pages
             _note = new NotificationData(_context);            
             _audit = new AuditSqlServices(config);
         }
-        public IEnumerable<Outcome> outcomes { get; set; }
-        public IEnumerable<WaitingList> waitingList { get; set; }
+        public List<Outcome> outcomes { get; set; }
+        public List<WaitingList> waitingList { get; set; }
         public ClinicVenue? clinicVenue { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }
         public StaffMember? staffMember { get; set; }
         public List<StaffMember> staffMemberList { get; set; }
-        public IEnumerable<ClinicSlot> clinicSlotList { get; set; }
-        public IEnumerable<ClinicSlot> openSlotList { get; set; }
-        public IEnumerable<Patient> patientList { get; set; }
-        public IEnumerable<Appointment?> appointmentList { get; set; }
+        public List<ClinicSlot> clinicSlotList { get; set; }
+        public List<ClinicSlot> openSlotList { get; set; }
+        public List<Patient> patientList { get; set; }
+        public List<Appointment?> appointmentList { get; set; }
 
         public string notificationMessage { get; set; }
         public bool isLive { get; set; }

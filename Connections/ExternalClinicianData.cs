@@ -18,7 +18,7 @@ namespace CPTest.Connections
 
         public ExternalClinician GetClinicianDetails(string cCode)
         {
-            var clin = _context.ExternalClinician.FirstOrDefault(s => s.MasterClinicianCode == cCode);
+            ExternalClinician clin = _context.ExternalClinician.FirstOrDefault(s => s.MasterClinicianCode == cCode);
             return clin;
         }        
         

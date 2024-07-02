@@ -21,20 +21,20 @@ namespace CPTest.Connections
                 
         public ClinicsAdded GetAdHocClinicDetails(int id)
         {
-            var adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ID == id);
+            ClinicsAdded adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ID == id);
             return adhoc;
         }
 
         public ClinicsAdded GetAdHocClinicDetailsByData(string clinicianID, string clinicID, int numSlots, int duration, int startHour, int startMin,
                 DateTime clinicDate)
         {
-            var adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ClinicianID == clinicianID && p.ClinicID== clinicID && p.NumSlots == numSlots && 
+            ClinicsAdded adhoc = _context.ClinicsAdded.FirstOrDefault(p => p.ClinicianID == clinicianID && p.ClinicID== clinicID && p.NumSlots == numSlots && 
             p.Duration == duration && p.StartHr == startHour && p.StartMin == startMin && p.ClinicDate == clinicDate);
             return adhoc;
         }
         public List<ClinicsAdded> GetAdHocList(string clinID) 
         {
-            var adhocs = _context.ClinicsAdded.Where(c => c.ClinicianID == clinID).ToList();
+            List<ClinicsAdded> adhocs = _context.ClinicsAdded.Where(c => c.ClinicianID == clinID).ToList();
             return adhocs;
         }
                 

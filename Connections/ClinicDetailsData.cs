@@ -17,7 +17,7 @@ namespace CPTest.Connections
 
         public ClinicDetails GetClinicDetails(string ven)
         {
-            var clin = _context.ClinicDetails.FirstOrDefault(v => v.Facility == ven);
+            ClinicDetails clin = _context.ClinicDetails.FirstOrDefault(v => v.Facility == ven);
             return clin;
         }
 

@@ -18,13 +18,13 @@ namespace CPTest.Connections
        
         public List<Referral> GetReferralsList(int mpi) 
         {
-            var refs = _context.Referrals.Where(r => r.MPI == mpi & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate).ToList();
-            return refs;
+            IQueryable<Referral> refs = _context.Referrals.Where(r => r.MPI == mpi & r.logicaldelete == false & r.COMPLETE == "Active").OrderBy(r => r.RefDate);
+            return refs.ToList();
         }
 
         public Referral GetReferralDetails(int refID)
         {
-            var referral = _context.Referrals.FirstOrDefault(r => r.RefID == refID);
+            Referral referral = _context.Referrals.FirstOrDefault(r => r.RefID == refID);
             return referral;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using CPTest.Data;
+using CPTest.Models;
 
 
 namespace CPTest.Connections
@@ -21,7 +22,7 @@ namespace CPTest.Connections
         {
             string message = ""; 
 
-            var messageNotifications = _context.Notifications.Where(n => n.MessageCode == "CPOutage" && n.IsActive == true);
+            IQueryable<Notifications> messageNotifications = _context.Notifications.Where(n => n.MessageCode == "CPOutage" && n.IsActive == true);
 
             if (messageNotifications.Count() > 0) 
             { 

@@ -1,4 +1,5 @@
 ﻿using CPTest.Data;
+using CPTest.Models;
 
 namespace CPTest.Connections
 {
@@ -16,7 +17,7 @@ namespace CPTest.Connections
         
         public string GetConstantValue(string constantCode)
         {
-            var cnst = _context.Constants.FirstOrDefault(c => c.ConstantCode.Contains(constantCode));
+            Constants cnst = _context.Constants.FirstOrDefault(c => c.ConstantCode.Contains(constantCode));
             //We must use "contains" because half of the constant codes have trailing spaces for some reason!
             return cnst.ConstantValue;
         }

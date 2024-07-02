@@ -20,18 +20,18 @@ namespace CPTest.Connections
 
         public Patient GetPatientDetails(int mpi)
         {
-            var pt = _context.Patients.FirstOrDefault(p => p.MPI == mpi);            
+            Patient pt = _context.Patients.FirstOrDefault(p => p.MPI == mpi);            
             return pt;
         }
         public Patient GetPatientDetailsByIntID(int intID)
         {
-            var pt = _context.Patients.FirstOrDefault(p => p.INTID == intID);           
+            Patient pt = _context.Patients.FirstOrDefault(p => p.INTID == intID);           
             return pt;
         }
 
         public Patient GetPatientDetailsByCGUNo(string cguNo)
         {
-            var pt = _context.Patients.FirstOrDefault(p => p.CGU_No == cguNo);
+            Patient pt = _context.Patients.FirstOrDefault(p => p.CGU_No == cguNo);
             return pt;
         }
 

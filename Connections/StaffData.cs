@@ -20,19 +20,19 @@ namespace CPTest.Connections
 
         public StaffMember GetStaffDetails(string clin)
         {
-            var staff = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == clin);
+            StaffMember staff = _context.StaffMembers.FirstOrDefault(s => s.STAFF_CODE == clin);
             return staff;
         }
 
         public StaffMember GetStaffDetailsByUsername(string username)
         {
-            var staff = _context.StaffMembers.FirstOrDefault(s => s.EMPLOYEE_NUMBER == username);
+            StaffMember staff = _context.StaffMembers.FirstOrDefault(s => s.EMPLOYEE_NUMBER == username);
             return staff;
         }
 
         public List<StaffMember> GetStaffMemberList() 
         {            
-            var stafflist = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
+            IQueryable<StaffMember> stafflist = _context.StaffMembers.Where(s => s.InPost == true & s.Clinical == true).OrderBy(s => s.NAME);
             return stafflist.ToList();
         }
 

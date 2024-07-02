@@ -17,7 +17,7 @@ namespace CPTest.Connections
        
         public List<AppType> GetAppTypeList()
         {
-            var at = _context.AppType.Where(t => t.NON_ACTIVE == 0 & t.ISAPPT == true).ToList();
+            List<AppType> at = _context.AppType.Where(t => t.NON_ACTIVE == 0 & t.ISAPPT == true).ToList();
             return at;
         }
     }

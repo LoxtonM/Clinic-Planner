@@ -6,8 +6,8 @@ namespace CPTest.Connections
 {
     interface IWaitingListData
     {
-        public IEnumerable<WaitingList> GetWaitingList(string? clinician, string? clinic);
-        public IEnumerable<WaitingList> GetWaitingListByCGUNo(string searchTerm);
+        public List<WaitingList> GetWaitingList(string? clinician, string? clinic);
+        public List<WaitingList> GetWaitingListByCGUNo(string searchTerm);
         public WaitingList GetWaitingListEntry(int intID, string clinicianID, string clinicID);
     }
     public class WaitingListData : IWaitingListData
@@ -19,25 +19,26 @@ namespace CPTest.Connections
         }
        
 
-        public IEnumerable<WaitingList> GetWaitingList(string? clinician, string? clinic)
+        public List<WaitingList> GetWaitingList(string? clinician, string? clinic)
         {
-            List<WaitingList> wl = _context.WaitingList.ToList();
+            IQueryable<WaitingList> wl = _context.WaitingList;
 
             if (clinician != null)
             {
-                wl = wl.Where(l => l.ClinicianID == clinician).ToList();
+                wl = wl.Where(l => l.ClinicianID == clinician);
             }
             if (clinic != null)
             {
-                wl = wl.Where(l => l.ClinicID == clinic).ToList();
+                wl = wl.Where(l => l.ClinicID == clinic);
             }
-            return wl.OrderBy(l => l.PriorityLevel).ThenBy(l => l.AddedDate);
+            return wl.OrderBy(l => l.PriorityLevel).ThenBy(l => l.AddedDate).ToList();
         }
 
-        public IEnumerable<WaitingList> GetWaitingListByCGUNo(string searchTerm)
+        public List<WaitingList> GetWaitingListByCGUNo(string searchTerm)
         {
             IQueryable<WaitingList> wl = _context.WaitingList.Where(w => w.CGU_No.Contains(searchTerm));                       
-            return wl.OrderBy(l => l.AddedDate);
+            
+            return wl.OrderBy(l => l.AddedDate).ToList();
         }
         
         public WaitingList GetWaitingListEntry(int intID, string clinicianID, string clinicID)

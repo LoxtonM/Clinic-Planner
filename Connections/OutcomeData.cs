@@ -17,8 +17,9 @@ namespace CPTest.Connections
        
         public List<Outcome> GetOutcomeList() 
         {
-            var oc = _context.Outcomes.Where(o => o.DEFAULT_CLINIC_STATUS == "Active").ToList();
-            return oc;
+            IQueryable<Outcome> oc = _context.Outcomes.Where(o => o.DEFAULT_CLINIC_STATUS == "Active");
+
+            return oc.ToList();
         }
     }
 }
