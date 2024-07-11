@@ -51,7 +51,10 @@ namespace CPTest.Pages
                 if (cgu != null)
                 {                    
                     Patient = _patientData.GetPatientDetailsByCGUNo(cgu);
-                    referralList = _referralData.GetReferralsList(Patient.MPI);
+                    if (Patient == null)
+                    {                        
+                        Response.Redirect("CGUNumberNotFound");
+                    }
                 }
             }
             catch (Exception ex)
@@ -68,7 +71,7 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 priorityList = _priorityData.GetPriorityList();
                 string username = User.Identity.Name;
-                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE; //todo: change when login screen available
+                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
 
                 _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode, priorityLevel, linkedRef);
 

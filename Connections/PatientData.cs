@@ -7,8 +7,8 @@ namespace CPTest.Connections
     {
         public Patient GetPatientDetails(int mpi);
         public Patient GetPatientDetailsByIntID(int intID);
-
         public Patient GetPatientDetailsByCGUNo(string cguNo);
+        public List<Patient> GetFamilyMembers(int mpi);
     }
     public class PatientData : IPatientData
     { 
@@ -33,6 +33,13 @@ namespace CPTest.Connections
         {
             Patient pt = _context.Patients.FirstOrDefault(p => p.CGU_No == cguNo);
             return pt;
+        }
+
+        public List<Patient> GetFamilyMembers(int mpi)
+        {
+            Patient patient = _context.Patients.FirstOrDefault(p => p.MPI == mpi);
+            IQueryable<Patient> pts = _context.Patients.Where(p => p.PEDNO == patient.PEDNO & p.MPI != patient.MPI).OrderBy(p => p.MPI);
+            return pts.ToList();
         }
 
     }

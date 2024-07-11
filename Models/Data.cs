@@ -143,6 +143,7 @@ namespace CPTest.Models
         public string? LASTNAME { get; set; }
         public string? PtAKA { get; set; }
         public string? CGU_No { get; set; }
+        public string PEDNO { get; set; }
         public string PtLetterAddressee {  get; set; }
         public string SALUTATION { get; set; }
         public string ADDRESS1 { get; set; }

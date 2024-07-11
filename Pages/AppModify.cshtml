@@ -60,7 +60,18 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-6"></div>
+            <div class="col-md-2">
+                <label>Additional Family Members:</label>
+            </div>
+            <div class="col-md-2">
+                <select name="famMPI">
+                    <option value="">Select...</option>
+                    @foreach(var f in Model.familyMembers)
+                    {
+                        <option value=@f.MPI>@f.CGU_No - @f.FIRSTNAME @f.LASTNAME</option>
+                    }
+                </select>
+            </div>
             <div class="col-md-2">
                 <select name="appType" asp-for=@Model.appointment.AppType>
                     @foreach (var t in Model.appTypeList)

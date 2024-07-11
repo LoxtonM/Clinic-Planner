@@ -9,7 +9,7 @@ namespace CPTest.Connections
         public void CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation);        
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI);        
     }
     public class AppointmentSqlServices : IAppointmentSqlServices
 {
@@ -47,7 +47,7 @@ namespace CPTest.Connections
             con.Close();
         }
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation)
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
 
@@ -73,6 +73,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@MachineName", SqlDbType.VarChar).Value = System.Environment.MachineName;
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
             cmd.Parameters.Add("@cancellation", SqlDbType.VarChar).Value = sCancellation;
+            cmd.Parameters.Add("@famMPI", SqlDbType.Int).Value = famMPI;
             cmd.ExecuteNonQuery();
             con.Close();
         }
