@@ -519,7 +519,7 @@
                                                     apptClinicianArray[k] + "</br> " +
                                                     apptClinicArray[k] + "</br>" +
                                                     apptOutcomeArray[k] + "</br>" +
-                                                    CGUNoArray[k] + "</br><span hidden='true'>R:" +
+                                                    "Family: " + CGUNoArray[k].slice(0, CGUNoArray[k].indexOf('.')) + "</br><span hidden='true'>R:" +
                                                     apptRefIDArray[k].toString() + "</span>";
                                                 }
                                                 else //current/future appointments
@@ -530,10 +530,10 @@
                                                     apptClinicianArray[k] + "</br> " + 
                                                     apptClinicArray[k] + "</br>" + 
                                                     ClinicLetterDateArray[k] + "</br>" +
-                                                    CGUNoArray[k] + "</br><span hidden='true'>R:" +
+                                                    "Family: " + CGUNoArray[k].slice(0, CGUNoArray[k].indexOf('.')) + "</br><span hidden='true'>R:" +
                                                     apptRefIDArray[k].toString() + "</span>";
                                                 }
-                                                document.getElementById(col.id).innerHTML = strApptDetail;
+                                                document.getElementById(col.id).innerHTML = strApptDetail;                                                
                                             }
                                         }
                                     }

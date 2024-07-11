@@ -33,6 +33,7 @@ namespace CPTest.Pages
 
         public Patient patient { get; set; }
         public List<Patient> familyMembers { get; set; }
+        public List<Patient> patientsList { get; set; }
         public StaffMember staffMember { get; set; }
         public List<StaffMember> staffMemberList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
@@ -40,6 +41,7 @@ namespace CPTest.Pages
         public List<Outcome> outcomeList { get; set; }
         public List<AppType> appTypeList { get; set; }
         public Appointment appointment { get; set; }
+        public List<Appointment> appointmentsList { get; set; }
 
         
         public void OnGet(int refID)
@@ -61,6 +63,21 @@ namespace CPTest.Pages
                 outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
                 appTypeList = _appTypeData.GetAppTypeList();
                 familyMembers = _patientData.GetFamilyMembers(mpi);
+                appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                patientsList = new List<Patient>();
+                
+                if (appointmentsList.Count > 1)
+                {
+                    foreach (Appointment a in appointmentsList)
+                    {
+                        Patient p = _patientData.GetPatientDetails(a.MPI);
+                        if (p.MPI != patient.MPI)
+                        {
+                            patientsList.Add(p);
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {

@@ -4,21 +4,28 @@
 }
 <div class="container">
     <div class="row mb-5 g-5">
-        <h1 class="text-center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+        <h1 class="text-center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME (@Model.patient.CGU_No)</h1>
+        @if(Model.patientsList.Count > 0)
+        {
+            @foreach(var p in Model.patientsList)
+            {
+                <h1 class="text-center">@p.FIRSTNAME @p.LASTNAME (@p.CGU_No)</h1>
+            }
+        }
     </div>
     
     <div class="row mb-5 g-5">
-        <h2 class="text-center">@Model.staffMember.NAME, @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
-        <h2 class="text-center">@Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+        <h2 class="text-center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
+        <h2 class="text-center">On @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
     </div>
     
     <form method="post">
         <div class="row mb-5 g-5">
             <div class="col-md-2">
-                <label>Modify appointment location/clinician:</label>
+                <label class="w-100">Modify appointment location/clinician:</label>
             </div>
             <div class="col-md-3">
-                <select name="AppWith1" id="ddlClinician" asp-for=@Model.staffMember.STAFF_CODE>
+                <select name="AppWith1" id="ddlClinician" asp-for=@Model.staffMember.STAFF_CODE class="w-100">
                    @*<option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>*@
                     @foreach (var item in Model.staffMemberList)
                     {
@@ -28,7 +35,7 @@
             </div>
             <div class="col-md-2"></div>
             <div class="col-md-3">
-                <select name="AppLocation" id="ddlClinic" asp-for=@Model.clinicVenue.FACILITY>
+                <select name="AppLocation" id="ddlClinic" asp-for=@Model.clinicVenue.FACILITY class="w-100">
                     @*<option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>*@
                     @foreach (var item in Model.clinicVenueList)
                     {
@@ -39,10 +46,10 @@
             <div class="col-md-2"></div>
         </div>
         <div class="row mb-5 g-5">
-            <div class="col-md-2">Additional Clinicians:</div>
+            <div class="col-md-2"><label class="w-100">Additional Clinicians:</label></div>
             <div class="col-md-2">
                 <div class="row">
-                    <select name="appWith2" asp-for=@Model.appointment.STAFF_CODE_2>
+                    <select name="appWith2" asp-for=@Model.appointment.STAFF_CODE_2 class="w-100">
                         <option selected value=""></option>
                         @foreach (var s in Model.staffMemberList)
                         {
@@ -51,7 +58,7 @@
                     </select>
                 </div>
                 <div class="row">
-                    <select name="appWith3" asp-for=@Model.appointment.STAFF_CODE_3>
+                    <select name="appWith3" asp-for=@Model.appointment.STAFF_CODE_3 class="w-100">
                         <option selected value=""></option>
                         @foreach (var s in Model.staffMemberList)
                         {
@@ -60,20 +67,28 @@
                     </select>
                 </div>
             </div>
+            @if(Model.patientsList.Count > 0)
+            {
+                <div class="col-md-2">
+                    <label class="w-100">Additional Family Members:</label>
+                </div>
+                <div class="col-md-2">
+                    <select name="famMPI" class="w-100">
+                        <option value="">Select...</option>
+                        @foreach(var f in Model.familyMembers)
+                        {
+                            <option value=@f.MPI>@f.CGU_No - @f.FIRSTNAME @f.LASTNAME</option>
+                        }
+                    </select>                
+                </div>
+            }
+            else
+            {
+                <div class="col-md-4"></div>
+            }
+            <div class="col-md-2">Type:</div>
             <div class="col-md-2">
-                <label>Additional Family Members:</label>
-            </div>
-            <div class="col-md-2">
-                <select name="famMPI">
-                    <option value="">Select...</option>
-                    @foreach(var f in Model.familyMembers)
-                    {
-                        <option value=@f.MPI>@f.CGU_No - @f.FIRSTNAME @f.LASTNAME</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="appType" asp-for=@Model.appointment.AppType>
+                <select name="appType" asp-for=@Model.appointment.AppType class="w-100">
                     @foreach (var t in Model.appTypeList)
                     {
                         <option value=@t.APP_TYPE>@t.APP_TYPE</option>

@@ -30,6 +30,8 @@ namespace CPTest.Pages
         public Patient patient { get; set; }
         public StaffMember staffMember { get; set; }        
         public Appointment appointment { get; set; }
+        public List<Appointment> appointmentsList { get; set; }
+        public List<Patient> patientsList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int refID { get; set; }
 
@@ -48,6 +50,21 @@ namespace CPTest.Pages
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
                 patient = _patientData.GetPatientDetails(appointment.MPI);
                 clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                patientsList = new List<Patient>();
+
+                if (appointmentsList.Count > 1)
+                {
+                    foreach (Appointment a in appointmentsList)
+                    {
+                        Patient p = _patientData.GetPatientDetails(a.MPI);
+                        if (p.MPI != patient.MPI)
+                        {
+                            patientsList.Add(p);
+                        }
+                    }
+                }
+
                 _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Appt Details", "RefID=" + sRefID);
             }
             catch (Exception ex)
