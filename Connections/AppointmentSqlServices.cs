@@ -6,7 +6,7 @@ namespace CPTest.Connections
 {
     interface IAppointmentSqlServices
     { 
-        public void CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
+        public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI);        
@@ -18,7 +18,7 @@ namespace CPTest.Connections
         {
             _config = config;
         }        
-        public void CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation, 
+        public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation, 
             int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
@@ -43,8 +43,13 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
             cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;            
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
+            var returnValue = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int); //return success or not
+            returnValue.Direction = ParameterDirection.ReturnValue;
             cmd.ExecuteNonQuery();
+            var iReturnValue = (int)returnValue.Value;
             con.Close();
+
+            return iReturnValue;
         }
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI)

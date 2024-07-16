@@ -102,6 +102,20 @@ namespace CPTest.Pages
                 outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
                 appTypeList = _appTypeData.GetAppTypeList();
                 familyMembers = _patientData.GetFamilyMembers(mpi);
+                appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                patientsList = new List<Patient>();
+
+                if (appointmentsList.Count > 1)
+                {
+                    foreach (Appointment a in appointmentsList)
+                    {
+                        Patient p = _patientData.GetPatientDetails(a.MPI);
+                        if (p.MPI != patient.MPI)
+                        {
+                            patientsList.Add(p);
+                        }
+                    }
+                }
 
                 string sNewTime = dNewTime.Hour.ToString() + ":" + dNewTime.Minute.ToString(); //for some reason, I can't just convert the time to a string!!!
                 string sUser = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;

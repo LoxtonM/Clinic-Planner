@@ -115,8 +115,12 @@ namespace CPTest.Pages
 
                 linkedRefList = _referralData.GetReferralsList(mpi);
 
-                _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions);
-                
+                int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions);
+                if (success == 0)
+                {
+                    Response.Redirect("Error?sError=Update failed");
+                }
+
                 Response.Redirect("Index");
             }
             catch (Exception ex)
