@@ -67,7 +67,7 @@
         if (document.getElementById(id).innerHTML.includes("Booked")) 
         {
             const str = document.getElementById(id).innerHTML;
-            const sRID = str.slice(str.indexOf('R:') + 2);
+            const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
             //window.location.replace("AppModify?refID=" + sRID);
             window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
@@ -88,7 +88,8 @@
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
-        var CGUNoArray = [];
+        var pedNoArray = [];
+        var pedNameArray = [];
 
         const today = new Date();
         const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -104,9 +105,10 @@
                 @:apptDurationArray.push("@item.Duration");
                 @:apptClinicArray.push("@item.FACILITY");
                 @:apptClinicianArray.push("@item.STAFF_CODE_1");
-                @:CGUNoArray.push("@item.CGU_No");
+                @:pedNoArray.push("@item.FamilyNumber");
                 @:apptOutcomeArray.push("@item.Attendance");
                 @:apptRefIDArray.push("@item.RefID");
+                @:pedNameArray.push("@item.FamilyName");
             }
         }
    
@@ -140,8 +142,8 @@
                                                 apptClinicianArray[k] + "</br> " +
                                                 apptClinicArray[k] + "</br>" +
                                                 //apptOutcomeArray[k] + "</br>R:" +
-                                                CGUNoArray[k] + "</br>R:" +
-                                                apptRefIDArray[k].toString();                                                
+                                                pedNoArray[k] + " (" + pedNameArray[k] + ")" + "</br><span hidden='true'>R:" +
+                                                apptRefIDArray[k].toString() + "</span>";
                                                 document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }

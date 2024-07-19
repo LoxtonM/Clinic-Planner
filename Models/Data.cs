@@ -96,6 +96,8 @@ namespace CPTest.Models
         public int RefID { get; set; }
         public int MPI { get; set; }
         public string? CGU_No { get; set; }
+        public string? FamilyName { get; set; }
+        public string FamilyNumber { get; set; }
         public DateTime? BOOKED_DATE { get; set; }
         public DateTime? BOOKED_TIME { get; set; }
         public string? STAFF_CODE_1 { get; set; }
