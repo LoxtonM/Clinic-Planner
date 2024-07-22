@@ -116,6 +116,8 @@ namespace CPTest.Models
         public string? Clinic {  get; set; }
         public int ReferralRefID { get; set; }
         public string? LetterPrintedDate { get; set; }
+        public string? PrimaryLanguage { get; set; }        
+        public bool? IsInterpreterReqd { get; set; }
     }
 
     [Table("ViewPatientReferralDetails", Schema = "dbo")]

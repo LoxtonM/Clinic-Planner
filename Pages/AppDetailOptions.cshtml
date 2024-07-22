@@ -23,6 +23,15 @@
     <br />
     <br />
 
+    @if(Model.appointment.IsInterpreterReqd.GetValueOrDefault())
+    {
+        <div class="row mb-5 g-5">
+            <div class="row mb-2">
+                <h2 class="text-center">A @Model.appointment.PrimaryLanguage interpreter is required for this appointment.</h2>
+            </div>
+        </div>
+    }
+
     @if (Model.appointment.Clinician2 != null)
     {
         <div class="row mb-5 g-5">
