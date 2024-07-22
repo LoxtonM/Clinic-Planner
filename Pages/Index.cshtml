@@ -374,6 +374,7 @@
         var pedNoArray = [];       
         var ClinicLetterDateArray = [];
         var pedNameArray = [];
+        var alertArray = [];
         
         const today = new Date();
         //const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -411,7 +412,15 @@
                 @:apptRefIDArray.push("@item.RefID");   
                 @:ClinicLetterDateArray.push("@item.LetterPrintedDate");
                 @:pedNameArray.push("@item.FamilyName");
-            }
+                if(@item.ActiveAlerts)
+                {
+                    @:alertArray.push("Alerts in effect");
+                }
+                else
+                {
+                    @:alertArray.push(null);
+                }
+        }
         }
 
         //Display all the existing clinic slots
@@ -529,9 +538,14 @@
                                                     
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " + 
-                                                    apptClinicArray[k] + "</br>" + 
+                                                    apptClinicArray[k] + "</br>" +                                                    
                                                     ClinicLetterDateArray[k] + "</br>" +
-                                                    "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")</br><span hidden='true'>R:" +
+                                                    "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")";
+                                                    if(alertArray[k] != null)
+                                                    {
+                                                        strApptDetail = strApptDetail + "</br>" + alertArray[k];
+                                                    }
+                                                    strApptDetail = strApptDetail + "</br><span hidden='true'>R:" +
                                                     apptRefIDArray[k].toString() + "</span>";
                                                 }
                                                 document.getElementById(col.id).innerHTML = strApptDetail;                                                

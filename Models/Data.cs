@@ -29,7 +29,7 @@ namespace CPTest.Models
         public DateTime? AddedDate { get; set; }
         public int? Duration { get; set; }
         public int PriorityLevel { get; set; }
-        public string Priority { get; set; } 
+        public string Priority { get; set; }
     }
 
     [Table("ViewClinicSlots", Schema = "dbo")]
@@ -47,8 +47,8 @@ namespace CPTest.Models
         public DateTime SlotTime { get; set; }
         public int duration { get; set; }
         public int StartHr { get; set; }
-        public int StartMin {  get; set; }
-        public string Clinician {  get; set; }
+        public int StartMin { get; set; }
+        public string Clinician { get; set; }
         public string Facility { get; set; }
     }
 
@@ -75,7 +75,7 @@ namespace CPTest.Models
     }
 
     [Table("STAFF", Schema = "dbo")]
-    public class  StaffMember
+    public class StaffMember
     {
         [Key]
         public string STAFF_CODE { get; set; }
@@ -113,11 +113,12 @@ namespace CPTest.Models
         public string? Clinician { get; set; }
         public string? Clinician2 { get; set; }
         public string? Clinician3 { get; set; }
-        public string? Clinic {  get; set; }
+        public string? Clinic { get; set; }
         public int ReferralRefID { get; set; }
         public string? LetterPrintedDate { get; set; }
-        public string? PrimaryLanguage { get; set; }        
+        public string? PrimaryLanguage { get; set; }
         public bool? IsInterpreterReqd { get; set; }
+        public bool ActiveAlerts { get; set; }
     }
 
     [Table("ViewPatientReferralDetails", Schema = "dbo")]
@@ -129,12 +130,12 @@ namespace CPTest.Models
         public string? RefType { get; set; }
         public DateTime RefDate { get; set; }
         public string? COMPLETE { get; set; }
-        public string? ReferringClinician {  get; set; }
+        public string? ReferringClinician { get; set; }
         public string? ReferrerCode { get; set; }
         public string? ReferringFacility { get; set; }
         public bool logicaldelete { get; set; }
         public string? LeadClinician { get; set; }
-        public string? GC {  get; set; }
+        public string? GC { get; set; }
     }
 
     [Table("ViewPatientDemographicDetails", Schema = "dbo")]
@@ -148,19 +149,19 @@ namespace CPTest.Models
         public string? PtAKA { get; set; }
         public string? CGU_No { get; set; }
         public string PEDNO { get; set; }
-        public string PtLetterAddressee {  get; set; }
+        public string PtLetterAddressee { get; set; }
         public string SALUTATION { get; set; }
         public string ADDRESS1 { get; set; }
         public string? ADDRESS2 { get; set; }
         public string? ADDRESS3 { get; set; }
         public string? ADDRESS4 { get; set; }
-        public string POSTCODE {  get; set; }
+        public string POSTCODE { get; set; }
         public string SOCIAL_SECURITY { get; set; }
-        public DateTime DOB {  get; set; }
+        public DateTime DOB { get; set; }
         public string PrimaryLanguage { get; set; }
         public string IsInterpreterReqd { get; set; }
-        public string? Ethnic {  get; set; }
-        public string? GP {  get; set; }
+        public string? Ethnic { get; set; }
+        public string? GP { get; set; }
         public string? GP_CODE { get; set; }
         public string? GP_Facility { get; set; }
         public string? GP_Facility_Code { get; set; }
@@ -199,8 +200,8 @@ namespace CPTest.Models
         public string? MthOfYr { get; set; }
         public int NumSlots { get; set; }
         public int StartHr { get; set; }
-        public int StartMin {  get; set; }
-        public int Duration {  get; set; }
+        public int StartMin { get; set; }
+        public int Duration { get; set; }
         public int EndHr { get; set; }
         public int EndMin { get; set; }
         public DateTime? startDate { get; set; }
@@ -241,6 +242,18 @@ namespace CPTest.Models
         public string? TelNo { get; set; }
         public string? Initials { get; set; }
         public string? Secretary { get; set; }
+    }
+
+    [Table("Alerts", Schema = "dbo")]
+    public class Alerts
+    {
+        [Key]
+        public int AlertID { get; set; }
+        public int MPI {  get; set; }
+        public string AlertType { get; set; }
+        public DateTime EffectiveFromDate { get; set; }
+        public DateTime? EffectiveToDate { get; set; }
+        public string? Comments { get; set; }
     }
 
     [Table("ListDates", Schema = "dbo")]

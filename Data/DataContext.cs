@@ -26,5 +26,6 @@ namespace CPTest.Data
         public DbSet<DocumentsContent> DocumentsContent { get; set; }
         public DbSet<ExternalClinician> ExternalClinician { get; set; }
         public DbSet<ClinicDetails> ClinicDetails { get; set; }
+        public DbSet<Alerts> Alerts { get; set; }
     }
 }

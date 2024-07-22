@@ -23,15 +23,7 @@
     <br />
     <br />
 
-    @if(Model.appointment.IsInterpreterReqd.GetValueOrDefault())
-    {
-        <div class="row mb-5 g-5">
-            <div class="row mb-2">
-                <h2 class="text-center">A @Model.appointment.PrimaryLanguage interpreter is required for this appointment.</h2>
-            </div>
-        </div>
-    }
-
+   
     @if (Model.appointment.Clinician2 != null)
     {
         <div class="row mb-5 g-5">
@@ -48,11 +40,37 @@
                     </div>
                 }
         </div>
+        <br />
+        <br />
+    }
+    
+
+    @if (Model.appointment.IsInterpreterReqd.GetValueOrDefault())
+    {
+        <div class="row mb-5 g-5">
+            <div class="row mb-2">
+                <h2 class="text-center">A @Model.appointment.PrimaryLanguage interpreter is required for this appointment.</h2>
+            </div>
+        </div>
+        <br />
+        <br />
+    }
+    
+
+    @if (Model.appointment.ActiveAlerts)
+    {
+        <div class="row mb-5 g-5">
+            @foreach (var a in Model.alertsList)
+            {
+                <div class="row mb-2">
+                    <h2 class="text-center redtext">Patient Alert: @a.AlertType - @a.Comments</h2>
+                </div>
+                <br />
+            }
+        </div>
     }
     <br />
     <br />
-
-
     
     <div class="row mb-5 g-5">        
         <div class="col-md-4 text-center">

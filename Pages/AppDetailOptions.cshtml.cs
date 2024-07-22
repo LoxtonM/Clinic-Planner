@@ -14,6 +14,7 @@ namespace CPTest.Pages
         private readonly IPatientData _patientData;
         private readonly IAppointmentData _appointmentData;
         private readonly IClinicVenueData _clinicVenueData;
+        private readonly IAlertsData _alertData;
         private readonly IAuditSqlServices _audit;
 
         public AppDetailOptionsModel(DataContext context, IConfiguration config)
@@ -24,6 +25,7 @@ namespace CPTest.Pages
             _patientData = new PatientData(_context);            
             _appointmentData = new AppointmentData(_context);
             _clinicVenueData = new ClinicVenueData(_context);
+            _alertData = new AlertsData(_context);
             _audit = new AuditSqlServices(_config);
         }
 
@@ -32,6 +34,7 @@ namespace CPTest.Pages
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
         public List<Patient> patientsList { get; set; }
+        public List<Alerts> alertsList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int refID { get; set; }
 
@@ -52,6 +55,7 @@ namespace CPTest.Pages
                 clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
                 appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
                 patientsList = new List<Patient>();
+                alertsList = _alertData.GetAlerts(patient.MPI);
 
                 if (appointmentsList.Count > 1)
                 {
