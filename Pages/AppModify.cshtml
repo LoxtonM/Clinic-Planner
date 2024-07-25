@@ -67,7 +67,7 @@
                     </select>
                 </div>
             </div>
-            @if(Model.patientsList.Count > 0)
+            @if(Model.familyMembersList.Count > 0)
             {
                 <div class="col-md-2">
                     <label class="w-100">Additional Family Members:</label>
@@ -75,7 +75,7 @@
                 <div class="col-md-2">
                     <select name="famMPI" class="w-100">
                         <option value="">Select...</option>
-                        @foreach(var f in Model.familyMembers)
+                        @foreach(var f in Model.familyMembersList)
                         {
                             <option value=@f.MPI>@f.CGU_No - @f.FIRSTNAME @f.LASTNAME</option>
                         }
@@ -118,7 +118,7 @@
             <div class="col-md-1">
                 <input type="checkbox" class="form-check-input" id="chkCancelAppt" onclick="ShowCancelMenu()" />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <select id="ddlCancelAppt" name="sCancel" hidden=true>
                     <option selected value=""></option>
                     @foreach (var o in Model.outcomeList)
@@ -126,6 +126,13 @@
                         <option value=@o.CLINIC_OUTCOME>@o.CLINIC_OUTCOME</option>
                     }
                 </select>
+            </div>
+            <div class="col-md-2">
+                <label id="lblReturnToWL" hidden="true">Return to Waiting List:</label>
+            </div>
+            <div class="col-md-3">
+                <input type="checkbox" class="form-check-input" id="chkReturnWL" onclick="ReturnToWLTick()" hidden="true" />
+                <input type="text" id="txtReturnToWL" name="isReturnToWL" hidden="true" />
             </div>
         </div>
 
@@ -170,11 +177,20 @@
         if (document.getElementById("chkCancelAppt").checked) 
         {
             document.getElementById("ddlCancelAppt").hidden = false;
+            document.getElementById("lblReturnToWL").hidden = false;
+            document.getElementById("chkReturnWL").hidden = false;
         }
         else 
         {
             document.getElementById("ddlCancelAppt").hidden = true;
+            document.getElementById("lblReturnToWL").hidden = true;
+            document.getElementById("chkReturnWL").hidden = true;
         }
+    }
+
+    function ReturnToWLTick()
+    {
+        document.getElementById("txtReturnToWL").value = document.getElementById("chkReturnWL").checked;
     }
  
 </script>

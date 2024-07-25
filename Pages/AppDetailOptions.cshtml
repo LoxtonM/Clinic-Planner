@@ -4,6 +4,8 @@
 }
 
 <div class="container">
+    @if(Model.patient.MPI != 67066)
+    {
     <div class="row" class="text-center">
         <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.ToString("dd/MM/yyyy") (@Model.patient.CGU_No)</h1>
     </div>
@@ -85,7 +87,8 @@
         <div class="col-md-4 text-center">
             <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
         </div>        
-    </div>    
+    </div> 
+    }
 </div>
 
 <script>

@@ -1,7 +1,6 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
@@ -28,7 +27,6 @@ namespace CPTest.Pages
             _alertData = new AlertsData(_context);
             _audit = new AuditSqlServices(_config);
         }
-
         public Patient patient { get; set; }
         public StaffMember staffMember { get; set; }        
         public Appointment appointment { get; set; }
@@ -48,27 +46,38 @@ namespace CPTest.Pages
                 }
                 
                 refID = Int32.Parse(sRefID);
+                patientsList = new List<Patient>();                
 
-                appointment = _appointmentData.GetAppointmentDetails(refID);
-                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
-                patient = _patientData.GetPatientDetails(appointment.MPI);
-                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
-                appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
-                patientsList = new List<Patient>();
-                alertsList = _alertData.GetAlerts(patient.MPI);
-
-                if (appointmentsList.Count > 1)
+                if (refID == 0) //to catch those instances where the "booked" slot doesn't match an appointment
                 {
-                    foreach (Appointment a in appointmentsList)
+                    patient = _patientData.GetPatientDetails(67066);    //and obviously it can't just redirect it, it has to resolve the entire page first!!!
+                    appointmentsList = new List<Appointment>();         //So we have to give it junk data and use the page to resolve the if condition.
+                    alertsList = new List<Alerts>();
+                    Response.Redirect("Error?sError=Appointment not found - you may have clicked on a slot instead. Appointments should be blue or purple, " +
+                        "and slots should be green. If you see a red slot, it shouldn't be there, please note the S: number and report it to the IT team.");
+                }
+                else
+                {
+                    appointment = _appointmentData.GetAppointmentDetails(refID);
+                    staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
+                    patient = _patientData.GetPatientDetails(appointment.MPI);
+                    clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                    appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                    
+                    alertsList = _alertData.GetAlerts(patient.MPI);
+
+                    if (appointmentsList.Count > 1)
                     {
-                        Patient p = _patientData.GetPatientDetails(a.MPI);
-                        if (p.MPI != patient.MPI)
+                        foreach (Appointment a in appointmentsList)
                         {
-                            patientsList.Add(p);
+                            Patient p = _patientData.GetPatientDetails(a.MPI);
+                            if (p.MPI != patient.MPI)
+                            {
+                                patientsList.Add(p);
+                            }
                         }
                     }
                 }
-
                 _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Appt Details", "RefID=" + sRefID);
             }
             catch (Exception ex)

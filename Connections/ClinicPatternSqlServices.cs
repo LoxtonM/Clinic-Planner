@@ -59,7 +59,7 @@ namespace CPTest.Connections
             con.Close();
 
             int patternID = _patternData.GetPatternDetailsByData(clinicianID, clinicID, dayofWeek, weekofMonth, sMonthofYear, numSlots, duration,
-                startHour, startMin, dStartDate, dEndDate).PatternID;
+                startHour, startMin, dStartDate).PatternID;
 
             _csc.SetupClinicPattern(patternID, clinicianID, clinicID, dayofWeek, weekofMonth, sMonthofYear, numSlots, duration, startHour, 
                 startMin, dStartDate, dEndDate, username); 

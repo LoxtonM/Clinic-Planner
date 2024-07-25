@@ -317,6 +317,7 @@
             //const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
             //window.open("AppModify?sRefID=" + sRID);
+
             window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
         else if (str.includes("Free") || str.includes("Reserved") || str.includes("Unavailable"))
@@ -395,7 +396,7 @@
                 //@:pednumArray.push("@item.PedNum");
                 @:slotIDArray.push("@item.SlotID");
                 //we need to create the arrays like this because we can't access the data otherwise
-            }
+            }            
         }
             
         @if (Model.appointmentList != null) //then set up all the appointments
@@ -451,8 +452,7 @@
                                 const myDate = new Date(dateArray[k].substring(6, 10) + "-" + dateArray[k].substring(3, 5) + "-" + dateArray[k].substring(0, 2) + "T00:00:00");
                                 //because JS has a weird way of storing dates, we need to get the two dates in the right format so we can compare
                                 if(myDate.valueOf() == colDate.valueOf())
-                                {
-                                
+                                {                                
                                     for (var l = 0; l < timeArray.length; l++)
                                     {                                        
                                         const myTime = timeArray[k].substring(11, 16);
@@ -467,7 +467,7 @@
                                             else
                                             {
                                                 if (statusArray[k] == "Open") //for available slots
-                                                {                                                
+                                                {                                                    
                                                     document.getElementById(col.id).classList.add("freeslot");
                                                     strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + 
                                                     clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
@@ -478,11 +478,17 @@
                                                     strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" +
                                                         clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
-                                                else //for unavailable slots
-                                                {                                                   
+                                                else if (statusArray[k] == "Booked")
+                                                {
                                                     document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
+                                                        clinicArray[k] + "</br>" + "S:" + slotIDArray[k] + "</br>" + "<span hidden='true'>R:0</span>";
+                                                }
+                                                else //for unavailable slots
+                                                {                                                     
+                                                    document.getElementById(col.id).classList.add("unavailslot");
+                                                    strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
+                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";                                                        
                                                 }
                                             }
                                             document.getElementById(col.id).innerHTML = strSlotDetail;

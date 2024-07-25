@@ -9,7 +9,7 @@ namespace CPTest.Connections
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI);        
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL);        
     }
     public class AppointmentSqlServices : IAppointmentSqlServices
 {
@@ -52,7 +52,7 @@ namespace CPTest.Connections
             return iReturnValue;
         }
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI)
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
 
@@ -60,6 +60,8 @@ namespace CPTest.Connections
             if (appWith3 == null) { appWith3 = ""; }
             if (sInstructions == null) { sInstructions = ""; }
             if (sCancellation == null) { sCancellation = ""; }
+            int returnToWL = 0;
+            if (isReturnToWL) { returnToWL = 1; }
 
             SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
             con.Open();
@@ -79,6 +81,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
             cmd.Parameters.Add("@cancellation", SqlDbType.VarChar).Value = sCancellation;
             cmd.Parameters.Add("@famMPI", SqlDbType.Int).Value = famMPI;
+            cmd.Parameters.Add("@returnToWL", SqlDbType.Int).Value = returnToWL;
             cmd.ExecuteNonQuery();
             con.Close();
         }

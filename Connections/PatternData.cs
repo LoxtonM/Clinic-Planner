@@ -11,7 +11,7 @@ namespace CPTest.Connections
 
         public ClinicPattern GetPatternDetailsByData(string clinicianID, string clinicID, int dayofWeek, int weekofMonth,
                 string sMonthofYear, int numSlots, int duration, int startHour, int startMin,
-                DateTime dStartDate, DateTime? dEndDate);
+                DateTime dStartDate);
     }
     public class PatternData : IPatternData
     {
@@ -30,11 +30,11 @@ namespace CPTest.Connections
 
         public ClinicPattern GetPatternDetailsByData(string clinicianID, string clinicID, int dayofWeek, int weekofMonth,
                 string sMonthofYear, int numSlots, int duration, int startHour, int startMin,
-                DateTime dStartDate, DateTime? dEndDate)
+                DateTime dStartDate)
         {
             ClinicPattern pat = _context.ClinicPattern.FirstOrDefault(p => p.StaffID == clinicianID && p.Clinic == clinicID && p.DyOfWk == dayofWeek &&
                     p.WkOfMth == weekofMonth && p.MthOfYr == sMonthofYear && p.NumSlots == numSlots && p.Duration == duration &&
-                    p.StartHr == startHour && p.StartMin == startMin && p.startDate == dStartDate && p.endDate == dEndDate);
+                    p.StartHr == startHour && p.StartMin == startMin && p.startDate == dStartDate);
             return pat;
         }
 

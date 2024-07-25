@@ -150,7 +150,7 @@ namespace CPTest.Models
         public string? CGU_No { get; set; }
         public string PEDNO { get; set; }
         public string PtLetterAddressee { get; set; }
-        public string SALUTATION { get; set; }
+        public string? SALUTATION { get; set; }
         public string ADDRESS1 { get; set; }
         public string? ADDRESS2 { get; set; }
         public string? ADDRESS3 { get; set; }
