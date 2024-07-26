@@ -18,6 +18,12 @@
         <h2 class="text-center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
         <h2 class="text-center">On @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
     </div>
+    @if (Model.patientsList.Count > 0)
+    {
+        <div class="row mb-5 g-5">
+            <h3 class="text-center redtext">Note: this will change the appointment for all family members booked into this slot.</h3>        
+        </div>
+    }
     
     <form method="post">
         <div class="row mb-5 g-5">
