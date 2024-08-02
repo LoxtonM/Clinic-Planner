@@ -80,8 +80,8 @@ namespace CPTest.Connections
             Appointment appt = _context.Appointments.FirstOrDefault(a => a.RefID == refID);
 
             IQueryable<Appointment> appts = _context.Appointments.Where(a => a.BOOKED_DATE == appt.BOOKED_DATE & a.BOOKED_TIME == appt.BOOKED_TIME &
-            a.STAFF_CODE_1 == appt.STAFF_CODE_1 & a.FACILITY == appt.FACILITY & appt.Attendance == "NOT RECORDED").OrderBy(a => a.RefID);
-
+            a.STAFF_CODE_1 == appt.STAFF_CODE_1 & a.FACILITY == appt.FACILITY & a.Attendance == "NOT RECORDED").OrderBy(a => a.RefID);
+            
             return appts.ToList();
         }
     }
