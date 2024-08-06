@@ -11,6 +11,12 @@
     <br />
     <br />
     <form method="post">
+        <div id="metaData">
+            <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateString />
+            <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSelected />
+            <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSelected />
+        </div>
+
         <div class="row mb-5 g-5" hidden="true">
             <input name="slotID" value=@Model.slotID />
         </div>
@@ -74,8 +80,20 @@
 
     function GoBack() 
     {
-        //window.close();
-        window.location.replace("Index");
+        const wcDateString = document.getElementById("txtWcDate").value;
+        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        const clinicSelected = document.getElementById("txtClinicSelected").value;
+        const wcDate = Date.parse(wcDateString);
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
     }
 
     function ShowDetails() 

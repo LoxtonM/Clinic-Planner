@@ -20,6 +20,7 @@ namespace CPTest.Pages
         private readonly ICliniciansClinicData _cliniciansClinicData;
         private readonly INotificationData _note;
         private readonly IAuditSqlServices _audit;
+        private readonly INationalHolidayData _hols;
 
         public IndexModel(DataContext context, IConfiguration config)
         {
@@ -32,6 +33,7 @@ namespace CPTest.Pages
             _slotData = new ClinicSlotData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_context);
             _note = new NotificationData(_context);            
+            _hols = new NationalHolidayData(_context);
             _audit = new AuditSqlServices(config);
         }
         public List<Outcome> outcomes { get; set; }
@@ -44,6 +46,7 @@ namespace CPTest.Pages
         public List<ClinicSlot> openSlotList { get; set; }
         public List<Patient> patientList { get; set; }
         public List<Appointment?> appointmentList { get; set; }
+        public List<NationalHolidays> holidays { get; set; }
 
         public string notificationMessage { get; set; }
         public bool isLive { get; set; }
@@ -68,6 +71,7 @@ namespace CPTest.Pages
                 }
                 else
                 {
+                    holidays = _hols.GetNationalHolidays();
                     notificationMessage = _note.GetMessage();
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);

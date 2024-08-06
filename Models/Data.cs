@@ -30,6 +30,7 @@ namespace CPTest.Models
         public int? Duration { get; set; }
         public int PriorityLevel { get; set; }
         public string Priority { get; set; }
+        public string? Comment { get; set; }
     }
 
     [Table("ViewClinicSlots", Schema = "dbo")]
@@ -104,11 +105,8 @@ namespace CPTest.Models
         public string? STAFF_CODE_2 { get; set; }
         public string? STAFF_CODE_3 { get; set; }
         public string? FACILITY { get; set; }
-        //public Int16? EST_DURATION_MINS { get; set; }
         public Int16? Duration { get; set; }
-        //public string? COUNSELED { get; set; }
         public string? Attendance { get; set; }
-        //public string? TYPE { get; set; }
         public string? AppType { get; set; }
         public string? Clinician { get; set; }
         public string? Clinician2 { get; set; }
@@ -119,6 +117,8 @@ namespace CPTest.Models
         public string? PrimaryLanguage { get; set; }
         public bool? IsInterpreterReqd { get; set; }
         public bool ActiveAlerts { get; set; }
+        public string? PatientInstructions { get; set; }
+        public string? ClinicInstructions { get; set; }
     }
 
     [Table("ViewPatientReferralDetails", Schema = "dbo")]

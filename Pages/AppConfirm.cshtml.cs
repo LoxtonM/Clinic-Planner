@@ -42,9 +42,12 @@ namespace CPTest.Pages
         public string? appDateString;
         public string? appTimeString;
         public string? appTypeDef;
+        public string? wcDateString;
+        public string? clinicianSelected;
+        public string? clinicSelected;
         
         //public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
-        public void OnGet(string intIDString, string slotIDString)
+        public void OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -99,7 +102,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type)
+        public void OnPost(int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -121,7 +124,11 @@ namespace CPTest.Pages
                     Response.Redirect("Error?sError=Update failed");
                 }
 
-                Response.Redirect("Index");
+                string returnUrl = "Index?wcDt=" + wcDateString;
+                if (clinicianSelected != null) { returnUrl = returnUrl + $"&clinician={clinicianSelected}"; }
+                if (clinicSelected != null) { returnUrl = returnUrl + $"&clinic={clinicSelected}"; }
+
+                Response.Redirect(returnUrl);
             }
             catch (Exception ex)
             {

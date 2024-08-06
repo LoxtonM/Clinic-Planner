@@ -90,8 +90,6 @@ namespace CPTest.Pages
         {
             try
             {
-                
-
                 if (clinicianID != null)
                 {
                     staffMember = _staffData.GetStaffDetails(clinicianID);

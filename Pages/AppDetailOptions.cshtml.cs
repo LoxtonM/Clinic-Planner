@@ -35,8 +35,11 @@ namespace CPTest.Pages
         public List<Alerts> alertsList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int refID { get; set; }
+        public string? wcDateString;
+        public string? clinicianSelected;
+        public string? clinicSelected;
 
-        public void OnGet(string sRefID)
+        public void OnGet(string sRefID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {

@@ -31,8 +31,11 @@ namespace CPTest.Pages
         public ClinicSlot slot { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int slotID { get; set; }
+        public string? wcDateString;
+        public string? clinicianSelected;
+        public string? clinicSelected;
 
-        public void OnGet(string sSlotID)
+        public void OnGet(string sSlotID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -55,7 +58,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int slotID, string sAction, string? detail = "", bool? isApplyClinic=false)
+        public void OnPost(int slotID, string sAction, string? wcDateString, string? clinicianSelected, string? clinicSelected, string? detail = "", bool? isApplyClinic=false)
         {
             try
             {
@@ -91,7 +94,11 @@ namespace CPTest.Pages
                     }
                 }
 
-                Response.Redirect("Index");
+                string returnUrl = "Index?wcDt=" + wcDateString;
+                if (clinicianSelected != null) { returnUrl = returnUrl + $"&clinician={clinicianSelected}"; }
+                if (clinicSelected != null) { returnUrl = returnUrl + $"&clinic={clinicSelected}"; }
+
+                Response.Redirect(returnUrl);
             }
             catch (Exception ex)
             {

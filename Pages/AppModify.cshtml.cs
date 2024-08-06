@@ -43,9 +43,11 @@ namespace CPTest.Pages
         public List<AppType> appTypeList { get; set; }
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
+        public string? wcDateString;
+        public string? clinicianSelected;
+        public string? clinicSelected;
 
-        
-        public void OnGet(int refID)
+        public void OnGet(int refID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -97,7 +99,7 @@ namespace CPTest.Pages
         }
 
         public void OnPost(int refID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sInstructions, string sCancel, int? famMPI = 0, bool? isReturnToWL = false)
+            string appType, int duration, string sInstructions, string sCancel, string? wcDateString, string? clinicianSelected, string? clinicSelected, int? famMPI = 0, bool? isReturnToWL = false)
         {
             try
             {                
@@ -122,7 +124,11 @@ namespace CPTest.Pages
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, duration, sUser, sInstructions, sCancel, famMPI.GetValueOrDefault(), isReturnToWL.GetValueOrDefault());
 
-                Response.Redirect("Index");
+                string returnUrl = "Index?wcDt=" + wcDateString;
+                if (clinicianSelected != null) { returnUrl = returnUrl + $"&clinician={clinicianSelected}"; }
+                if (clinicSelected != null) { returnUrl = returnUrl + $"&clinic={clinicSelected}"; }
+
+                Response.Redirect(returnUrl);
             }
             catch (Exception ex)
             {

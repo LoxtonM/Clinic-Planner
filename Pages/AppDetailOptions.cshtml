@@ -6,6 +6,12 @@
 <div class="container">
     @if(Model.patient.MPI != 67066) @*this is necessary to deal with the null problem - it has to resolve the whole website before it can redirect it.*@
     {                               @*So I have to give it Freddie as a default patient, and not render the rest of the website in this case.*@
+        <div id="metaData" hidden="true">
+            <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateString />
+            <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSelected />
+            <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSelected />
+        </div>
+        
         <div class="row" class="text-center">
             <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.ToString("dd/MM/yyyy") (@Model.patient.CGU_No)</h1>
         </div>
@@ -24,7 +30,7 @@
         </div>
         <br />
         <br />
-   
+
         @if (Model.appointment.Clinician2 != null)
         {
             <div class="row mb-5 g-5">
@@ -70,6 +76,18 @@
         }
         <br />
         <br />
+
+        @if (Model.appointment.PatientInstructions != null)
+        {
+            <div class="row mb-5 g-5">
+                <div class="row mb-2">
+                    <h3 class="text-center">Patient Instructions: @Model.appointment.PatientInstructions</h3>
+                </div>                
+            </div>
+        }
+        <br />
+        <br />
+
     
         <div class="row mb-5 g-5">        
             <div class="col-md-4 text-center">
@@ -79,13 +97,14 @@
                     DateTime.Now.TimeOfDay <= Model.appointment.BOOKED_TIME.Value.TimeOfDay))
             {
                 <div class="col-md-4 text-center">
-                    <a type="button" id="btnModify" class="btn btn-success" asp-page="AppModify" asp-route-refID=@Model.refID>Modify Appointment</a>
+                    @*<a type="button" id="btnModify" class="btn btn-success" asp-page="AppModify" asp-route-refID=@Model.refID asp-route-wcDateString=@Model.wcDateString asp-route-clinicianSelected=@Model.clinicianSelected asp-route-clinicSelected=@Model.clinicSelected>Modify Appointment</a>*@
+                    <button type="button" id="btnModify" class="btn btn-success">Modify Appointment</button>
                 </div>
             }
             else @*Disable the "modify" button if it's a past appointment*@
             {
                 <div class="col-md-4 text-center">
-                    <button type="button" id="btnModify" class="btn btn-success" disabled="true">Modify Appointment</button>
+                    <button type="button" class="btn btn-success" disabled="true">Modify Appointment</button>
                 </div>
             }
 
@@ -99,12 +118,43 @@
 <script>
     
     document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.getElementById("btnModify").addEventListener("click", ModifyAppt);
     document.onload(HideMenu());
         
     function GoBack() 
     {
         //window.close();
-        window.location.replace("Index");
+        const wcDateString = document.getElementById("txtWcDate").value;
+        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        const clinicSelected = document.getElementById("txtClinicSelected").value;
+        const wcDate = Date.parse(wcDateString);
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+    function ModifyAppt()
+    {
+        const wcDateString = document.getElementById("txtWcDate").value;
+        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        const clinicSelected = document.getElementById("txtClinicSelected").value;        
+        var returnUrl = "AppModify?refID=@Model.refID&wcDateString=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinicianSelected=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinicSelected=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
     }
 
     function HideMenu() 

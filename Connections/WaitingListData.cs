@@ -1,6 +1,5 @@
 ﻿using CPTest.Data;
 using CPTest.Models;
-using System.Data.Entity.Core.Mapping;
 
 namespace CPTest.Connections
 {
@@ -18,7 +17,6 @@ namespace CPTest.Connections
             _context = context;
         }
        
-
         public List<WaitingList> GetWaitingList(string? clinician, string? clinic)
         {
             IQueryable<WaitingList> wl = _context.WaitingList;
@@ -43,7 +41,16 @@ namespace CPTest.Connections
         
         public WaitingList GetWaitingListEntry(int intID, string clinicianID, string clinicID)
         {
-            WaitingList waitingList = _context.WaitingList.FirstOrDefault(w => w.IntID == intID && w.ClinicID == clinicID && w.ClinicianID == clinicianID);
+            WaitingList waitingList;
+
+            if (clinicID != null) //because of course there are nulls. Why would there not be nulls?
+            {
+                waitingList = _context.WaitingList.FirstOrDefault(w => w.IntID == intID && w.ClinicID == clinicID && w.ClinicianID == clinicianID);
+            }
+            else
+            {
+                waitingList = _context.WaitingList.FirstOrDefault(w => w.IntID == intID && w.ClinicID == "" && w.ClinicianID == clinicianID);
+            }
 
             return waitingList;
         }

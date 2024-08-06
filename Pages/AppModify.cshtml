@@ -26,6 +26,13 @@
     }
     
     <form method="post">
+
+        <div id="metaData" hidden="true">
+            <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateString />
+            <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSelected />
+            <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSelected />
+        </div>
+
         <div class="row mb-5 g-5">
             <div class="col-md-2">
                 <label class="w-100">Modify appointment location/clinician:</label>
@@ -116,6 +123,15 @@
                 <input type="text" class="w-50" name="duration" asp-for=@Model.appointment.Duration/>
             </div>
         </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Instructions to Patient:</label>
+            </div>
+            <div class="col-md-4">
+                <textarea name="sInstructions" asp-for=@Model.appointment.PatientInstructions></textarea>
+            </div>
+        </div>
+
 
         <div class="row mb-5 g-5">
             <div class="col-md-2">
@@ -169,7 +185,20 @@
     function GoBack()
     {
         //window.close();
-        window.location.replace("Index");
+        const wcDateString = document.getElementById("txtWcDate").value;
+        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        const clinicSelected = document.getElementById("txtClinicSelected").value;
+        const wcDate = Date.parse(wcDateString);
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
     }
 
     function HideMenu()

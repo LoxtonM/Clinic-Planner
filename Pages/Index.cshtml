@@ -16,7 +16,7 @@
         <h1 class="text-center redtext">@Model.notificationMessage</h1>
     }
 
-    <div class="row mb-5 g-5"> @*Header only - appears if clinician and/or clinic selected*@
+    <div class="row mb-5 g-5"> @*Header - only appears if clinician and/or clinic selected*@
         <div class="col-md-2" id="holding"></div>
         @if (Model.clinicVenue != null)
         {
@@ -128,20 +128,20 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row waitinglistitem" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        <div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
                             @if(@item.Priority == "Urgent")
                             {
                                 <div class="redalert">@item.Priority</div>
                             }
-                            <div>@item.CGU_No</div>
-                            <div>@item.FIRSTNAME @item.LASTNAME</div>                            
+                            <div>@item.CGU_No - @item.FIRSTNAME @item.LASTNAME</div>                            
                             <div>@item.ClinicianName</div>
                             <div>@item.ClinicName (@item.ClinicID)</div>
                             @if (item.Duration != null)
                             {
                                 <div>Duration: @item.Duration mins</div>
                             }
-                            <div>Added: @item.AddedDate.Value.ToString("dd/MM/yyyy")</div>
+                            <div>@item.Comment</div>
+                            @*<div>Added: @item.AddedDate.Value.ToString("dd/MM/yyyy")</div>*@
                         </div>
                     }
                 }
@@ -239,8 +239,11 @@
         const slotID = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('S:') + 2, ev.target.innerHTML.length - 7);
 
         if (ev.target.innerHTML.includes("Free"))
-        {            
-            window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
+        {
+            const wcDateString= document.getElementById("wcDate").value;
+            const clinicianSelected = document.getElementById("ddlClinician").value;
+            const clinicSelected = document.getElementById("ddlClinic").value;
+            window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
             //document.getElementById("ClinicForm").submit();
         }
         if (ev.target.innerHTML.includes("Reserved"))
@@ -294,11 +297,7 @@
         if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved") || (ev.currentTarget.innerHTML.includes("For ") && ev.currentTarget.innerHTML.includes(" only")))
         {
             ev.currentTarget.classList.remove("selecteditem");            
-        }
-        //else if (ev.currentTarget.innerHTML.includes("Reserved")) 
-       // {
-       //     ev.currentTarget.classList.remove("selecteditem");            
-       // }
+        }        
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
@@ -310,21 +309,24 @@
 
     function OnDoubleClickAP(id)
     {
+        const wcDateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
         //window.alert(id);
         const str = document.getElementById(id).innerHTML;
         if (str.includes("Booked"))
-        {
+        {            
             //const str = document.getElementById(id).innerHTML;
             const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
             //window.open("AppModify?sRefID=" + sRID);
 
-            window.location.replace("AppDetailOptions?sRefID=" + sRID);
+            window.location.replace("AppDetailOptions?sRefID=" + sRID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
         }
         else if (str.includes("Free") || str.includes("Reserved") || str.includes("Unavailable"))
         {
             const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
             //window.alert(sSID);
-            window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
+            window.location.replace("ClinicSlotModify?sSlotID=" + sSID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
         }
         else if (str.includes("For ") && str.includes(" only"))
         {            
@@ -338,7 +340,7 @@
             else 
             {
                 const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
-                window.location.replace("ClinicSlotModify?sSlotID=" + sSID);
+                window.location.replace("ClinicSlotModify?sSlotID=" + sSID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
             }
         }
 
@@ -376,6 +378,7 @@
         var ClinicLetterDateArray = [];
         var pedNameArray = [];
         var alertArray = [];
+        var nationalHolidayArray = [];
         
         const today = new Date();
         //const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -421,8 +424,17 @@
                 {
                     @:alertArray.push(null);
                 }
+            }
         }
+
+        @if(Model.holidays != null)
+        {
+            @foreach (var item in Model.holidays)
+            {
+                @:nationalHolidayArray.push("@item.HolidayDate");
+            }
         }
+
 
         //Display all the existing clinic slots
         if(dateArray.length == 0 && timeArray.length == 0)
@@ -563,9 +575,42 @@
                         }
                     }
                 }
-            }
-            
+            }            
         }
+
+        //Now block out all of the national holidays
+        if (nationalHolidayArray.length != 0) 
+        {            
+            for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+            {
+                if (i > 0) 
+                {
+                    for (var j = 0, col; col = row.cells[j]; j++) 
+                    {
+                        if (j > 0) 
+                        {
+                            var theDate = col.id.substring(0, 10);                            
+                            
+                            const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
+
+                            for (var k = 0; k < nationalHolidayArray.length; k++) 
+                            {
+                                const myDate = new Date(nationalHolidayArray[k].substring(6, 10) + "-" + nationalHolidayArray[k].substring(3, 5) + "-" + nationalHolidayArray[k].substring(0, 2) + "T00:00:00");
+                                //window.alert(myDate);
+                                if (myDate.valueOf() == colDate.valueOf()) 
+                                {
+                                    document.getElementById(col.id).classList.add("unavailslot");
+                                                    
+                                    strApptDetail = "National Holiday</br>"
+                                                document.getElementById(col.id).innerHTML = strApptDetail;                                                
+                                }                            
+                            }
+                        }
+                    }
+               }
+            }            
+        }
+
         
         //finally, hide all empty rows        
         for (var i = 0, row; row = cMatrix.rows[i]; i++) 

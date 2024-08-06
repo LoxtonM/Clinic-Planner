@@ -14,6 +14,12 @@
         <h1 class="text-center">This patient does not exist.</h1>
     }
 
+    <div id="metaData" hidden="true">
+        <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateString />
+        <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSelected />
+        <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSelected />
+    </div>
+
     <form id="ApptForm" method="post">
         <div class="row mb-5 g-5">
             @if(@Model.staffMember != null)
@@ -114,9 +120,22 @@
     }
 
     function GoBack()
-    {
+    {        
         //window.close();
-        window.location.replace("Index");
+        const wcDateString = document.getElementById("txtWcDate").value;
+        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        const clinicSelected = document.getElementById("txtClinicSelected").value;
+        const wcDate = Date.parse(wcDateString);
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if(clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
     }
 
     function HideMenu()
