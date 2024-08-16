@@ -1,6 +1,7 @@
 using CPTest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Login/UserLogin";
     });
+
+var directoryInfo = new DirectoryInfo(@"C:\Websites\Authentication");
+builder.Services.AddDataProtection()
+	.PersistKeysToFileSystem(directoryInfo)
+	.SetApplicationName("GeneticsWebAppHome");
+
+builder.Services.ConfigureApplicationCookie(options => {
+	options.Cookie.Name = ".AspNet.SharedCookie";
+	options.Cookie.Path = "/";
+});
+
 builder.Services.AddRazorPages();
 builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("secrets.json");
 var app = builder.Build();
