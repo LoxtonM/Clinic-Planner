@@ -35,9 +35,9 @@ namespace CPTest.Pages
         public List<Alerts> alertsList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int refID { get; set; }
-        public string? wcDateString;
-        public string? clinicianSelected;
-        public string? clinicSelected;
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
 
         public void OnGet(string sRefID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
@@ -49,7 +49,11 @@ namespace CPTest.Pages
                 }
                 
                 refID = Int32.Parse(sRefID);
-                patientsList = new List<Patient>();                
+                patientsList = new List<Patient>(); 
+                
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
 
                 if (refID == 0) //to catch those instances where the "booked" slot doesn't match an appointment
                 {

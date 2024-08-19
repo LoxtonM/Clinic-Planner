@@ -5,12 +5,7 @@
 
 <div class="container">
     @if(Model.patient.MPI != 67066) @*this is necessary to deal with the null problem - it has to resolve the whole website before it can redirect it.*@
-    {                               @*So I have to give it Freddie as a default patient, and not render the rest of the website in this case.*@
-        <div id="metaData" hidden="true">
-            <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateString />
-            <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSelected />
-            <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSelected />
-        </div>
+    {                               @*So I have to give it Freddie as a default patient, and not render the rest of the website in this case.*@        
         
         <div class="row" class="text-center">
             <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.ToString("dd/MM/yyyy") (@Model.patient.CGU_No)</h1>
@@ -123,11 +118,10 @@
         
     function GoBack() 
     {
-        //window.close();
-        const wcDateString = document.getElementById("txtWcDate").value;
-        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
-        const clinicSelected = document.getElementById("txtClinicSelected").value;
-        const wcDate = Date.parse(wcDateString);
+        
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
         var returnUrl = "Index?wcDt=" + wcDateString;
         if (clinicianSelected != null)
         {
@@ -142,9 +136,12 @@
 
     function ModifyAppt()
     {
-        const wcDateString = document.getElementById("txtWcDate").value;
-        const clinicianSelected = document.getElementById("txtClinicianSelected").value;
-        const clinicSelected = document.getElementById("txtClinicSelected").value;        
+        //const wcDateString = document.getElementById("txtWcDate").value;
+        //const clinicianSelected = document.getElementById("txtClinicianSelected").value;
+        //const clinicSelected = document.getElementById("txtClinicSelected").value;  
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
         var returnUrl = "AppModify?refID=@Model.refID&wcDateString=" + wcDateString;
         if (clinicianSelected != null)
         {

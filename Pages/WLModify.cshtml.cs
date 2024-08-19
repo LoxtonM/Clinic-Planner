@@ -39,9 +39,13 @@ namespace CPTest.Pages
         public List<ClinicVenue> clinicVenueList { get; set; }     
         public WaitingList waitingList { get; set; }
         public List<Priority> priorityList { get; set; }
-
         
-        public void OnGet(int intID, string clinicID, string clinicianID)
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
+
+
+        public void OnGet(int intID, string clinicID, string clinicianID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -49,6 +53,10 @@ namespace CPTest.Pages
                 {
                     Response.Redirect("Login");
                 }
+
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
 
                 waitingList = _waitingListData.GetWaitingListEntry(intID, clinicianID, clinicID);
 

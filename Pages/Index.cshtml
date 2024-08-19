@@ -303,8 +303,11 @@
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     function OnDoubleClickWL(intID, clinicID, clinicianID)
     {
+        const wcDateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
         //window.open("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
-        window.location.replace("WLModify?intid=" + intID + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
+        window.location.replace("WLModify?intid=" + intID + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
     }
 
     function OnDoubleClickAP(id)

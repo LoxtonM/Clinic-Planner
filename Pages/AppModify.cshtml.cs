@@ -43,9 +43,9 @@ namespace CPTest.Pages
         public List<AppType> appTypeList { get; set; }
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
-        public string? wcDateString;
-        public string? clinicianSelected;
-        public string? clinicSelected;
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
 
         public void OnGet(int refID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
@@ -70,6 +70,10 @@ namespace CPTest.Pages
                 patientsList = new List<Patient>();
                 familyMembers = _patientData.GetFamilyMembers(mpi);
                 familyMembersList = new List<Patient>(); //we have to build the list first and add to it, we can't remove from an existing list
+
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
 
                 if (appointmentsList.Count > 1)
                 {

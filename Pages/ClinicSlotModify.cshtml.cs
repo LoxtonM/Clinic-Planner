@@ -31,9 +31,9 @@ namespace CPTest.Pages
         public ClinicSlot slot { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int slotID { get; set; }
-        public string? wcDateString;
-        public string? clinicianSelected;
-        public string? clinicSelected;
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
 
         public void OnGet(string sSlotID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
@@ -45,6 +45,10 @@ namespace CPTest.Pages
                 }
 
                 slotID = Int32.Parse(sSlotID);
+
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
 
                 slot = _slotData.GetSlotDetails(slotID);
                 clinicVenue = _clinicVenueData.GetVenueDetails(slot.ClinicID);

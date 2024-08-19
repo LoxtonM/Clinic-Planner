@@ -42,9 +42,9 @@ namespace CPTest.Pages
         public string? appDateString;
         public string? appTimeString;
         public string? appTypeDef;
-        public string? wcDateString;
-        public string? clinicianSelected;
-        public string? clinicSelected;
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
         
         //public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
         public void OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
@@ -60,6 +60,10 @@ namespace CPTest.Pages
                 int slotID = Int32.Parse(slotIDString);
                 int mpi = 0;
                 
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
+
                 ClinicSlot slot = _clinicSlotData.GetSlotDetails(slotID);
 
                 string clin = slot.ClinicianID;

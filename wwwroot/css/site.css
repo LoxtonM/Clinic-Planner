@@ -39,30 +39,30 @@ body {
 
 .freeslot {
     background-color: green !important;
-    color: whitesmoke;
+    color: whitesmoke !important;
 }
 
 .unavailslot {
     background-color: firebrick !important;
-    color: whitesmoke;
+    color: whitesmoke !important;
 }
 
 .reservedslot {
     background-color: orange !important;
-    color: whitesmoke;
+    color: whitesmoke !important;
 }
 
 .pastappt {
     background-color: purple !important;
-    color: whitesmoke;
+    color: whitesmoke !important;
 }
 
 .currentappt {
     background-color: blue !important;
-    color: whitesmoke;
+    color: whitesmoke !important;
 }
 
 .selecteditem {
     background-color: yellow !important;
-    color: black;
+    color: black !important;
 }
