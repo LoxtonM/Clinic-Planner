@@ -3,6 +3,7 @@ using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Web;
 
 namespace CPTest.Pages
 {
@@ -94,7 +95,8 @@ namespace CPTest.Pages
             }
         }    
         
-        public void OnPost(int mpi, string clinicianID, string clinicID, string oldClinicianID, string oldClinicID, int priorityLevel, int oldPriorityLevel, bool isRemoval)
+        public void OnPost(int mpi, string clinicianID, string clinicID, string oldClinicianID, string oldClinicID, int priorityLevel, int oldPriorityLevel, 
+            bool isRemoval, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -114,9 +116,7 @@ namespace CPTest.Pages
                 }                
 
                 string sStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
-                int intID = patient.INTID;
-
-                waitingList = _waitingListData.GetWaitingListEntry(intID, clinicianID, clinicID);
+                int intID = patient.INTID;                
 
                 priorityList = _priority.GetPriorityList();
 
@@ -125,9 +125,18 @@ namespace CPTest.Pages
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
                 _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, priorityLevel, oldClinicianID, oldClinicID, oldPriorityLevel, sStaffCode, isRemoval);
-                               
 
-                Response.Redirect("Index");
+                waitingList = _waitingListData.GetWaitingListEntry(intID, clinicianID, clinicID);
+
+                wcDateStr = HttpUtility.UrlEncode(wcDateString);
+                clinicianSel = HttpUtility.UrlEncode(clinicianSelected);
+                clinicSel = HttpUtility.UrlEncode(clinicSelected);
+
+                string returnUrl = "Index?wcDt=" + wcDateStr;
+                if (clinicianSel != null) { returnUrl = returnUrl + $"&clinician={clinicianSel}"; }
+                if (clinicSel != null) { returnUrl = returnUrl + $"&clinic={clinicSel}"; }
+
+                Response.Redirect(returnUrl);
             }
             catch (Exception ex)
             {

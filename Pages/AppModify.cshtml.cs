@@ -2,6 +2,7 @@ using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Web;
 
 namespace CPTest.Pages
 {
@@ -128,9 +129,13 @@ namespace CPTest.Pages
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, duration, sUser, sInstructions, sCancel, famMPI.GetValueOrDefault(), isReturnToWL.GetValueOrDefault());
 
-                string returnUrl = "Index?wcDt=" + wcDateString;
-                if (clinicianSelected != null) { returnUrl = returnUrl + $"&clinician={clinicianSelected}"; }
-                if (clinicSelected != null) { returnUrl = returnUrl + $"&clinic={clinicSelected}"; }
+                wcDateStr = HttpUtility.UrlEncode(wcDateString);
+                clinicianSel = HttpUtility.UrlEncode(clinicianSelected);
+                clinicSel = HttpUtility.UrlEncode(clinicSelected);
+
+                string returnUrl = "Index?wcDt=" + wcDateStr;
+                if (clinicianSel != null) { returnUrl = returnUrl + $"&clinician={clinicianSel}"; }
+                if (clinicSel != null) { returnUrl = returnUrl + $"&clinic={clinicSel}"; }
 
                 Response.Redirect(returnUrl);
             }
