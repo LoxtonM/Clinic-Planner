@@ -63,7 +63,8 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int slotID, string sAction, string? wcDateString, string? clinicianSelected, string? clinicSelected, string? detail = "", bool? isApplyClinic=false)
+        public void OnPost(int slotID, string sAction, string sSlotTime, string? wcDateString, string? clinicianSelected, string? clinicSelected, string? detail = "", 
+            bool? isApplyClinic=false)
         {
             try
             {
@@ -97,6 +98,11 @@ namespace CPTest.Pages
                     {
                         _ss.ModifyClinicSlot(slotID, staffCode, sAction, detail);
                     }
+                }
+
+                if (sSlotTime != slot.SlotTime.ToString("HH:mm:ss.fff"))
+                {
+                    _ss.ChangeClinicSlotTime(slotID, sSlotTime);
                 }
 
                 wcDateStr = HttpUtility.UrlEncode(wcDateString);

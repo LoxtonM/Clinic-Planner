@@ -10,6 +10,7 @@ namespace CPTest.Connections
             string clinicID, string sStaffCode, int duration, int iPatternID);        
         public void ClearClinicSlots(string clinicianID, string clinicID, DateTime? dEndDate);
         public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details = "");
+        public void ChangeClinicSlotTime(int slotID, string sNewTime);
         public void DeleteClinicSlot(int slotID, string staffCode);
     }
     public class ClinicSlotSqlServices : IClinicSlotSqlServices
@@ -96,6 +97,21 @@ namespace CPTest.Connections
                 con.Close();
 
             }
+        }
+
+        public void ChangeClinicSlotTime(int slotID, string sNewTime)
+        {
+            DateTime newTime = DateTime.Parse($"1899-12-30 {sNewTime}:00.000");
+
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerChangeSlotTime]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;
+            cmd.Parameters.Add("@slotTime", SqlDbType.DateTime).Value = newTime;
+            cmd.ExecuteNonQuery();
+            con.Close();           
+
         }
 
         public void DeleteClinicSlot(int slotID, string staffCode) 

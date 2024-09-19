@@ -22,7 +22,7 @@
         </div>
         <div class="row mb-5 g-5">
             <div class="col-md-2">
-                <label>Select:</label>
+                <label>Set Slot Status:</label>
             </div>
             <div class="col-md-4">
                 <select id="ddlSelectAction" name="sAction">
@@ -54,6 +54,19 @@
         </div>
 
         <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Change Start Time:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="checkbox" id="chkChangeStartTime" />
+            </div>
+            <div class="col-md-2">
+                <input id="sStartTime" asp-for=@Model.slot.SlotTime name="sSlotTime" hidden="true"  />
+            </div>
+        </div>
+
+
+        <div class="row mb-5 g-5">
             <div class="col-md-6 text-center">
                 <button type="submit" class="btn btn-success">Confirm</button>
             </div>
@@ -71,6 +84,7 @@
     //document.getElementById("btnConfirm").addEventListener("click", Confirm);
     document.getElementById("btnCancel").addEventListener("click", GoBack);
     document.getElementById("ddlSelectAction").addEventListener("change", ShowDetails);
+    document.getElementById("chkChangeStartTime").addEventListener("change", ShowStartTime);
     document.onload(HideMenu());
 
     function Confirm() 
@@ -119,6 +133,11 @@
             document.getElementById("lApplyToWholeClinic").hidden = false;
             document.getElementById("ddlApplyToWholeClinic").hidden = false;
         }
+    }
+
+    function ShowStartTime()
+    {
+        document.getElementById("sStartTime").hidden = !document.getElementById("chkChangeStartTime").checked;
     }
 
     function HideMenu() 
