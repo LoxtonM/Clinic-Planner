@@ -199,10 +199,14 @@ namespace CPTest.Document
             {
                 PdfSharpCore.Pdf.PdfDocument document = new PdfSharpCore.Pdf.PdfDocument();
                 PdfPage page = document.AddPage();
+                PdfPage page2 = document.AddPage();
                 page.Orientation = PdfSharpCore.PageOrientation.Landscape;
+                page2.Orientation = PdfSharpCore.PageOrientation.Landscape;
 
                 XGraphics gfx = XGraphics.FromPdfPage(page);
+                XGraphics gfx2 = XGraphics.FromPdfPage(page2);
                 var tf = new XTextFormatter(gfx);
+                var tf2 = new XTextFormatter(gfx2);
                 //set the fonts used for the letters
                 XFont font = new XFont("Arial", 12, XFontStyle.Regular);
                 XFont fontSmall = new XFont("Arial", 10, XFontStyle.Regular);
@@ -215,6 +219,7 @@ namespace CPTest.Document
                 tf.DrawString("WEST MIDLANDS REGIONAL CLINICAL GENETICS SERVICE", fontBold, XBrushes.Black, new XRect(325, 130, 500, 10));
 
                 int totalLength = 50;
+                int totalLength2 = 50;
                 tf.Alignment = XParagraphAlignment.Left;
 
                 var appt = _appointment.GetAppointmentDetails(refID);
@@ -259,11 +264,9 @@ namespace CPTest.Document
 
                 foreach (var item in clinicList)
                 {
-                    totalLength = totalLength + 15;
-                    tf.DrawString(item.BOOKED_TIME.Value.ToString("HH:mm"), font, XBrushes.Black, new XRect(20, totalLength, 500, 10));
                     var pat = _patient.GetPatientDetails(item.MPI);
                     string address = pat.ADDRESS1 + ", ";
-                    if(pat.ADDRESS2 != null)
+                    if (pat.ADDRESS2 != null)
                     {
                         address = address + pat.ADDRESS2 + ", ";
                     }
@@ -271,38 +274,77 @@ namespace CPTest.Document
                     address = address + pat.ADDRESS4 + System.Environment.NewLine;
                     address = address + pat.POSTCODE;
                     string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.ToString("dd/MM/yyyy") + System.Environment.NewLine + pat.POSTCODE;
-                    tf.DrawString(patient, font, XBrushes.Black, new XRect(70, totalLength, 200, 80)); //patient demographics
                     string ourrefs = "Our ref: " + pat.CGU_No + System.Environment.NewLine + "NHS No: " + pat.SOCIAL_SECURITY;
-                    tf.DrawString(ourrefs, font, XBrushes.Black, new XRect(250, totalLength, 150, 30)); //CGU and NHS numbers
                     string gpName = "Unknown";
                     if (pat.GP != null) //because there are ALWAYS nulls somewhere!
                     {
                         gpName = pat.GP + System.Environment.NewLine + pat.GP_Facility; ;
-                    }                        
-                    tf.DrawString(gpName, font, XBrushes.Black, new XRect(400, totalLength, 100, 30)); //GP
+                    }
                     var referral = _referral.GetReferralDetails(item.ReferralRefID);
-                    
                     string referrerName = "Unknown";
                     if (referral.ReferringClinician != null)
                     {
                         referrerName = referral.ReferringClinician + System.Environment.NewLine + referral.ReferringFacility;
                     }
-                    tf.DrawString(referrerName, font, XBrushes.Black, new XRect(500, totalLength, 100, 30));
 
+                    if (totalLength < 350)
+                    {
+                        totalLength = totalLength + 30;
+                        tf.DrawString(item.BOOKED_TIME.Value.ToString("HH:mm"), font, XBrushes.Black, new XRect(20, totalLength, 500, 10));                        
+                        tf.DrawString(patient, font, XBrushes.Black, new XRect(70, totalLength, 200, 80)); //patient demographics                        
+                        tf.DrawString(ourrefs, font, XBrushes.Black, new XRect(250, totalLength, 150, 30)); //CGU and NHS numbers                        
+                        tf.DrawString(gpName, font, XBrushes.Black, new XRect(400, totalLength, 100, 30)); //GP                        
+                        tf.DrawString(referrerName, font, XBrushes.Black, new XRect(500, totalLength, 100, 30));
+                    }
+                    else
+                    {
+                        totalLength2 = totalLength2 + 30;
+                        tf2.DrawString(item.BOOKED_TIME.Value.ToString("HH:mm"), font, XBrushes.Black, new XRect(20, totalLength2, 500, 10));                        
+                        tf2.DrawString(patient, font, XBrushes.Black, new XRect(70, totalLength2, 200, 80)); //patient demographics
+                        tf2.DrawString(ourrefs, font, XBrushes.Black, new XRect(250, totalLength2, 150, 30)); //CGU and NHS numbers
+                        tf2.DrawString(gpName, font, XBrushes.Black, new XRect(400, totalLength2, 100, 30)); //GP                        
+                        tf2.DrawString(referrerName, font, XBrushes.Black, new XRect(500, totalLength2, 100, 30));
+                    }
                 }
-                totalLength = 450;
+                string postLude = "";
+                if (clinicDetails.Postlude != null)
+                {
+                    postLude = clinicDetails.Postlude;
+                }
 
-                tf.DrawString(clinicDetails.Postlude, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
-                totalLength = totalLength + 20;
-                
-                tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
-                totalLength = totalLength + 50;
-                tf.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength, 100, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 30));
-                totalLength = totalLength + 15;
-                //copies to etc
+                if (totalLength <= 400)
+                {
+                    totalLength = 450;
+                    tf.DrawString(postLude, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
+                    totalLength = totalLength + 20;
 
+                    tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
+                    totalLength = totalLength + 50;
+                    tf.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength, 100, 10));
+                    totalLength = totalLength + 15;
+                    tf.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 30));
+                    totalLength = totalLength + 15;
+                    //copies to etc
+                }
+                else
+                {
+                    totalLength2 = 450;
+                    tf2.DrawString(postLude, font, XBrushes.Black, new XRect(50, totalLength2, 500, 100));
+                    totalLength2 = totalLength2 + 20;
+
+                    tf2.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength2, 100, 30));
+                    totalLength2 = totalLength2 + 50;
+                    tf2.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength2, 100, 10));
+                    totalLength2 = totalLength2 + 15;
+                    tf2.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength2, 500, 30));
+                    totalLength2 = totalLength2 + 15;
+                    //copies to etc
+                }
+
+                if(totalLength2 == 50)
+                {
+                    document.Pages.Remove(page2);
+                }
 
                 if (File.Exists(@"wwwroot/cliniclist.pdf"))
                 {
