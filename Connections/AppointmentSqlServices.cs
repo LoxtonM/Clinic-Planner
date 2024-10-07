@@ -9,7 +9,9 @@ namespace CPTest.Connections
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL);        
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL);
+        public int CreatePastAppointment(DateTime appDate, string appTime, string appWith1, string appLocation, int iLinkedRef, int mpi,
+            string appType, int duration, string sStaffCode, string outcome, bool isClockStop, string letterReq, int patientsSeen, string arrivalTime);
     }
     public class AppointmentSqlServices : IAppointmentSqlServices
 {
@@ -42,7 +44,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@ApptType", SqlDbType.VarChar).Value = appType;
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
             cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;            
-            cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
+            cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;            
             var returnValue = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int); //return success or not
             returnValue.Direction = ParameterDirection.ReturnValue;
             cmd.ExecuteNonQuery();
@@ -85,5 +87,39 @@ namespace CPTest.Connections
             cmd.ExecuteNonQuery();
             con.Close();
         }
-    }
+
+        public int CreatePastAppointment(DateTime appDate, string appTime, string appWith1, string appLocation, int iLinkedRef, int mpi,
+        string appType, int duration, string sStaffCode, string outcome, bool isClockStop, string letterReq, int patientsSeen, string arrivalTime)
+        {
+            DateTime dAppTim = DateTime.Parse("1899-12-30 " + appTime);
+            DateTime dArrTim = DateTime.Parse("1899-12-30 " + arrivalTime);
+
+            SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
+            con.Open();
+            SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerCreatePastAppointment]", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@ApptDate", SqlDbType.DateTime).Value = appDate;
+            cmd.Parameters.Add("@ApptTime", SqlDbType.DateTime).Value = dAppTim;
+            cmd.Parameters.Add("@ApptWith1", SqlDbType.VarChar).Value = appWith1;
+            cmd.Parameters.Add("@ApptLocation", SqlDbType.VarChar).Value = appLocation;
+            cmd.Parameters.Add("@LinkedRefID", SqlDbType.BigInt).Value = iLinkedRef;
+            cmd.Parameters.Add("@MPI", SqlDbType.BigInt).Value = mpi;
+            cmd.Parameters.Add("@ApptType", SqlDbType.VarChar).Value = appType;
+            cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
+            cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;
+            cmd.Parameters.Add("@counseled", SqlDbType.VarChar).Value = outcome;
+            cmd.Parameters.Add("@clockStop", SqlDbType.Bit).Value = isClockStop;
+            cmd.Parameters.Add("@letterRequired", SqlDbType.VarChar).Value = letterReq;
+            cmd.Parameters.Add("@patientsSeen", SqlDbType.Int).Value = patientsSeen;
+            cmd.Parameters.Add("@arrivalTime", SqlDbType.DateTime).Value = dArrTim;
+
+            var returnValue = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int); //return success or not
+            returnValue.Direction = ParameterDirection.ReturnValue;
+            cmd.ExecuteNonQuery();
+            var iReturnValue = (int)returnValue.Value;
+            con.Close();
+
+            return iReturnValue;
+        }
+    }    
 }

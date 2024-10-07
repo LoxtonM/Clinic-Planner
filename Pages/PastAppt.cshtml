@@ -1,0 +1,175 @@
+﻿@page
+@model CPTest.Pages.PastApptModel
+@{
+}
+
+
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">Create Past Appointment</h1>
+    </div>
+    <br />
+    <br />
+    <form method="post">
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Linked Referral:</label>
+            </div>
+            <div class="col-md-4">
+                <select class="w-100" name="refID">
+                    @if (Model.referralList.Count > 0)
+                    {
+                        @foreach (var item in Model.referralList)
+                        {
+                            <option value=@item.RefID>@item.RefType - @item.RefDate.ToString("dd/MM/yyyy")</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+
+        
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Clinician:</label>
+            </div>
+            <div class="col-md-4">
+                <select class="w-100" name="clinician">
+                    @foreach(var item in Model.clinicianList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Clinic:</label>
+            </div>
+            <div class="col-md-4">
+                <select class="w-100" name="clinic">
+                    @foreach (var item in Model.clinicList)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Date:</label>
+            </div>
+            <div class="col-md-2">
+                <input class="w-100" type="date" name="sSlotDate" />
+            </div>            
+            <div class="col-md-2">
+                <label class="w-100">Time:</label>
+            </div>
+            <div class="col-md-2">
+                <input class="w-100" type="time" name="sSlotTime" />
+            </div>
+            <div class="col-md-2"><label class="w-100">Duration:</label></div>
+            <div class="col-md-2">
+                <input type="text" class="w-50" name="duration" />
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">            
+            <div class="col-md-2">
+                <label class="w-100">Type:</label>
+            </div>
+            <div class="col-md-2">
+                <select class="w-100" name="appType">
+                    @foreach(var item in Model.appTypeList)
+                    {
+                        <option value=@item.APP_TYPE>@item.APP_TYPE</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Arrival Time:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="time" class="w-100" name="arrivalTime" />
+            </div>           
+            <div class="col-md-2">
+                <label class="w-100">Patients Seen:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="w-50" name="patientsSeen" />
+            </div>           
+        </div>
+
+        <div class="row mb-5 g-5">            
+            <div class="col-md-2">
+                <label class="w-100">Outcome:</label>
+            </div>
+            <div class="col-md-2">
+                <select class="w-100" name="outcome">
+                    @foreach(var item in Model.outcomeList)
+                    {
+                        <option value=@item.CLINIC_OUTCOME>@item.CLINIC_OUTCOME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Clock Stop:</label>
+            </div>
+            <div class="col-md-2">
+                <select class="w-100" name="isClockStop">
+                    <option value="" selected></option>
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Letter Required:</label>
+            </div>
+            <div class="col-md-2">
+                <select name="letterRequired" class="w-100">
+                    <option value="Yes - Within 10 Days">Yes - Within 10 Days</option>
+                    <option value="Yes - Later">Yes - Later</option>
+                    <option selected value="No">No</option>
+                </select>
+            </div>
+        </div>       
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-6 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+            </div>
+        </div>
+    </form>
+
+    
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);    
+    document.onload(HideMenu());
+
+
+    function GoBack() 
+    {
+        
+        //var returnUrl = "Index?wcDt=" + wcDateString;
+        
+        window.location.replace("Index");
+    }
+
+    
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>

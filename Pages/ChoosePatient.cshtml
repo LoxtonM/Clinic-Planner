@@ -1,0 +1,108 @@
+﻿@page
+@model CPTest.Pages.ChoosePatientModel
+@{
+}
+
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">Choose Patient</h1>
+    </div>
+    <br />
+    <br />
+    <form method="post">
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">CGU Number:</label>
+            </div>
+            <div class="col-md-4">
+               <input type="text" name="cguno" />
+            </div>
+        </div>
+
+        @if (Model.patient != null)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="w-100">@Model.patient.FIRSTNAME @Model.patient.LASTNAME</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    @if(Model.patient.DOB.ToString("yyyy-MM-dd") != "0001-01-01")
+                    {
+                        <label class="w-100">@Model.patient.DOB.ToString("dd/MM/yyyy")</label>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="w-100">@Model.patient.POSTCODE</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="w-100">@Model.patient.SOCIAL_SECURITY</label>
+                </div>
+            </div>
+        }
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4 text-center">
+                <button type="submit" class="btn btn-success">Find</button>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                @if (Model.patient != null)
+                {
+                    <a type="button" class="btn btn-success" asp-page="PastAppt" asp-route-mpi=@Model.patient.MPI>Continue</a>
+                }
+            </div>
+            <div class="col-md-4 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+            </div>
+        </div>
+        
+
+    </form>
+
+    
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);    
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        
+        //var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace("Index");
+    }
+
+    
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>
+

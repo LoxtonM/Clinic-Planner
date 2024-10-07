@@ -136,7 +136,8 @@
                                         {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional") 
                                             {
-                                                document.getElementById(col.id).style.backgroundColor = "blue";
+                                                document.getElementById(col.id).classList.add("currentappt");
+
                                                 strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                 apptClinicianArray[k] + "</br> " +
                                                 apptClinicArray[k] + "</br>" +
