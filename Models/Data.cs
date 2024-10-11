@@ -51,6 +51,7 @@ namespace CPTest.Models
         public int StartMin { get; set; }
         public string Clinician { get; set; }
         public string Facility { get; set; }
+        public string? Comment { get; set; }
     }
 
     [Table("CLIN_FACILITIES", Schema = "dbo")]
@@ -193,8 +194,8 @@ namespace CPTest.Models
     {
         [Key]
         public int PatternID { get; set; }
-        public string Clinic { get; set; }
-        public string StaffID { get; set; }
+        public string? Clinic { get; set; }
+        public string? StaffID { get; set; }
         public int DyOfWk { get; set; }
         public int WkOfMth { get; set; }
         public string? MthOfYr { get; set; }

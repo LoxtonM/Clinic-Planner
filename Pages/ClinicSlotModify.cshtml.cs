@@ -64,7 +64,7 @@ namespace CPTest.Pages
         }
 
         public void OnPost(int slotID, string sAction, string sSlotTime, string? wcDateString, string? clinicianSelected, string? clinicSelected, string? detail = "", 
-            bool? isApplyClinic=false)
+            bool? isApplyClinic=false, string? comments = "")
         {
             try
             {
@@ -91,12 +91,12 @@ namespace CPTest.Pages
                         slotsForDay = _slotData.GetDaySlots(slot.SlotDate, slot.ClinicianID, slot.ClinicID).ToList();
                         foreach(var slot in slotsForDay)
                         {
-                            _ss.ModifyClinicSlot(slot.SlotID, staffCode, sAction, detail);
+                            _ss.ModifyClinicSlot(slot.SlotID, staffCode, sAction, detail, comments);
                         }
                     }
                     else
                     {
-                        _ss.ModifyClinicSlot(slotID, staffCode, sAction, detail);
+                        _ss.ModifyClinicSlot(slotID, staffCode, sAction, detail, comments);
                     }
                 }
 

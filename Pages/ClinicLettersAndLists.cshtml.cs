@@ -23,9 +23,11 @@ namespace CPTest.Pages
             _clinicVenueData = new ClinicVenueData(_context);
         }
 
-        public Patient patient { get; set; }
+        public Patient patient { get; set; }        
         public StaffMember staffMember { get; set; }
         public Appointment appointment { get; set; }
+        public List<Appointment> appointmentList { get; set; }
+        public List<Appointment> appointmentListForFamily { get; set; }
         public ClinicVenue clinicVenue { get; set; }
 
         public void OnGet(int refID)
@@ -40,6 +42,17 @@ namespace CPTest.Pages
                 appointment = _appointmentData.GetAppointmentDetails(refID);
                 staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
                 patient = _patientData.GetPatientDetails(appointment.MPI);
+                appointmentList = _appointmentData.GetAppointmentsForADay(appointment.BOOKED_DATE.GetValueOrDefault(), appointment.STAFF_CODE_1, appointment.FACILITY);
+                appointmentListForFamily = new List<Appointment>();
+
+                foreach (Appointment appt in appointmentList)
+                {
+                    if(appt.STAFF_CODE_1 == appointment.STAFF_CODE_1 && appt.FACILITY == appointment.FACILITY && appt.BOOKED_TIME == appointment.BOOKED_TIME)
+                    {
+                        appointmentListForFamily.Add(appt);
+                    }
+                }
+
                 clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
             }
             catch (Exception ex)

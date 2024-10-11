@@ -9,7 +9,7 @@ namespace CPTest.Connections
         public void CreateClinicSlot(DateTime dSlotDate, DateTime dSlotTime, string clinicianID,
             string clinicID, string sStaffCode, int duration, int iPatternID);        
         public void ClearClinicSlots(string clinicianID, string clinicID, DateTime? dEndDate);
-        public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details = "");
+        public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details = "", string? comments = "");
         public void ChangeClinicSlotTime(int slotID, string sNewTime);
         public void DeleteClinicSlot(int slotID, string staffCode);
     }
@@ -58,8 +58,12 @@ namespace CPTest.Connections
             con.Close();
         }
 
-        public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details="")
-        {            
+        public void ModifyClinicSlot(int slotID, string staffCode, string action, string? details="", string? comments="")
+        {
+            if(comments == null)
+            {
+                comments = "";
+            }
             if (action == "Unavail" || action == "Open")
             {
                 SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
@@ -69,9 +73,9 @@ namespace CPTest.Connections
                 cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;
                 cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = staffCode;
                 cmd.Parameters.Add("@action", SqlDbType.VarChar).Value = action;
+                cmd.Parameters.Add("@comment", SqlDbType.VarChar).Value = comments;
                 cmd.ExecuteNonQuery();
-                con.Close();
-                
+                con.Close();                
             }
             else if (action == "Reserve")
             {
@@ -82,6 +86,7 @@ namespace CPTest.Connections
                 cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;
                 cmd.Parameters.Add("@cguNumber", SqlDbType.VarChar).Value = details;
                 cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = staffCode;
+                cmd.Parameters.Add("@comment", SqlDbType.VarChar).Value = comments;
                 cmd.ExecuteNonQuery();
                 con.Close();
             }
@@ -93,6 +98,7 @@ namespace CPTest.Connections
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;                
                 cmd.Parameters.Add("@staffCode", SqlDbType.VarChar).Value = staffCode;
+                cmd.Parameters.Add("@comment", SqlDbType.VarChar).Value = comments;
                 cmd.ExecuteNonQuery();
                 con.Close();
 

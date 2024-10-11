@@ -25,7 +25,20 @@
         @if (Model.staffMember != null)
         {
             <div class="col-md-5"><h1>@Model.staffMember.NAME</h1></div>
-        }
+        }        
+    </div>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-2">
+            <button type="button" class="btn btn-success" onclick="AddClinicSlot()">Add Clinic Slot</button>
+        </div>
+
+        <div class="col-md-8">
+        </div>
+
+        <div class="col-md-2">
+            <button type="button" class="btn btn-success" onclick="PrintClinicList()">Print Clinic List</button>
+        </div>
     </div>
 
 
@@ -149,15 +162,16 @@
         </div>
     
         <div class="col-md-10">
+            
             <form id="ClinicForm" method="post">
                 <table id="ClinicMatrix" class="table table-bordered">
                     <thead>
                         <th>Time:</th>
-                        <th>Monday @Model.DateArray[0].ToString("dd/MM/yyyy")</th>
-                        <th>Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</th>
-                        <th>Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</th>
-                        <th>Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</th>
-                        <th>Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</th>
+                        <th><button type="button" class="btn btn-success" id="Monday" onclick="DayClinicList(id)">Monday @Model.DateArray[0].ToString("dd/MM/yyyy")</button></th>
+                        <th><button type="button" class="btn btn-success" id="Tuesday" onclick="DayClinicList(id)">Tuesday @Model.DateArray[1].ToString("dd/MM/yyyy")</button></th>
+                        <th><button type="button" class="btn btn-success" id="Wednesday" onclick="DayClinicList(id)">Wednesday @Model.DateArray[2].ToString("dd/MM/yyyy")</button></th>
+                        <th><button type="button" class="btn btn-success" id="Thursday" onclick="DayClinicList(id)">Thursday @Model.DateArray[3].ToString("dd/MM/yyyy")</button></th>
+                        <th><button type="button" class="btn btn-success" id="Friday" onclick="DayClinicList(id)">Friday @Model.DateArray[4].ToString("dd/MM/yyyy")</button></th>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.TimeArray)
@@ -191,15 +205,30 @@
     function GoBack() //called by wcBack
     {        
         var date = new Date(document.getElementById("wcDate").value);
-        date.setDate(date.getDate() - 7);
+        if(date.getDay() == 1)
+        {
+            date.setDate(date.getDate() - 7);
+        }
+        else
+        {
+            date.setDate(date.getDate() - (6 - (7 - date.getDay())));
+        }
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
         RefreshForm()
     }
 
     function GoNext() //called by wcNext
-    {   
+    {           
         var date = new Date(document.getElementById("wcDate").value);
-        date.setDate(date.getDate() + 7);        
+       
+        if(date.getDay() == 1)
+        {
+            date.setDate(date.getDate() + 7);
+        }
+        else
+        {
+            date.setDate(date.getDate() + 7 - (6 - (7 - date.getDay())));
+        }
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
         RefreshForm()
     }
@@ -353,9 +382,73 @@
         }
     }
 
+    function AddClinicSlot()
+    {
+        const wcDateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
+        
+        window.location.replace("AddClinicSlot?wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
+    }
+
+    function PrintClinicList()
+    {
+        const wcDateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
+
+        if (clinicianSelected == "" || clinicSelected == "")
+        {
+            window.alert("Please choose a clinician/clinic.");
+        }
+        else
+        {
+            window.location.replace("ClinicListSelect?wcDateString=" + wcDateString + "&clinicianid=" + clinicianSelected + "&clinicid=" + clinicSelected);
+        }
+    }
+
     function WaitingListSearch() 
     { 
         document.getElementById("WaitingListForm").submit();
+    }
+
+    function DayClinicList(day)
+    {
+        const wcDateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
+        var dateString;
+
+        switch(day)
+        {
+            case "Monday": //we HAVE to do it this way, we can't simply pass a parameter to the model array!
+                dateString = "@Model.DateArray[0]";
+                break;
+            case "Tuesday":
+                dateString = "@Model.DateArray[1]";
+                break;
+            case "Wednesday":
+                dateString = "@Model.DateArray[2]";
+                break;
+            case "Thursday":
+                dateString = "@Model.DateArray[3]";
+                break;
+            case "Friday":
+                dateString = "@Model.DateArray[4]";
+                break;
+        }
+
+        if (clinicianSelected == "" || clinicSelected == "")
+        {
+            window.alert("Please choose a clinician/clinic to generate a clinicArray list.");
+        }
+        else
+        {            
+            var clinicDate = new Date(dateString.substring(6,10) + "-" + dateString.substring(3,5) + "-" + dateString.substring(0,2));
+            dateString = clinicDate.toISOString().slice(0, 10);
+            window.location.replace("ClinicListSelect?wcDateString=" + wcDateString + "&clinicianid=" + clinicianSelected + "&clinicid=" + 
+            clinicSelected + "&clinicDateString=" + dateString);
+        }
     }
 
     //Called at the start - sets the clinic matrix view
@@ -380,8 +473,10 @@
         var pedNoArray = [];       
         var ClinicLetterDateArray = [];
         var pedNameArray = [];
+        var pednumArray = [];
         var alertArray = [];
         var nationalHolidayArray = [];
+        var commentArray = [];
         
         const today = new Date();
         //const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -399,8 +494,9 @@
                 @:clinicArray.push("@item.Facility");
                 @:clinicianArray.push("@item.Clinician");   
                 @:statusArray.push("@item.SlotStatus");
-                //@:pednumArray.push("@item.PedNum");
+                @:pednumArray.push("@item.PedNum");
                 @:slotIDArray.push("@item.SlotID");
+                @:commentArray.push("@item.Comment");
                 //we need to create the arrays like this because we can't access the data otherwise
             }            
         }
@@ -485,25 +581,32 @@
                                                 {                                                    
                                                     document.getElementById(col.id).classList.add("freeslot");
                                                     strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + 
-                                                    clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
+                                                    clinicArray[k] + "</br>" + 
+                                                    commentArray[k] + "</br>" + //I wouldn't have thought this was necessary, but who knows in this place!!
+                                                    "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else if (statusArray[k] == "Reserved")
                                                 {
                                                     document.getElementById(col.id).classList.add("reservedslot");
-                                                    strSlotDetail = statusArray[k] + " for " + pedNameArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
+                                                    strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" +
+                                                        clinicArray[k] + "</br>" + 
+                                                        commentArray[k] + "</br>" +
+                                                        "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else if (statusArray[k] == "Booked")
                                                 {
                                                     document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + "S:" + slotIDArray[k] + "</br>" + "<span hidden='true'>R:0</span>";
+                                                        clinicArray[k] + "</br>" + 
+                                                        "S:" + slotIDArray[k] + "</br>" + "<span hidden='true'>R:0</span>";
                                                 }
                                                 else //for unavailable slots
                                                 {                                                     
                                                     document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + "<span hidden='true'>S:" + slotIDArray[k] + "</span>";                                                        
+                                                    clinicArray[k] + "</br>" +
+                                                        commentArray[k] + "</br>" + 
+                                                        "<span hidden='true'>S:" + slotIDArray[k] + "</span>";                                                        
                                                 }
                                             }
                                             document.getElementById(col.id).innerHTML = strSlotDetail;
@@ -555,7 +658,14 @@
                                                 }
                                                 else //current/future appointments
                                                 {
-                                                    document.getElementById(col.id).classList.add("currentappt");
+                                                    if (ClinicLetterDateArray[k] == "Letter not printed")
+                                                    {
+                                                        document.getElementById(col.id).classList.add("currentappt");
+                                                    }
+                                                    else
+                                                    {
+                                                        document.getElementById(col.id).classList.add("currentapptletterprinted");
+                                                    }
                                                     
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                     apptClinicianArray[k] + "</br> " + 

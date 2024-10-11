@@ -1,0 +1,98 @@
+﻿@page
+@model CPTest.Pages.AddClinicSlotModel
+@{
+}
+
+<div class="container">
+
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Clinician:</label>
+            </div>
+            <div class="col-md-4">
+                <select class="w-100" name="clinician" asp-for=@Model.clinician.STAFF_CODE>
+                    @foreach (var item in Model.clinicianList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Clinic:</label>
+            </div>
+            <div class="col-md-4">
+                <select class="w-100" name="clinic" asp-for=@Model.clinic.FACILITY>
+                    @foreach (var item in Model.clinicList)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Date:</label>
+            </div>
+            <div class="col-md-2">
+                <input class="w-100" type="date" name="slotDate" />
+            </div>
+            <div class="col-md-2">
+                <label class="w-100">Time:</label>
+            </div>
+            <div class="col-md-2">
+                <input class="w-100" type="time" name="slotTime" />
+            </div>
+            <div class="col-md-2"><label class="w-100">Duration:</label></div>
+            <div class="col-md-2">
+                <input type="text" class="w-50" name="duration" />
+            </div>
+        </div>
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-6 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+
+    function GoBack()
+    {
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>

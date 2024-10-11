@@ -62,6 +62,11 @@ body {
     color: whitesmoke !important;
 }
 
+.currentapptletterprinted {
+    background-color: darkslateblue !important;
+    color: whitesmoke !important;
+}
+
 .selecteditem {
     background-color: yellow !important;
     color: black !important;

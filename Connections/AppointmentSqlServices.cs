@@ -14,7 +14,7 @@ namespace CPTest.Connections
             string appType, int duration, string sStaffCode, string outcome, bool isClockStop, string letterReq, int patientsSeen, string arrivalTime);
     }
     public class AppointmentSqlServices : IAppointmentSqlServices
-{
+    {
         private readonly IConfiguration _config;
         public AppointmentSqlServices(IConfiguration config) 
         {

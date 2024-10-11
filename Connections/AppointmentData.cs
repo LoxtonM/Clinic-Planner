@@ -39,7 +39,7 @@ namespace CPTest.Connections
             if (clinic != null)
             {
                 appts = appts.Where(l => l.FACILITY == clinic);
-            }
+            }            
 
             appts = appts.OrderByDescending(a => a.RefID); //to do the latest first, so that the first one appears on top
             

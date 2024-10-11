@@ -10,7 +10,10 @@
 
     <div class="row mb-5 g-5">
         <div class="col-md-6">
-            <a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@Model.appointment.RefID>Create Letter to Patient</a>
+            @foreach (var item in Model.appointmentListForFamily)
+            {
+                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Create Letter to @item.CGU_No</a></p>
+            }
         </div>
         @*<div class="col-md-6">
             <a type="button" class="btn btn-success" asp-page="WIP">Email Letter to Patient (WIP)</a>
