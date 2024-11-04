@@ -53,6 +53,8 @@ namespace CPTest.Pages
                     }
                 }
 
+                appointmentListForFamily = appointmentListForFamily.Distinct().ToList();
+
                 clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
             }
             catch (Exception ex)

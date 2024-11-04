@@ -105,7 +105,7 @@ namespace CPTest.Document
                 else
                 {
                     salutation = pat.SALUTATION;
-                    openingBlurb = docContent.Para2 + extClinician.TITLE + " " + extClinician.FIRST_NAME + " " + extClinician.NAME + ", " + docContent.Para12;
+                    openingBlurb = docContent.Para2 + " " + extClinician.TITLE + " " + extClinician.FIRST_NAME + " " + extClinician.NAME + ", " + docContent.Para12;
                 }
 
                 string address = pat.ADDRESS1 + Environment.NewLine;
@@ -165,7 +165,7 @@ namespace CPTest.Document
                 totalLength = totalLength + 75;
 
                 tf.Alignment = XParagraphAlignment.Center;
-                tf.DrawString(docContent.Para9, fontBoldUnderlined, XBrushes.Black, new XRect(50, totalLength, 500, 40)); //"It is our policy not to offer another..."
+                tf.DrawString(docContent.Para9, fontBold, XBrushes.Black, new XRect(50, totalLength, 500, 40)); //"It is our policy not to offer another..."
 
                 totalLength = totalLength + 40;
                 totalLength = totalLength + 15;
@@ -175,6 +175,8 @@ namespace CPTest.Document
                 totalLength = totalLength + 50;
 
                 tf.DrawString("Clinical Genetics Booking Centre", font, XBrushes.Black, new XRect(50, totalLength, 500, 20));
+                //totalLength = totalLength + 50;
+                //tf.DrawString(docContent.DocCode, font, XBrushes.Black, new XRect(500, totalLength, 500, 20));
 
                 if (File.Exists(@"wwwroot/letter.pdf"))
                 {
@@ -317,13 +319,15 @@ namespace CPTest.Document
                     totalLength = 450;
                     tf.DrawString(postLude, font, XBrushes.Black, new XRect(50, totalLength, 500, 100));
                     totalLength = totalLength + 20;
-
-                    tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
-                    totalLength = totalLength + 50;
-                    tf.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength, 100, 10));
-                    totalLength = totalLength + 15;
-                    tf.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 30));
-                    totalLength = totalLength + 15;
+                    if (clinicDetails.Secretary != null)
+                    {
+                        tf.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength, 100, 30));
+                        totalLength = totalLength + 50;                    
+                        tf.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength, 100, 10));
+                        totalLength = totalLength + 15;
+                        tf.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength, 500, 30));
+                        totalLength = totalLength + 15;
+                    }
                     //copies to etc
                 }
                 else
@@ -331,13 +335,15 @@ namespace CPTest.Document
                     totalLength2 = 450;
                     tf2.DrawString(postLude, font, XBrushes.Black, new XRect(50, totalLength2, 500, 100));
                     totalLength2 = totalLength2 + 20;
-
-                    tf2.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength2, 100, 30));
-                    totalLength2 = totalLength2 + 50;
-                    tf2.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength2, 100, 10));
-                    totalLength2 = totalLength2 + 15;
-                    tf2.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength2, 500, 30));
-                    totalLength2 = totalLength2 + 15;
+                    if (clinicDetails.Secretary != null)
+                    {
+                        tf2.DrawString("Yours sincerely", font, XBrushes.Black, new XRect(50, totalLength2, 100, 30));
+                        totalLength2 = totalLength2 + 50;                    
+                        tf2.DrawString(clinicDetails.Secretary, font, XBrushes.Black, new XRect(50, totalLength2, 100, 10));
+                        totalLength2 = totalLength2 + 15;
+                        tf2.DrawString("Secretary to " + clinician.NAME + ", " + clinician.POSITION, font, XBrushes.Black, new XRect(50, totalLength2, 500, 30));
+                        totalLength2 = totalLength2 + 15;
+                    }
                     //copies to etc
                 }
 

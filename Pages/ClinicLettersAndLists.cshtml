@@ -12,7 +12,12 @@
         <div class="col-md-6">
             @foreach (var item in Model.appointmentListForFamily)
             {
-                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Create Letter to @item.CGU_No</a></p>
+                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Create Letter to @item.CGU_No</a>(Create letter for manual printing)</p>
+                @if(!item.ActiveAlerts)
+                {
+                    <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Print Letter to @item.CGU_No</a>(Print directly via Synertec)</p>
+                    @*TODO: test printing via Synertec, and make it actually print when confirmed*@
+                }
             }
         </div>
         @*<div class="col-md-6">

@@ -67,6 +67,13 @@ body {
     color: whitesmoke !important;
 }
 
+.currentapptwithalert {
+    background-color: deepskyblue !important;
+    color: whitesmoke !important;
+    border-style: double !important;
+    border-color: red !important;
+}
+
 .selecteditem {
     background-color: yellow !important;
     color: black !important;

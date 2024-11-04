@@ -675,6 +675,7 @@
                                                     if(alertArray[k] != null)
                                                     {
                                                         strApptDetail = strApptDetail + "</br>" + alertArray[k];
+                                                        document.getElementById(col.id).classList.add("currentapptwithalert");
                                                     }
                                                     strApptDetail = strApptDetail + "</br><span hidden='true'>R:" +
                                                     apptRefIDArray[k].toString() + "</span>";
