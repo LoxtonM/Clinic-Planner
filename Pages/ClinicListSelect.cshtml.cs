@@ -41,7 +41,7 @@ namespace CPTest.Pages
                 clinicSel = clinicid;
 
                 List<Appointment> appts = new List<Appointment>();
-                appts = _appt.GetAppointments(DateTime.Now, DateTime.Now.AddDays(365), clinicianid, clinicid).Distinct().ToList();
+                appts = _appt.GetAppointments(DateTime.Parse(wcDateString), DateTime.Parse(wcDateString).AddDays(7), clinicianid, clinicid).Distinct().ToList();
                 apptList = new List<Appointment>();
 
                 if (clinicDateString != null)
@@ -49,9 +49,16 @@ namespace CPTest.Pages
                     DateTime clinicDate = DateTime.Parse(clinicDateString);
                     Appointment appt = appts.First(a => a.BOOKED_DATE == clinicDate);
                     int refid = appt.RefID;
-
-                    Response.Redirect(@Url.Content(@"~/cliniclist.pdf"));
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString());
+                    if (_doc.ClinicList(refid, User.Identity.Name) == 1)
+                    { 
+                        Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
+                        _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString());
+                    }
+                    else
+                    {
+                        string message = "Something went wrong and the letter didn't print for some reason.";
+                        Response.Redirect("Error?sError=" + message);
+                    }
                 }
                 else
                 {
@@ -87,9 +94,9 @@ namespace CPTest.Pages
                 if (clinicianSel != null) { returnUrl = returnUrl + $"&clinician={clinicianSel}"; }
                 if (clinicSel != null) { returnUrl = returnUrl + $"&clinic={clinicSel}"; }
 
-                if (_doc.ClinicList(refid) == 1)
+                if (_doc.ClinicList(refid, User.Identity.Name) == 1)
                 {
-                    Response.Redirect(@Url.Content(@"~/cliniclist.pdf"));
+                    Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
                     _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString());
                 }
                 else

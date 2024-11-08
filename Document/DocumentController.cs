@@ -13,8 +13,8 @@ namespace CPTest.Document
 {
     interface IDocumentController
     {
-        public int ClinicLetter(int refID);
-        public int ClinicList(int refID);
+        public int ClinicLetter(int refID, string username);
+        public int ClinicList(int refID, string username);
     }
     public class DocumentController : IDocumentController
     {
@@ -43,7 +43,7 @@ namespace CPTest.Document
             _docContent = new DocumentsContentData(_context);
             _clinicDetails = new ClinicDetailsData(_context);
         }
-        public int ClinicLetter(int refID)
+        public int ClinicLetter(int refID, string username)
         {
             try
             {
@@ -178,12 +178,12 @@ namespace CPTest.Document
                 //totalLength = totalLength + 50;
                 //tf.DrawString(docContent.DocCode, font, XBrushes.Black, new XRect(500, totalLength, 500, 20));
 
-                if (File.Exists(@"wwwroot/letter.pdf"))
+                if (File.Exists($"wwwroot/letter-{username}.pdf"))
                 {
-                    File.Delete(@"wwwroot/letter.pdf");
+                    File.Delete($"wwwroot/letter-{username}.pdf");
                 }
 
-                document.Save(@"wwwroot/letter.pdf");
+                document.Save($"wwwroot/letter-{username}.pdf");
                                 
                 //we can't print, it will only print to the server (and fail). We can't print it to a local printer. :(
                 return 1;
@@ -195,7 +195,7 @@ namespace CPTest.Document
         }
 
 
-        public int ClinicList(int refID)
+        public int ClinicList(int refID, string username)
         {
             try
             {
@@ -352,11 +352,11 @@ namespace CPTest.Document
                     document.Pages.Remove(page2);
                 }
 
-                if (File.Exists(@"wwwroot/cliniclist.pdf"))
+                if (File.Exists($"wwwroot/cliniclist-{username}.pdf"))
                 {
-                    File.Delete(@"wwwroot/cliniclist.pdf");
+                    File.Delete($"wwwroot/cliniclist-{username}.pdf");
                 }
-                document.Save(@"wwwroot/cliniclist.pdf");
+                document.Save($"wwwroot/cliniclist-{username}.pdf");
 
                 return 1;
             }

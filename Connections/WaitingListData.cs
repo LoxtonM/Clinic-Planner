@@ -8,6 +8,7 @@ namespace CPTest.Connections
         public List<WaitingList> GetWaitingList(string? clinician, string? clinic);
         public List<WaitingList> GetWaitingListByCGUNo(string searchTerm);
         public WaitingList GetWaitingListEntry(int intID, string clinicianID, string clinicID);
+        public WaitingList GetWaitingListEntryByID(int id);
     }
     public class WaitingListData : IWaitingListData
     {
@@ -51,6 +52,14 @@ namespace CPTest.Connections
             {
                 waitingList = _context.WaitingList.FirstOrDefault(w => w.IntID == intID && w.ClinicID == "" && w.ClinicianID == clinicianID);
             }
+
+            return waitingList;
+        }
+
+        public WaitingList GetWaitingListEntryByID(int id)
+        {
+            WaitingList waitingList = _context.WaitingList.FirstOrDefault(w => w.ID == id);
+            
 
             return waitingList;
         }

@@ -12,11 +12,20 @@ namespace CPTest.Models
         public string DEFAULT_CLINIC_STATUS { get; set; }
     }
 
+    [Table("ListCancellationReason", Schema = "dbo")]
+    public class CancellationReason
+    {
+        [Key]
+        public int ID { get; set; }
+        public string Reason { get; set; }
+    }
+
     //Views rather than tables are used so we can have useful data available in the front end
     [Table("ViewPatientWaitingListDetails", Schema = "dbo")]
     [Keyless]
     public class WaitingList
     {
+        public int ID { get; set; }
         public int MPI { get; set; }
         public int IntID { get; set; }
         public string? ClinicianID { get; set; }

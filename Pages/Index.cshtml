@@ -141,7 +141,8 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        @*<div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">*@
+                        <div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
                             @if(@item.Priority == "Urgent")
                             {
                                 <div class="redalert">@item.Priority</div>
@@ -195,17 +196,17 @@
 <script>
     
     document.onload(LoadClinics());
-    
+
     function AddToWL()
-    {   
+    {
         window.location.replace("AddToWL");
     }
 
     //Handles Next and Back buttons for the date selector
     function GoBack() //called by wcBack
-    {        
+    {
         var date = new Date(document.getElementById("wcDate").value);
-        if(date.getDay() == 1)
+        if (date.getDay() == 1)
         {
             date.setDate(date.getDate() - 7);
         }
@@ -218,10 +219,10 @@
     }
 
     function GoNext() //called by wcNext
-    {           
+    {
         var date = new Date(document.getElementById("wcDate").value);
-       
-        if(date.getDay() == 1)
+
+        if (date.getDay() == 1)
         {
             date.setDate(date.getDate() + 7);
         }
@@ -235,27 +236,27 @@
 
     //Clear/reset the select menus
     function Clear() //called by btnClear
-    {        
+    {
         document.getElementById("ddlClinician").value = ""
         document.getElementById("ddlClinic").value = ""
         RefreshForm()
     }
 
-    function RefreshForm() 
-    { 
+    function RefreshForm()
+    {
         document.getElementById("ClinicSelect").submit();
     }
-    
+
     //Drag-and-drop functionality
     function OnDragStart(ev)
-    {  
-        ev.dataTransfer.setData("text", ev.target.id);        
+    {
+        ev.dataTransfer.setData("text", ev.target.id);
         ev.currentTarget.classList.add("selecteditem");
     }
-    
+
     function OnDragEnd(iIntID, ev)
     {
-        ev.currentTarget.classList.remove("selecteditem");        
+        ev.currentTarget.classList.remove("selecteditem");
     }
 
     function OnDrop(ev)
@@ -264,44 +265,47 @@
         const id = ev.dataTransfer.getData("text");
         const draggableElement = document.getElementById(id);
         const dropzone = ev.target;
-        const intID = draggableElement.id;
+        //const intID = draggableElement.id;
+        const WLID = draggableElement.id;
+
         const slotID = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('S:') + 2, ev.target.innerHTML.length - 7);
 
         if (ev.target.innerHTML.includes("Free"))
         {
-            const wcDateString= document.getElementById("wcDate").value;
+
+            const wcDateString = document.getElementById("wcDate").value;
             const clinicianSelected = document.getElementById("ddlClinician").value;
             const clinicSelected = document.getElementById("ddlClinic").value;
-            window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
+            window.location.replace("AppConfirm?intIDString=" + WLID + "&slotIDString=" + slotID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
             //document.getElementById("ClinicForm").submit();
         }
         if (ev.target.innerHTML.includes("Reserved"))
         {
             const targCguNo = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('for ') + 4, ev.target.innerHTML.indexOf('<br>'));
-            const sourcCguNo = draggableElement.innerHTML.slice(draggableElement.innerHTML.indexOf('<div>') + 5, draggableElement.innerHTML.indexOf('.'));                 
+            const sourcCguNo = draggableElement.innerHTML.slice(draggableElement.innerHTML.indexOf('<div>') + 5, draggableElement.innerHTML.indexOf('.'));
 
-            if (sourcCguNo != targCguNo) 
+            if (sourcCguNo != targCguNo)
             {
-                window.alert("This is reserved for patient " + targCguNo);                
+                window.alert("This is reserved for patient " + targCguNo);
                 ev.target.classList.add("reservedslot");
             }
-            else 
-            { 
+            else
+            {
                 //window.location.replace("AppConfirm?intIDString=" + intID + "&clin=" + apClin + "&ven=" + apVen + "&dat=" + apDateProper + "&tim=" + apTime + "&dur=" + apDur);
                 window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
             }
         }
-        if (ev.target.innerHTML.includes("For ") && ev.target.innerHTML.includes(" only")) 
-        {            
+        if (ev.target.innerHTML.includes("For ") && ev.target.innerHTML.includes(" only"))
+        {
             const userName = "@Model.userStaffCode";
             const bookableName = ev.target.innerHTML.slice(ev.target.innerHTML.indexOf('For ') + 4, ev.target.innerHTML.indexOf(' only'));
-            
-            if (userName != bookableName) 
+
+            if (userName != bookableName)
             {
                 window.alert("Only " + bookableName + " can book this.");
                 ev.currentTarget.classList.remove("selecteditem");
             }
-            else    
+            else
             {
                 window.location.replace("AppConfirm?intIDString=" + intID + "&slotIDString=" + slotID);
             }
@@ -311,12 +315,12 @@
     //Sets highlight colours for drag/drop
     function OnDragOver(ev)
     {
-       ev.preventDefault();
-       
+        ev.preventDefault();
+
         if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved") || (ev.currentTarget.innerHTML.includes("For ") && ev.currentTarget.innerHTML.includes(" only")))
-            {            
+        {
             ev.currentTarget.classList.add("selecteditem");
-        }       
+        }
     }
 
     function OnDragLeave(ev)
@@ -325,8 +329,8 @@
 
         if (ev.currentTarget.innerHTML.includes("Free") || ev.currentTarget.innerHTML.includes("Reserved") || (ev.currentTarget.innerHTML.includes("For ") && ev.currentTarget.innerHTML.includes(" only")))
         {
-            ev.currentTarget.classList.remove("selecteditem");            
-        }        
+            ev.currentTarget.classList.remove("selecteditem");
+        }
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
@@ -347,9 +351,9 @@
         //window.alert(id);
         const str = document.getElementById(id).innerHTML;
         if (str.includes("Booked"))
-        {            
+        {
             //const str = document.getElementById(id).innerHTML;
-            const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);            
+            const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);
             //window.open("AppModify?sRefID=" + sRID);
 
             window.location.replace("AppDetailOptions?sRefID=" + sRID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
@@ -361,24 +365,24 @@
             window.location.replace("ClinicSlotModify?sSlotID=" + sSID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
         }
         else if (str.includes("For ") && str.includes(" only"))
-        {            
+        {
             const userName = "@Model.userStaffCode";
             const bookableName = str.slice(str.indexOf('For ') + 4, str.indexOf(' only'));
-                      
-            if (userName != bookableName) 
+
+            if (userName != bookableName)
             {
-                window.alert("Only " + bookableName + " can modify this.");                
+                window.alert("Only " + bookableName + " can modify this.");
             }
-            else 
+            else
             {
                 const sSID = str.slice(str.indexOf('S:') + 2, str.length - 7);
                 window.location.replace("ClinicSlotModify?sSlotID=" + sSID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
             }
         }
 
-        else if (str.includes("PAST")) 
+        else if (str.includes("PAST"))
         {
-            window.alert("This is in the past, you cannot edit this.");            
+            window.alert("This is in the past, you cannot edit this.");
         }
     }
 
@@ -387,7 +391,7 @@
         const wcDateString = document.getElementById("wcDate").value;
         const clinicianSelected = document.getElementById("ddlClinician").value;
         const clinicSelected = document.getElementById("ddlClinic").value;
-        
+
         window.location.replace("AddClinicSlot?wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
     }
 
@@ -407,8 +411,8 @@
         }
     }
 
-    function WaitingListSearch() 
-    { 
+    function WaitingListSearch()
+    {
         document.getElementById("WaitingListForm").submit();
     }
 
@@ -419,7 +423,7 @@
         const clinicSelected = document.getElementById("ddlClinic").value;
         var dateString;
 
-        switch(day)
+        switch (day)
         {
             case "Monday": //we HAVE to do it this way, we can't simply pass a parameter to the model array!
                 dateString = "@Model.DateArray[0]";
@@ -443,24 +447,25 @@
             window.alert("Please choose a clinician/clinic to generate a clinicArray list.");
         }
         else
-        {            
-            var clinicDate = new Date(dateString.substring(6,10) + "-" + dateString.substring(3,5) + "-" + dateString.substring(0,2));
+        {
+            var clinicDate = new Date(dateString.substring(6, 10) + "-" + dateString.substring(3, 5) + "-" + dateString.substring(0, 2));
             dateString = clinicDate.toISOString().slice(0, 10);
-            window.location.replace("ClinicListSelect?wcDateString=" + wcDateString + "&clinicianid=" + clinicianSelected + "&clinicid=" + 
-            clinicSelected + "&clinicDateString=" + dateString);
+            window.location.replace("ClinicListSelect?wcDateString=" + wcDateString + "&clinicianid=" + clinicianSelected + "&clinicid=" +
+                clinicSelected + "&clinicDateString=" + dateString);
         }
     }
 
     //Called at the start - sets the clinic matrix view
     function LoadClinics()
-    {        
+    {
+        
         var cMatrix = document.getElementById("ClinicMatrix");
         var timeArray = [];
         var dateArray = [];
         var durationArray = [];
         var clinicArray = [];
         var clinicianArray = [];
-        var statusArray = [];        
+        var statusArray = [];
         var slotIDArray = [];
         var apptDateArray = [];
         var apptTimeArray = [];
@@ -470,126 +475,132 @@
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
-        var pedNoArray = [];       
+        var pedNoArray = [];
         var ClinicLetterDateArray = [];
         var pedNameArray = [];
         var pednumArray = [];
         var alertArray = [];
         var nationalHolidayArray = [];
         var commentArray = [];
-        
+
         const today = new Date();
         //const rightnow = today.getHours() + ":" + today.getMinutes();
         const rightnow = today.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         //window.alert(rightnow);
-        today.setHours(0, 0, 0, 0);       
+        today.setHours(0, 0, 0, 0);
 
-        @if (Model.clinicSlotList != null) //set up all the clinic slots first
+    @if (Model.clinicSlotList != null) //set up all the clinic slots first
+    {
+        @foreach (var item in Model.clinicSlotList)
         {
-            @foreach (var item in Model.clinicSlotList)
+            @:dateArray.push("@item.SlotDate");
+            @:timeArray.push("@item.SlotTime");
+            @:durationArray.push("@item.duration");
+            @:clinicArray.push("@item.Facility");
+            @:clinicianArray.push("@item.Clinician");
+            @:statusArray.push("@item.SlotStatus");
+            @:pednumArray.push("@item.PedNum");
+            @:slotIDArray.push("@item.SlotID");
+            @:commentArray.push("@item.Comment");
+            //we need to create the arrays like this because we can't access the data otherwise
+        }
+    }
+
+    @if (Model.appointmentList != null) //then set up all the appointments
+    {
+        @foreach (var item in Model.appointmentList)
+        {            
+            @:apptDateArray.push("@item.BOOKED_DATE");
+            @:apptTimeArray.push("@item.BOOKED_TIME");
+            @:apptDurationArray.push("@item.Duration");
+            @:apptClinicArray.push("@item.Clinic");
+            @:apptClinicianArray.push("@item.Clinician");
+            @:pedNoArray.push("@item.FamilyNumber");
+            @:apptOutcomeArray.push("@item.Attendance");
+            @:apptRefIDArray.push("@item.RefID");
+            @:ClinicLetterDateArray.push("@item.LetterPrintedDate");            
+            if(@item.FamilyName != null) //well here's a thing: unless I do this, it throws up "syntax error" but won't tell me which one it doesn't like!!!
             {
-                @:dateArray.push("@item.SlotDate");
-                @:timeArray.push("@item.SlotTime");   
-                @:durationArray.push("@item.duration");
-                @:clinicArray.push("@item.Facility");
-                @:clinicianArray.push("@item.Clinician");   
-                @:statusArray.push("@item.SlotStatus");
-                @:pednumArray.push("@item.PedNum");
-                @:slotIDArray.push("@item.SlotID");
-                @:commentArray.push("@item.Comment");
-                //we need to create the arrays like this because we can't access the data otherwise
+                if(@item.FamilyName.Length > 1) //so we have to specify "length > 1" - but first we have to make sure it's not null.
+                {
+                    @:pedNameArray.push("@item.FamilyName"); 
+                }
             }            
-        }
-            
-        @if (Model.appointmentList != null) //then set up all the appointments
-        {
-            @foreach (var item in Model.appointmentList)
-            {
-                @:apptDateArray.push("@item.BOOKED_DATE");
-                @:apptTimeArray.push("@item.BOOKED_TIME");
-                @:apptDurationArray.push("@item.Duration");
-                @:apptClinicArray.push("@item.Clinic");
-                @:apptClinicianArray.push("@item.Clinician");
-                @:pedNoArray.push("@item.FamilyNumber");
-                @:apptOutcomeArray.push("@item.Attendance");
-                @:apptRefIDArray.push("@item.RefID");   
-                @:ClinicLetterDateArray.push("@item.LetterPrintedDate");
-                @:pedNameArray.push("@item.FamilyName");
-                if(@item.ActiveAlerts)
-                {
-                    @:alertArray.push("Alerts in effect");
-                }
-                else
-                {
-                    @:alertArray.push(null);
-                }
+            if (@item.ActiveAlerts)
+            { 
+                @:alertArray.push("Alerts in effect");
             }
-        }
-
-        @if(Model.holidays != null)
-        {
-            @foreach (var item in Model.holidays)
+            else
             {
-                @:nationalHolidayArray.push("@item.HolidayDate");
+                @:alertArray.push(null);
             }
+        }        
+    }
+    
+    @if (Model.holidays != null)
+    {
+        @foreach (var item in Model.holidays)
+        {
+            @:nationalHolidayArray.push("@item.HolidayDate");
         }
+    }
 
 
         //Display all the existing clinic slots
-        if(dateArray.length == 0 && timeArray.length == 0)
+        if (dateArray.length == 0 && timeArray.length == 0)
         {
             return;
         }
         else
-        {            
+        {
             //used to check if appointment is before today, later on
-            for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+            for (var i = 0, row; row = cMatrix.rows[i]; i++)
             {
                 //loop through all rows to check times
-                if (i > 0) 
+                if (i > 0)
                 {
                     for (var j = 0, col; col = row.cells[j]; j++)
                     {
                         //loop through all columns to check dates
-                        if (j > 0) 
+                        if (j > 0)
                         {
                             var theDate = col.id.substring(0, 10);
                             var theTime = col.id.substring(11, col.id.length);
                             const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
-                            
+
 
                             for (var k = 0; k < dateArray.length; k++)
                             {
                                 const myDate = new Date(dateArray[k].substring(6, 10) + "-" + dateArray[k].substring(3, 5) + "-" + dateArray[k].substring(0, 2) + "T00:00:00");
                                 //because JS has a weird way of storing dates, we need to get the two dates in the right format so we can compare
-                                if(myDate.valueOf() == colDate.valueOf())
-                                {                                
+                                if (myDate.valueOf() == colDate.valueOf())
+                                {
                                     for (var l = 0; l < timeArray.length; l++)
-                                    {                                        
+                                    {
                                         const myTime = timeArray[k].substring(11, 16);
                                         var strSlotDetail;
-                                        if (myTime == theTime) 
+                                        if (myTime == theTime)
                                         {
                                             if ((colDate < today) || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))//for clinic slots in the past
-                                            {                                                
+                                            {
                                                 document.getElementById(col.id).classList.add("unavailslot");
-                                                strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k]; 
-                                            } 
+                                                strSlotDetail = "PAST</br>" + clinicianArray[k] + "</br>" + clinicArray[k];
+                                            }
                                             else
                                             {
                                                 if (statusArray[k] == "Open") //for available slots
-                                                {                                                    
+                                                {
                                                     document.getElementById(col.id).classList.add("freeslot");
-                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" + 
-                                                    clinicArray[k] + "</br>" + 
-                                                    commentArray[k] + "</br>" + //I wouldn't have thought this was necessary, but who knows in this place!!
-                                                    "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
+                                                    strSlotDetail = "Free - " + durationArray[k].toString() + " mins</br>" + clinicianArray[k] + "</br>" +
+                                                        clinicArray[k] + "</br>" +
+                                                        commentArray[k] + "</br>" + //I wouldn't have thought this was necessary, but who knows in this place!!
+                                                        "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                                 else if (statusArray[k] == "Reserved")
                                                 {
                                                     document.getElementById(col.id).classList.add("reservedslot");
                                                     strSlotDetail = statusArray[k] + " for " + pednumArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + 
+                                                        clinicArray[k] + "</br>" +
                                                         commentArray[k] + "</br>" +
                                                         "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
@@ -597,20 +608,20 @@
                                                 {
                                                     document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                        clinicArray[k] + "</br>" + 
+                                                        clinicArray[k] + "</br>" +
                                                         "S:" + slotIDArray[k] + "</br>" + "<span hidden='true'>R:0</span>";
                                                 }
                                                 else //for unavailable slots
-                                                {                                                     
+                                                {
                                                     document.getElementById(col.id).classList.add("unavailslot");
                                                     strSlotDetail = statusArray[k] + "</br>" + clinicianArray[k] + "</br>" +
-                                                    clinicArray[k] + "</br>" +
-                                                        commentArray[k] + "</br>" + 
-                                                        "<span hidden='true'>S:" + slotIDArray[k] + "</span>";                                                        
+                                                        clinicArray[k] + "</br>" +
+                                                        commentArray[k] + "</br>" +
+                                                        "<span hidden='true'>S:" + slotIDArray[k] + "</span>";
                                                 }
                                             }
                                             document.getElementById(col.id).innerHTML = strSlotDetail;
-                                        }                                    
+                                        }
                                     }
                                 }
                             }
@@ -619,42 +630,49 @@
                 }
             }
         }
-        
+
         //now do the same but with the appointments
-        if (apptDateArray.length != 0 && apptTimeArray.length != 0) 
+        if (apptDateArray.length != 0 && apptTimeArray.length != 0)
         {
             
-            for (var i = 0, row; row = cMatrix.rows[i]; i++) {
-                if (i > 0) {
-                    for (var j = 0, col; col = row.cells[j]; j++) {
-                        if (j > 0) {
+            for (var i = 0, row; row = cMatrix.rows[i]; i++)
+            {
+                if (i > 0)
+                {
+                    for (var j = 0, col; col = row.cells[j]; j++)
+                    {
+                        if (j > 0)
+                        {
                             var theDate = col.id.substring(0, 10);
                             var theTime = col.id.substring(11, col.id.length);
                             const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
 
-                            for (var k = 0; k < apptDateArray.length; k++) {
+                            for (var k = 0; k < apptDateArray.length; k++)
+                            {
                                 const myDate = new Date(apptDateArray[k].substring(6, 10) + "-" + apptDateArray[k].substring(3, 5) + "-" + apptDateArray[k].substring(0, 2) + "T00:00:00");
 
-                                if (myDate.valueOf() == colDate.valueOf()) {
+                                if (myDate.valueOf() == colDate.valueOf())
+                                {
 
-                                    for (var l = 0; l < apptTimeArray.length; l++) {
+                                    for (var l = 0; l < apptTimeArray.length; l++)
+                                    {
                                         const myTime = apptTimeArray[k].substring(11, 16);
                                         var strApptDetail;
-                                        if (myTime == theTime) 
+                                        if (myTime == theTime)
                                         {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
-                                            {                                                
+                                            {
                                                 //we have to do this here, because the C# throws a fit if we get nulls
                                                 if (colDate < today || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))  //past appointments
-                                                {                                                    
+                                                {
                                                     document.getElementById(col.id).classList.add("pastappt");
                                                     
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                    apptClinicianArray[k] + "</br> " +
-                                                    apptClinicArray[k] + "</br>" +
-                                                    apptOutcomeArray[k] + "</br>" +
-                                                    "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")</br><span hidden='true'>R:" +
-                                                    apptRefIDArray[k].toString() + "</span>";
+                                                        apptClinicianArray[k] + "</br> " +
+                                                        apptClinicArray[k] + "</br>" +
+                                                        apptOutcomeArray[k] + "</br>" +
+                                                        "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")</br><span hidden='true'>R:" +
+                                                        apptRefIDArray[k].toString() + "</span>";
                                                 }
                                                 else //current/future appointments
                                                 {
@@ -666,21 +684,21 @@
                                                     {
                                                         document.getElementById(col.id).classList.add("currentapptletterprinted");
                                                     }
-                                                    
+
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                    apptClinicianArray[k] + "</br> " + 
-                                                    apptClinicArray[k] + "</br>" +                                                    
-                                                    ClinicLetterDateArray[k] + "</br>" +
-                                                    "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")";
-                                                    if(alertArray[k] != null)
+                                                        apptClinicianArray[k] + "</br> " +
+                                                        apptClinicArray[k] + "</br>" +
+                                                        ClinicLetterDateArray[k] + "</br>" +
+                                                        "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")";
+                                                    if (alertArray[k] != null)
                                                     {
                                                         strApptDetail = strApptDetail + "</br>" + alertArray[k];
                                                         document.getElementById(col.id).classList.add("currentapptwithalert");
                                                     }
                                                     strApptDetail = strApptDetail + "</br><span hidden='true'>R:" +
-                                                    apptRefIDArray[k].toString() + "</span>";
+                                                        apptRefIDArray[k].toString() + "</span>";
                                                 }
-                                                document.getElementById(col.id).innerHTML = strApptDetail;                                                
+                                                document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }
                                     }
@@ -689,67 +707,65 @@
                         }
                     }
                 }
-            }            
+            }
         }
 
         //Now block out all of the national holidays
-        if (nationalHolidayArray.length != 0) 
-        {            
-            for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+        if (nationalHolidayArray.length != 0)
+        {
+            for (var i = 0, row; row = cMatrix.rows[i]; i++)
             {
-                if (i > 0) 
+                if (i > 0)
                 {
-                    for (var j = 0, col; col = row.cells[j]; j++) 
+                    for (var j = 0, col; col = row.cells[j]; j++)
                     {
-                        if (j > 0) 
+                        if (j > 0)
                         {
-                            var theDate = col.id.substring(0, 10);                            
-                            
+                            var theDate = col.id.substring(0, 10);
+
                             const colDate = new Date(theDate.substring(6, 10) + "-" + theDate.substring(3, 5) + "-" + theDate.substring(0, 2) + "T00:00:00");
 
-                            for (var k = 0; k < nationalHolidayArray.length; k++) 
+                            for (var k = 0; k < nationalHolidayArray.length; k++)
                             {
                                 const myDate = new Date(nationalHolidayArray[k].substring(6, 10) + "-" + nationalHolidayArray[k].substring(3, 5) + "-" + nationalHolidayArray[k].substring(0, 2) + "T00:00:00");
                                 //window.alert(myDate);
-                                if (myDate.valueOf() == colDate.valueOf()) 
+                                if (myDate.valueOf() == colDate.valueOf())
                                 {
                                     document.getElementById(col.id).classList.add("unavailslot");
-                                                    
+
                                     strApptDetail = "National Holiday</br>"
-                                                document.getElementById(col.id).innerHTML = strApptDetail;                                                
-                                }                            
+                                    document.getElementById(col.id).innerHTML = strApptDetail;
+                                }
                             }
                         }
                     }
-               }
-            }            
+                }
+            }
         }
 
-        
-        //finally, hide all empty rows        
-        for (var i = 0, row; row = cMatrix.rows[i]; i++) 
+
+        //finally, hide all empty rows
+        for (var i = 0, row; row = cMatrix.rows[i]; i++)
         {
             var colcount = 0
-            if (i > 0) 
+            if (i > 0)
             {
-                for (var j = 0, col; col = row.cells[j]; j++) 
+                for (var j = 0, col; col = row.cells[j]; j++)
                 {
-                    if (j > 0) 
+                    if (j > 0)
                     {
-                        if(col.innerHTML == "")
+                        if (col.innerHTML == "")
                         {
-                            colcount ++;
+                            colcount++;
                         }
                     }
                 }
-                if(colcount>=5)
+                if (colcount >= 5)
                 {
                     row.hidden = true;
                 }
             }
-        }        
+        }
     }
-    
-
 
 </script>

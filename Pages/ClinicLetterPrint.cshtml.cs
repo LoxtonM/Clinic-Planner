@@ -27,11 +27,11 @@ namespace CPTest.Pages
         {
             try
             {
-                if (_doc.ClinicLetter(refID) == 1)
+                if (_doc.ClinicLetter(refID, User.Identity.Name) == 1)
                 {
                     _letter.UpdateClinicLetter(refID, User.Identity.Name);
                     _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString());
-                    Response.Redirect(@Url.Content(@"~/letter.pdf"));
+                    Response.Redirect(@Url.Content($"~/letter-{User.Identity.Name}.pdf"));
                 }
                 else
                 {

@@ -133,12 +133,21 @@
             <div class="col-md-1">
                 <input type="checkbox" class="form-check-input" id="chkCancelAppt" onclick="ShowCancelMenu()" />
             </div>
-            <div class="col-md-4">
-                <select id="ddlCancelAppt" name="sCancel" hidden=true>
+            <div class="col-md-2">
+                <select id="ddlCancelAppt" name="sCancel" hidden=true onchange="ShowCancelReasonMenu()">
                     <option selected value=""></option>
                     @foreach (var o in Model.outcomeList)
                     {
                         <option value=@o.CLINIC_OUTCOME>@o.CLINIC_OUTCOME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlCancelReason" name="sCancelReason" hidden=true>
+                    <option selected value=""></option>
+                    @foreach (var r in Model.cancellationReasonsList)
+                    {
+                        <option value=@r.Reason>@r.Reason</option>
                     }
                 </select>
             </div>
@@ -212,6 +221,18 @@
             document.getElementById("ddlCancelAppt").hidden = true;
             document.getElementById("lblReturnToWL").hidden = true;
             document.getElementById("chkReturnWL").hidden = true;
+        }
+    }
+
+    function ShowCancelReasonMenu()
+    {
+        if (document.getElementById("ddlCancelAppt").value == "Cancelled by professional")
+        {              
+            document.getElementById("ddlCancelReason").hidden = false;        
+        }
+        else
+        {
+            document.getElementById("ddlCancelReason").hidden = true;            
         }
     }
 

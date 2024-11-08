@@ -27,9 +27,9 @@ namespace CPTest.Pages
         {
             try
             {
-                if (_doc.ClinicList(refID) == 1)
+                if (_doc.ClinicList(refID, User.Identity.Name) == 1)
                 {
-                    Response.Redirect(@Url.Content(@"~/cliniclist.pdf"));
+                    Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
                     _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refID.ToString());
                 }
                 else

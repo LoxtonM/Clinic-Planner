@@ -16,6 +16,7 @@ namespace CPTest.Pages
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAppTypeData _appTypeData;
         private readonly IOutcomeData _outcomeData;
+        private readonly ICancellationReasonData _cancelReasonData;
         private readonly IAppointmentData _appointmentData;        
         private readonly IAppointmentSqlServices _ss;
 
@@ -29,6 +30,7 @@ namespace CPTest.Pages
             _clinicVenueData = new ClinicVenueData(_context);
             _appTypeData = new AppTypeData(_context);
             _outcomeData = new OutcomeData(_context);
+            _cancelReasonData = new CancellationReasonData(_context);
             _appointmentData = new AppointmentData(_context);
         }
 
@@ -41,6 +43,7 @@ namespace CPTest.Pages
         public ClinicVenue clinicVenue { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }
         public List<Outcome> outcomeList { get; set; }
+        public List<CancellationReason> cancellationReasonsList { get; set; }
         public List<AppType> appTypeList { get; set; }
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
@@ -65,6 +68,7 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
                 outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                cancellationReasonsList = _cancelReasonData.GetCancellationReasonsList();
                 appTypeList = _appTypeData.GetAppTypeList();
                 
                 appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
@@ -104,7 +108,7 @@ namespace CPTest.Pages
         }
 
         public void OnPost(int refID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sInstructions, string sCancel, string? wcDateString, string? clinicianSelected, string? clinicSelected, int? famMPI = 0, bool? isReturnToWL = false)
+            string appType, int duration, string sInstructions, string sCancel, string? sCancelReason, string? wcDateString, string? clinicianSelected, string? clinicSelected, int? famMPI = 0, bool? isReturnToWL = false)
         {
             try
             {                
@@ -117,6 +121,7 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
                 outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                cancellationReasonsList = _cancelReasonData.GetCancellationReasonsList();
                 appTypeList = _appTypeData.GetAppTypeList();
 
                 //appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
@@ -127,7 +132,7 @@ namespace CPTest.Pages
                 string sUser = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
 
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
-                appType, duration, sUser, sInstructions, sCancel, famMPI.GetValueOrDefault(), isReturnToWL.GetValueOrDefault());
+                appType, duration, sUser, sInstructions, sCancel, famMPI.GetValueOrDefault(), isReturnToWL.GetValueOrDefault(), sCancelReason);
 
                 wcDateStr = HttpUtility.UrlEncode(wcDateString);
                 clinicianSel = HttpUtility.UrlEncode(clinicianSelected);

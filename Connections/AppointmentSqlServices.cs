@@ -7,9 +7,9 @@ namespace CPTest.Connections
     interface IAppointmentSqlServices
     { 
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions);
+            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL);
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL, string? cancelReason);
         public int CreatePastAppointment(DateTime appDate, string appTime, string appWith1, string appLocation, int iLinkedRef, int mpi,
             string appType, int duration, string sStaffCode, string outcome, bool isClockStop, string letterReq, int patientsSeen, string arrivalTime);
     }
@@ -21,7 +21,7 @@ namespace CPTest.Connections
             _config = config;
         }        
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation, 
-            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions)
+            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
 
@@ -44,7 +44,8 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@ApptType", SqlDbType.VarChar).Value = appType;
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
             cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;            
-            cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;            
+            cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
+            cmd.Parameters.Add("@WLID", SqlDbType.Int).Value = wlid;
             var returnValue = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int); //return success or not
             returnValue.Direction = ParameterDirection.ReturnValue;
             cmd.ExecuteNonQuery();
@@ -54,7 +55,7 @@ namespace CPTest.Connections
             return iReturnValue;
         }
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL)
+            string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL, string? cancelReason)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
 
@@ -82,6 +83,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@MachineName", SqlDbType.VarChar).Value = System.Environment.MachineName;
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
             cmd.Parameters.Add("@cancellation", SqlDbType.VarChar).Value = sCancellation;
+            cmd.Parameters.Add("@cancellationReason", SqlDbType.VarChar).Value = cancelReason;
             cmd.Parameters.Add("@famMPI", SqlDbType.Int).Value = famMPI;
             cmd.Parameters.Add("@returnToWL", SqlDbType.Int).Value = returnToWL;
             cmd.ExecuteNonQuery();

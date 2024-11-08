@@ -7,6 +7,7 @@ namespace CPTest.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Outcome> Outcomes { get; set; }
+        public DbSet<CancellationReason> CancellationReasons { get; set; }
         public DbSet<WaitingList> WaitingList { get; set; }
         public DbSet<ClinicSlot> ClinicSlots { get; set; }
         public DbSet<ClinicVenue> ClinicVenues { get; set; }

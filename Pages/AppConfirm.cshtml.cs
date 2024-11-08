@@ -16,6 +16,7 @@ namespace CPTest.Pages
         private readonly IReferralData _referralData;
         private readonly IAppTypeData _appTypeData;
         private readonly IClinicSlotData _clinicSlotData;
+        private readonly IWaitingListData _waitingListData;
         private readonly IAppointmentSqlServices _ss;
 
         public AppConfirmModel(DataContext context, IConfiguration config)
@@ -28,6 +29,7 @@ namespace CPTest.Pages
             _clinicVenueData = new ClinicVenueData(_context);
             _referralData = new ReferralData(_context);
             _appTypeData = new AppTypeData(_context);
+            _waitingListData = new WaitingListData(_context);
             _clinicSlotData = new ClinicSlotData(_context);
         }
 
@@ -46,6 +48,7 @@ namespace CPTest.Pages
         public string? wcDateStr;
         public string? clinicianSel;
         public string? clinicSel;
+        public int wlID;
         
         //public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
         public void OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
@@ -57,7 +60,9 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                int intID = Int32.Parse(intIDString);
+                //int intID = Int32.Parse(intIDString);
+                int WLID = Int32.Parse(intIDString);
+                int intID = _waitingListData.GetWaitingListEntryByID(WLID).IntID;
                 int slotID = Int32.Parse(slotIDString);
                 int mpi = 0;
                 
@@ -91,6 +96,7 @@ namespace CPTest.Pages
                 appDate = slot.SlotDate;
                 appTime = slot.SlotTime;
                 appDur = slot.duration;
+                wlID = WLID;
 
                 if (staffMember.CLINIC_SCHEDULER_GROUPS == "GC")
                 {
@@ -107,7 +113,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public void OnPost(int wlID, int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -117,13 +123,13 @@ namespace CPTest.Pages
                 patient = _patientData.GetPatientDetails(mpi);
                 appTypeList = _appTypeData.GetAppTypeList();
                 staffMember = _staffData.GetStaffDetails(clin);
-                staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE; //placeholder - will replace when login screen available                
+                staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;                
                 
                 clinicVenue = _clinicVenueData.GetVenueDetails(ven);
 
                 linkedRefList = _referralData.GetReferralsList(mpi);
 
-                int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions);
+                int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions, wlID);
                 if (success == 0)
                 {
                     Response.Redirect("Error?sError=Update failed");
