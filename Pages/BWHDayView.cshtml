@@ -86,7 +86,8 @@
     }
     
     //Called at the start - sets the clinic matrix view
-    function LoadClinics() {
+    function LoadClinics() 
+    {
         var cMatrix = document.getElementById("ClinicMatrix");
         var timeArray = [];
         var dateArray = [];
@@ -107,34 +108,50 @@
         const rightnow = today.getHours() + ":" + today.getMinutes();
         today.setHours(0, 0, 0, 0);
 
-    @if (Model.clinicSlotList != null) //set up all the clinic slots first
-    {
-        @foreach (var item in Model.clinicSlotList)
+        @if (Model.clinicSlotList != null) //set up all the clinic slots first
         {
-            @:dateArray.push("@item.SlotDate");
-            @:timeArray.push("@item.SlotTime");
-            @:durationArray.push("@item.duration");
-            @:clinicArray.push("@item.ClinicID");
-            @:clinicianArray.push("@item.ClinicianID");
-            @:statusArray.push("@item.SlotStatus");
-            //we need to create the arrays like this because we can't access the data otherwise
+            @foreach (var item in Model.clinicSlotList)
+            {
+                @:dateArray.push("@item.SlotDate");
+                @:timeArray.push("@item.SlotTime");
+                @:durationArray.push("@item.duration");
+                @:clinicArray.push("@item.ClinicID");
+                @:clinicianArray.push("@item.ClinicianID");
+                @:statusArray.push("@item.SlotStatus");
+                //we need to create the arrays like this because we can't access the data otherwise
+            }
         }
-    }
 
-    @if (Model.appointmentList != null) //then set up all the appointments
-    {
-        @foreach (var item in Model.appointmentList)
+        @if (Model.appointmentList != null) //then set up all the appointments
         {
-            @:apptDateArray.push("@item.BOOKED_DATE");
-            @:apptTimeArray.push("@item.BOOKED_TIME");
-            @:apptDurationArray.push("@item.Duration");
-            @:apptClinicArray.push("@item.FACILITY");
-            @:apptClinicianArray.push("@item.Clinician");
-            @:CGUNoArray.push("@item.CGU_No");
-            @:apptOutcomeArray.push("@item.Attendance");
-            @:apptRefIDArray.push("@item.RefID");
-        }
-    } 
+            @foreach (var item in Model.appointmentList)
+            {
+                @:apptDateArray.push("@item.BOOKED_DATE");
+                @:apptTimeArray.push("@item.BOOKED_TIME");
+                @:apptDurationArray.push("@item.Duration");
+                @:apptClinicArray.push("@item.Clinic");
+                @:apptClinicianArray.push("@item.Clinician");
+                @:pedNoArray.push("@item.FamilyNumber");
+                @:apptOutcomeArray.push("@item.Attendance");
+                @:apptRefIDArray.push("@item.RefID");
+                @:ClinicLetterDateArray.push("@item.LetterPrintedDate");            
+                if(@item.FamilyName != null) 
+                {
+                    if(@item.FamilyName.Length > 1) 
+                    {
+                        @:pedNameArray.push("@item.FamilyName"); 
+                    }
+                }            
+                if (@item.ActiveAlerts)
+                { 
+                    @:alertArray.push("Alerts in effect");
+                }
+                else
+                {
+                    @:alertArray.push(null);
+                }
+            }
+        } 
         //now do the same but with the appointments
         if (apptClinicArray.length != 0 && apptTimeArray.length != 0) {
             
@@ -162,27 +179,13 @@
                                         var strApptDetail;
                                         if (myTime == theTime) {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional") {
-                                                //we have to do this here, because the C# throws a fit if we get nulls
-                                                //if (colDate < today || theTime < rightnow)  //past appointments
-                                                //{
-                                                 //   document.getElementById(col.id).style.backgroundColor = "purple";
-                                                 //   strApptDetail = "PAST - " + apptDurationArray[k].toString() + " mins</br> " +
-                                                 //       apptClinicianArray[k] + "</br> " +
-                                                 //       apptClinicArray[k] + "</br>" +
-                                                 //       //apptOutcomeArray[k] + "</br>R:" +
-                                                 //       CGUNoArray[k] + "</br>R:" +
-                                                 //       apptRefIDArray[k].toString();
-                                               // }
-                                               // else //current/future appointments
-                                                //{
-                                                    document.getElementById(col.id).style.backgroundColor = "blue";
+                                                
+                                                document.getElementById(col.id).classList.add("currentappt");
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                         apptClinicianArray[k] + "</br> " +
-                                                        apptClinicArray[k] + "</br>" +
-                                                        //apptOutcomeArray[k] + "</br>R:" +
+                                                        apptClinicArray[k] + "</br>" +                                                        
                                                         CGUNoArray[k] + "</br>R:" +
-                                                        apptRefIDArray[k].toString();
-                                                //}
+                                                        apptRefIDArray[k].toString();                                                
                                                 document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }

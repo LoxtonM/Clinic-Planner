@@ -63,6 +63,7 @@ namespace CPTest.Connections
             if (appWith3 == null) { appWith3 = ""; }
             if (sInstructions == null) { sInstructions = ""; }
             if (sCancellation == null) { sCancellation = ""; }
+            if (cancelReason == null) { cancelReason = ""; }
             int returnToWL = 0;
             if (isReturnToWL) { returnToWL = 1; }
 

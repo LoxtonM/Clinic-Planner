@@ -103,12 +103,27 @@
                 @:apptDateArray.push("@item.BOOKED_DATE");
                 @:apptTimeArray.push("@item.BOOKED_TIME");
                 @:apptDurationArray.push("@item.Duration");
-                @:apptClinicArray.push("@item.FACILITY");
-                @:apptClinicianArray.push("@item.STAFF_CODE_1");
+                @:apptClinicArray.push("@item.Clinic");
+                @:apptClinicianArray.push("@item.Clinician");
                 @:pedNoArray.push("@item.FamilyNumber");
                 @:apptOutcomeArray.push("@item.Attendance");
                 @:apptRefIDArray.push("@item.RefID");
-                @:pedNameArray.push("@item.FamilyName");
+                @:ClinicLetterDateArray.push("@item.LetterPrintedDate");
+                if (@item.FamilyName != null)
+                {
+                    if (@item.FamilyName.Length > 1)
+                    {
+                        @:pedNameArray.push("@item.FamilyName");
+                    }
+                }
+                if (@item.ActiveAlerts)
+                {
+                    @:alertArray.push("Alerts in effect");
+                }
+                else
+                {
+                    @:alertArray.push(null);
+                }
             }
         }
    
