@@ -141,8 +141,8 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        @*<div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">*@
-                        <div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        <div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        @*<div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">*@
                             @if(@item.Priority == "Urgent")
                             {
                                 <div class="redalert">@item.Priority</div>
@@ -525,7 +525,11 @@
                 {
                     @:pedNameArray.push("@item.FamilyName"); 
                 }
-            }            
+            }
+            else
+            {
+                @:pedNameArray.push("");
+            }
             if (@item.ActiveAlerts)
             { 
                 @:alertArray.push("Alerts in effect");
@@ -581,6 +585,12 @@
                                         var strSlotDetail;
                                         if (myTime == theTime)
                                         {
+                                            var classList = document.getElementById(col.id).classList; //clear all CSS each time
+                                            while (classList.length > 0)
+                                            {
+                                                classList.remove(classList.item(0));
+                                            }
+
                                             if ((colDate < today) || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))//for clinic slots in the past
                                             {
                                                 document.getElementById(col.id).classList.add("unavailslot");
@@ -661,7 +671,12 @@
                                         if (myTime == theTime)
                                         {
                                             if (apptOutcomeArray[k] != "Declined" & apptOutcomeArray[k] != "Cancelled by patient" & apptOutcomeArray[k] != "Cancelled by professional")
-                                            {
+                                            {                                                
+                                                var classList = document.getElementById(col.id).classList; //clear all CSS each time
+                                                while (classList.length > 0)
+                                                {
+                                                    classList.remove(classList.item(0));
+                                                }
                                                 //we have to do this here, because the C# throws a fit if we get nulls
                                                 if (colDate < today || (theTime < rightnow && (colDate.getDate() == today.getDate() && colDate.getMonth() == today.getMonth())))  //past appointments
                                                 {
@@ -692,7 +707,7 @@
                                                         "Family: " + pedNoArray[k] + " (" + pedNameArray[k] + ")";
                                                     if (alertArray[k] != null)
                                                     {
-                                                        strApptDetail = strApptDetail + "</br>" + alertArray[k];
+                                                        strApptDetail = strApptDetail + "</br>" + alertArray[k];                                                        
                                                         document.getElementById(col.id).classList.add("currentapptwithalert");
                                                     }
                                                     strApptDetail = strApptDetail + "</br><span hidden='true'>R:" +
