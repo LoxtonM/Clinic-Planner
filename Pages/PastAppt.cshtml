@@ -22,7 +22,7 @@
                     {
                         @foreach (var item in Model.referralList)
                         {
-                            <option value=@item.RefID>@item.RefType - @item.RefDate.ToString("dd/MM/yyyy")</option>
+                            <option value=@item.refid>@item.RefType - @item.RefDate.GetValueOrDefault().ToString("dd/MM/yyyy")</option>
                         }
                     }
                 </select>

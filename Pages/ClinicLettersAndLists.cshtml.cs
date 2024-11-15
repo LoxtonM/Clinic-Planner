@@ -1,26 +1,27 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Connections;
 
 namespace CPTest.Pages
 {
     public class ClinicLettersAndListsModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;        
         private readonly IStaffData _staffData;
         private readonly IPatientData _patientData;
-        private readonly IAppointmentData _appointmentData;
+        private readonly IAppointmentData _appointmentData;        
         private readonly IClinicVenueData _clinicVenueData;
 
-        public ClinicLettersAndListsModel(DataContext context, IConfiguration config)
+        public ClinicLettersAndListsModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
             _staffData = new StaffData(_context);
             _patientData = new PatientData(_context);
             _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
         }
 
         public Patient patient { get; set; }        

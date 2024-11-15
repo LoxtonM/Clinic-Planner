@@ -15,8 +15,8 @@ namespace CPTest.Connections
     }
     public class PatternData : IPatternData
     {
-        private readonly DataContext _context;
-        public PatternData(DataContext context)
+        private readonly CPXContext _context;
+        public PatternData(CPXContext context)
         {
             _context = context;
         }

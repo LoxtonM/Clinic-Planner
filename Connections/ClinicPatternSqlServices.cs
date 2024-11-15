@@ -1,4 +1,5 @@
-﻿using CPTest.Data;
+﻿using ClinicalXPDataConnections.Data;
+using CPTest.Data;
 using CPTest.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -22,13 +23,15 @@ namespace CPTest.Connections
         private readonly IConfiguration _config;
         private readonly IClinicSlotsCreator _csc;
         private readonly IPatternData _patternData;        
-        private readonly DataContext _context;
-        public ClinicPatternSqlServices(DataContext context, IConfiguration config) 
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        public ClinicPatternSqlServices(ClinicalContext context, CPXContext cPXContext, IConfiguration config) 
         {
             _context = context;
+            _cpxContext = cPXContext;
             _config = config;
-            _csc = new ClinicSlotsCreator(_context, _config);
-            _patternData = new PatternData(_context);
+            _csc = new ClinicSlotsCreator(_context, _cpxContext, _config);
+            _patternData = new PatternData(_cpxContext);
         }        
         
         public void SaveClinicPattern(string clinicianID, string clinicID, int dayofWeek, int weekofMonth, 

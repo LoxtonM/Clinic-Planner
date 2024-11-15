@@ -13,8 +13,8 @@ namespace CPTest.Connections
     }
     public class AdHocClinicData : IAdHocClinicData
     {
-        private readonly DataContext _context;
-        public AdHocClinicData(DataContext context)
+        private readonly CPXContext _context;
+        public AdHocClinicData(CPXContext context)
         {
             _context = context;
         }

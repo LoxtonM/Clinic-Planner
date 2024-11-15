@@ -1,20 +1,21 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class ChoosePatientModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IPatientData _patientData;
         private readonly IAuditSqlServices _audit;
 
-        public ChoosePatientModel(DataContext context, IConfiguration config)
+        public ChoosePatientModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
             _config = config;

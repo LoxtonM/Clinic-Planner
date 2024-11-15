@@ -1,5 +1,6 @@
 ﻿using CPTest.Data;
-using CPTest.Models;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
@@ -13,8 +14,8 @@ namespace CPTest.Connections
     }
     public class ClinicSlotData : IClinicSlotData
     {
-        private readonly DataContext _context;
-        public ClinicSlotData(DataContext context)
+        private readonly ClinicalContext _context;
+        public ClinicSlotData(ClinicalContext context)
         {
             _context = context;
         }

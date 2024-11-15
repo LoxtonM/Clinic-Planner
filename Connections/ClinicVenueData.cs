@@ -1,5 +1,6 @@
 ﻿using CPTest.Data;
-using CPTest.Models;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
@@ -10,21 +11,23 @@ namespace CPTest.Connections
     }
     public class ClinicVenueData : IClinicVenueData
     {
-        private readonly DataContext _context;
-        public ClinicVenueData(DataContext context)
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        public ClinicVenueData(ClinicalContext context, CPXContext cpxContext)
         {
             _context = context;
+            _cpxContext = cpxContext;
         }        
 
         public ClinicVenue GetVenueDetails(string ven)
         {
-            ClinicVenue clin = _context.ClinicVenues.FirstOrDefault(v => v.FACILITY == ven);
+            ClinicVenue clin = _context.ClinicalFacilities.FirstOrDefault(v => v.FACILITY == ven);
             return clin;
         }
 
         public List<ClinicVenue> GetVenueList() 
         {
-            IQueryable<ClinicVenue> venuelist = _context.ClinicVenues.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
+            IQueryable<ClinicVenue> venuelist = _context.ClinicalFacilities.Where(v => v.NON_ACTIVE == 0).OrderBy(v => v.NAME);
             return venuelist.ToList();
         }       
     }

@@ -1,12 +1,11 @@
-﻿using Azure;
-using CPTest.Connections;
+﻿using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
-using Spire.Pdf;
-using System.Net.Mail; //must use an older version as 10.2 doesn't work with .NET 6 anymore!
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Connections;
 
 
 namespace CPTest.Document
@@ -18,30 +17,34 @@ namespace CPTest.Document
     }
     public class DocumentController : IDocumentController
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        private readonly DocumentContext _documentContext;
         private readonly IPatientData _patient;
         private readonly IAppointmentData _appointment;
         private readonly IStaffData _staff;
         private readonly IClinicVenueData _clinic;
         private readonly IReferralData _referral;
-        private readonly IConstantData _constant;
+        private readonly IConstantsData _constant;
         private readonly IExternalClinicianData _externalClinician;
         private readonly IDocumentsContentData _docContent;
         private readonly IClinicDetailsData _clinicDetails;
 
 
-        public DocumentController(DataContext context)
+        public DocumentController(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext)
         {
             _context = context;
+            _cpxContext = cpxContext;
+            _documentContext = documentContext;
             _patient = new PatientData(_context);
             _appointment = new AppointmentData(_context);
             _staff = new StaffData(_context);
-            _clinic = new ClinicVenueData(_context);
+            _clinic = new ClinicVenueData(_context, _cpxContext);
             _referral = new ReferralData(_context);
-            _constant = new ConstantData(_context);
+            _constant = new ConstantsData(_documentContext);
             _externalClinician = new ExternalClinicianData(_context);
-            _docContent = new DocumentsContentData(_context);
-            _clinicDetails = new ClinicDetailsData(_context);
+            _docContent = new DocumentsContentData(_documentContext);
+            _clinicDetails = new ClinicDetailsData(_cpxContext);
         }
         public int ClinicLetter(int refID, string username)
         {
@@ -87,8 +90,8 @@ namespace CPTest.Document
                 tf.Alignment = XParagraphAlignment.Right;
                 //Our address and contact details
                 tf.DrawString("Clinical Genetics Unit", font, XBrushes.Black, new XRect(-20, 150, page.Width, 200));
-                tf.DrawString("Tel: " + _constant.GetConstantValue("MainCGUPhoneNumber").Trim(), fontBold, XBrushes.Black, new XRect(-20, 165, page.Width, 10));
-                tf.DrawString("Email: " + _constant.GetConstantValue("MainCGUEmail").Trim(), font, XBrushes.Black, new XRect(-20, 180, page.Width, 10));
+                tf.DrawString("Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim(), fontBold, XBrushes.Black, new XRect(-20, 165, page.Width, 10));
+                tf.DrawString("Email: " + _constant.GetConstant("MainCGUEmail", 1).Trim(), font, XBrushes.Black, new XRect(-20, 180, page.Width, 10));
 
                 //patient's address
                 tf.Alignment = XParagraphAlignment.Left;
@@ -97,7 +100,7 @@ namespace CPTest.Document
 
                 string salutation = "";
                 string openingBlurb = "";
-                if (pat.DOB.AddYears(16) > DateTime.Now)
+                if (pat.DOB.GetValueOrDefault().AddYears(16) > DateTime.Now)
                 {
                     salutation = "Parent/Guardian of " + pat.SALUTATION;
                     openingBlurb = docContent.Para1 + extClinician.TITLE + " " + extClinician.FIRST_NAME + " " + extClinician.NAME + ", " + docContent.Para11;
@@ -275,7 +278,7 @@ namespace CPTest.Document
                     address = address + pat.ADDRESS3 + ", ";
                     address = address + pat.ADDRESS4 + System.Environment.NewLine;
                     address = address + pat.POSTCODE;
-                    string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.ToString("dd/MM/yyyy") + System.Environment.NewLine + pat.POSTCODE;
+                    string patient = pat.FIRSTNAME + " " + pat.LASTNAME + ", " + pat.DOB.Value.ToString("dd/MM/yyyy") + System.Environment.NewLine + pat.POSTCODE;
                     string ourrefs = "Our ref: " + pat.CGU_No + System.Environment.NewLine + "NHS No: " + pat.SOCIAL_SECURITY;
                     string gpName = "Unknown";
                     if (pat.GP != null) //because there are ALWAYS nulls somewhere!

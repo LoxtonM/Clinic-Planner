@@ -1,7 +1,7 @@
 ﻿using CPTest.Data;
-using System;
 using System.Data;
 using System.Data.SqlClient;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
@@ -18,13 +18,15 @@ namespace CPTest.Connections
         private readonly IConfiguration _config;
         private readonly IClinicSlotsCreator _csc;
         private readonly IAdHocClinicData _adhocClinicData;
-        private readonly DataContext _context;
-        public AdHocClinicSqlServices(DataContext context, IConfiguration config) 
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        public AdHocClinicSqlServices(ClinicalContext context, CPXContext cPXContext, IConfiguration config) 
         {
             _context = context;
+            _cpxContext = cPXContext;
             _config = config;
-            _csc = new ClinicSlotsCreator(_context, _config);
-            _adhocClinicData = new AdHocClinicData(_context);
+            _csc = new ClinicSlotsCreator(_context, _cpxContext, _config);
+            _adhocClinicData = new AdHocClinicData(_cpxContext);
         }        
                 
         public void SaveAdHocClinic(string clinicianID, string clinicID, int numSlots, int duration, int startHr, int startMin,

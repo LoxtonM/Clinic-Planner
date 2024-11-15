@@ -1,4 +1,5 @@
-﻿using CPTest.Data;
+﻿using ClinicalXPDataConnections.Data;
+using CPTest.Data;
 using Microsoft.Extensions.FileSystemGlobbing.Internal;
 
 namespace CPTest.Connections
@@ -13,18 +14,20 @@ namespace CPTest.Connections
     }
     public class ClinicSlotsCreator : IClinicSlotsCreator
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IClinicSlotData _slotData;
         private readonly IMiscData _dc;
         private readonly IClinicSlotSqlServices _ssSlot;
 
-        public ClinicSlotsCreator(DataContext context, IConfiguration config)
+        public ClinicSlotsCreator(ClinicalContext context, CPXContext cPXContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cPXContext;
             _config = config;
             _slotData = new ClinicSlotData(_context);
-            _dc = new MiscData(_context);
+            _dc = new MiscData(_cpxContext);
             _ssSlot = new ClinicSlotSqlServices(_config);
         }
                 

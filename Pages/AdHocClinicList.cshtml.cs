@@ -1,20 +1,24 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class AdHocClinicListModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IStaffData _staffData;
         private readonly IAdHocClinicData _adHocClinicData;
-        public AdHocClinicListModel(DataContext context)
+        public AdHocClinicListModel(ClinicalContext context, CPXContext cpxContext)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _staffData = new StaffData(_context);
-            _adHocClinicData = new AdHocClinicData(_context);
+            _adHocClinicData = new AdHocClinicData(_cpxContext);
         }
         
         public StaffMember clinician;

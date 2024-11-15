@@ -1,5 +1,6 @@
 ﻿using CPTest.Data;
-using CPTest.Models;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
@@ -9,8 +10,8 @@ namespace CPTest.Connections
     }
     public class DocumentsContentData : IDocumentsContentData
     {
-        private readonly DataContext _context;
-        public DocumentsContentData(DataContext context)
+        private readonly DocumentContext _context;
+        public DocumentsContentData(DocumentContext context)
         {
             _context = context;
         }

@@ -3,21 +3,27 @@ using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using CPTest.Document;
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Models;
 
 namespace CPTest.Pages
 {
     public class ClinicPatternListModel : PageModel
     {
-        private readonly DataContext _context;        
+        private readonly ClinicalContext _context; 
+        private readonly CPXContext _cpxContext;
+        private readonly DocumentContext _documentContext;
         private readonly IStaffData _staffData;
         private readonly IPatternData _patternData;
         private readonly DocumentController _doc;
-        public ClinicPatternListModel(DataContext context)
+        public ClinicPatternListModel(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext)
         {
             _context = context;
+            _cpxContext = cpxContext;
+            _documentContext = documentContext;
             _staffData = new StaffData(_context);
-            _patternData = new PatternData(_context);
-            _doc = new DocumentController(_context);
+            _patternData = new PatternData(_cpxContext);
+            _doc = new DocumentController(_context, _cpxContext, _documentContext);
         }
 
         public StaffMember clinician;

@@ -1,16 +1,18 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Web;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class WLModifyModel : PageModel
     {
 
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IPatientData _patientData;
         private readonly IStaffData _staffData;
@@ -20,14 +22,15 @@ namespace CPTest.Pages
         private readonly IPriorityData _priority;
         private readonly IAuditSqlServices _audit;
 
-        public WLModifyModel(DataContext context, IConfiguration config)
+        public WLModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _ss = new WaitingListSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
-            _clinicalVenueData = new ClinicVenueData(_context);
+            _clinicalVenueData = new ClinicVenueData(_context, _cpxContext);
             _waitingListData = new WaitingListData(_context);
             _priority = new PriorityData(_context);
             _audit = new AuditSqlServices(_config);

@@ -3,12 +3,16 @@ using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Web;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Models;
 
 namespace CPTest.Pages
 {
     public class AppConfirmModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IPatientData _patientData;
         private readonly IStaffData _staffData;
@@ -19,16 +23,17 @@ namespace CPTest.Pages
         private readonly IWaitingListData _waitingListData;
         private readonly IAppointmentSqlServices _ss;
 
-        public AppConfirmModel(DataContext context, IConfiguration config)
+        public AppConfirmModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;            
             _ss = new AppointmentSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
             _referralData = new ReferralData(_context);
-            _appTypeData = new AppTypeData(_context);
+            _appTypeData = new AppTypeData(_cpxContext);
             _waitingListData = new WaitingListData(_context);
             _clinicSlotData = new ClinicSlotData(_context);
         }

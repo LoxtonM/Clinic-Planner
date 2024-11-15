@@ -1,16 +1,18 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using System.Web;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Data;
+
 
 namespace CPTest.Pages
 {
     public class PastApptModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicSlotData _slotData;
@@ -22,15 +24,16 @@ namespace CPTest.Pages
         private readonly IAppointmentSqlServices _ssAppt;
         private readonly IAuditSqlServices _audit;
 
-        public PastApptModel(DataContext context, IConfiguration config)
+        public PastApptModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
             _slotData = new ClinicSlotData(_context);
             _referralData = new ReferralData(_context);
-            _appTypeData = new AppTypeData(_context);
+            _appTypeData = new AppTypeData(_cpxContext);
             _outcomeData = new OutcomeData(_context);
             _ssSlot = new ClinicSlotSqlServices(_config);
             _ssAppt = new AppointmentSqlServices(_config);

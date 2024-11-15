@@ -1,14 +1,16 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 
 namespace CPTest.Pages
 {
     public class AddToWLModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;        
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicalVenueData;
@@ -23,12 +25,13 @@ namespace CPTest.Pages
         public IEnumerable<Referral> referralList { get; set; }
         public Patient Patient { get; set; }
 
-        public AddToWLModel(DataContext context, IConfiguration config)
+        public AddToWLModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicalVenueData = new ClinicVenueData(_context);
+            _clinicalVenueData = new ClinicVenueData(_context, _cpxContext);
             _priorityData = new PriorityData(_context);
             _patientData = new PatientData(_context);
             _referralData = new ReferralData(_context);

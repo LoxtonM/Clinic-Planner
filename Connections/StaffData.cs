@@ -1,5 +1,5 @@
-﻿using CPTest.Data;
-using CPTest.Models;
+﻿using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
@@ -11,8 +11,8 @@ namespace CPTest.Connections
     }
     public class StaffData : IStaffData
     {
-        private readonly DataContext _context;
-        public StaffData(DataContext context)
+        private readonly ClinicalContext _context;
+        public StaffData(ClinicalContext context)
         {
             _context = context;
         }

@@ -10,9 +10,9 @@ namespace CPTest.Connections
     }
     public class NationalHolidayData : INationalHolidayData
     {        
-        private readonly DataContext _context;
+        private readonly CPXContext _context;
         
-        public NationalHolidayData(DataContext context)
+        public NationalHolidayData(CPXContext context)
         {            
             _context = context;
         }        

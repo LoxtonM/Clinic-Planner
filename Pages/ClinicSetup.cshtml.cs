@@ -1,15 +1,16 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
-using Microsoft.AspNetCore.Hosting;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class ClinicSetupModel : PageModel
     {
 
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
@@ -17,14 +18,15 @@ namespace CPTest.Pages
         private readonly IAdHocClinicSqlServices _ssAdHoc;
         private readonly IAuditSqlServices _audit;
 
-        public ClinicSetupModel(DataContext context, IConfiguration config)
+        public ClinicSetupModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
-            _ssPat = new ClinicPatternSqlServices(_context, _config);
-            _ssAdHoc = new AdHocClinicSqlServices(_context, _config);
+            _ssPat = new ClinicPatternSqlServices(_context, _cpxContext, _config);
+            _ssAdHoc = new AdHocClinicSqlServices(_context, _cpxContext, _config);
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
             _audit = new AuditSqlServices(_config);
         }
         public List<StaffMember> staffMemberList { get; set; }

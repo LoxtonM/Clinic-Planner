@@ -3,13 +3,18 @@ using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Web;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Models;
 
 namespace CPTest.Pages
 {
     public class AppModifyModel : PageModel
     {
 
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IPatientData _patientData;
         private readonly IStaffData _staffData;
@@ -20,17 +25,18 @@ namespace CPTest.Pages
         private readonly IAppointmentData _appointmentData;        
         private readonly IAppointmentSqlServices _ss;
 
-        public AppModifyModel(DataContext context, IConfiguration config)
+        public AppModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;            
             _ss = new AppointmentSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _appTypeData = new AppTypeData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _appTypeData = new AppTypeData(_cpxContext);
             _outcomeData = new OutcomeData(_context);
-            _cancelReasonData = new CancellationReasonData(_context);
+            _cancelReasonData = new CancellationReasonData(_cpxContext);
             _appointmentData = new AppointmentData(_context);
         }
 

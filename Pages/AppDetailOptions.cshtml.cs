@@ -1,30 +1,35 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class AppDetailOptionsModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IPatientData _patientData;
         private readonly IAppointmentData _appointmentData;
         private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAlertsData _alertData;
+        private readonly IAlertData _alertData;
         private readonly IAuditSqlServices _audit;
 
-        public AppDetailOptionsModel(DataContext context, IConfiguration config)
+        public AppDetailOptionsModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
             _patientData = new PatientData(_context);            
             _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _alertData = new AlertsData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _alertData = new AlertData(_context);
             _audit = new AuditSqlServices(_config);
         }
         public Patient patient { get; set; }
@@ -32,7 +37,7 @@ namespace CPTest.Pages
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
         public List<Patient> patientsList { get; set; }
-        public List<Alerts> alertsList { get; set; }
+        public List<Alert> alertsList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public int refID { get; set; }
         public string? wcDateStr;
@@ -59,7 +64,7 @@ namespace CPTest.Pages
                 {
                     patient = _patientData.GetPatientDetails(67066);    //and obviously it can't just redirect it, it has to resolve the entire page first!!!
                     appointmentsList = new List<Appointment>();         //So we have to give it junk data and use the page to resolve the if condition.
-                    alertsList = new List<Alerts>();
+                    alertsList = new List<Alert>();
                     Response.Redirect("Error?sError=Appointment not found - you may have clicked on a slot instead. Appointments should be blue or purple, " +
                         "and slots should be green. If you see a red slot, it shouldn't be there, please note the S: number and report it to the IT team.");
                 }
@@ -71,7 +76,7 @@ namespace CPTest.Pages
                     clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
                     appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
                     
-                    alertsList = _alertData.GetAlerts(patient.MPI);
+                    alertsList = _alertData.GetAlertsList(patient.MPI);
 
                     if (appointmentsList.Count > 1)
                     {

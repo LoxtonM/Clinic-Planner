@@ -2,26 +2,30 @@ using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class ClinicPatternModifyModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IPatternData _patternData;
         private readonly IClinicPatternSqlServices _ss;
 
-        public ClinicPatternModifyModel(DataContext context, IConfiguration config)
+        public ClinicPatternModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
-            _context = context;            
+            _context = context;    
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _patternData = new PatternData(_context);
-            _ss = new ClinicPatternSqlServices(_context, _config);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _patternData = new PatternData(_cpxContext);
+            _ss = new ClinicPatternSqlServices(_context, _cpxContext, _config);
         }
 
         public ClinicPattern pattern { get; set; }

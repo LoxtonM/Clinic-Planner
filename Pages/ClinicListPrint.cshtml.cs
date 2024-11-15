@@ -1,3 +1,4 @@
+using ClinicalXPDataConnections.Data;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
@@ -10,16 +11,20 @@ namespace CPTest.Pages
     public class ClinicListPrintModel : PageModel
     {
         private readonly DocumentController _doc;
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        private readonly DocumentContext _documentContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IAuditSqlServices _audit;
 
-        public ClinicListPrintModel(DataContext context, IConfiguration config)
+        public ClinicListPrintModel(ClinicalContext context, CPXContext cPXContext, DocumentContext documentContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cPXContext;
+            _documentContext = documentContext;
             _config = config;
-            _doc = new DocumentController(_context);
+            _doc = new DocumentController(_context, _cpxContext, _documentContext);
             _staffData = new StaffData(_context);
             _audit = new AuditSqlServices(_config);
         }

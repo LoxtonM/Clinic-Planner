@@ -9,8 +9,8 @@ namespace CPTest.Connections
     }
     public class CancellationReasonData : ICancellationReasonData
     {
-        private readonly DataContext _context;
-        public CancellationReasonData(DataContext context)
+        private readonly CPXContext _context;
+        public CancellationReasonData(CPXContext context)
         {
             _context = context;
         }

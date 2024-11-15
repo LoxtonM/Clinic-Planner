@@ -39,7 +39,7 @@
                     <select name="refID">
                         @foreach (var r in Model.linkedRefList)
                         {
-                            <option value=@r.RefID>@r.RefType - @r.RefDate.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
+                            <option value=@r.refid>@r.RefType - @r.RefDate.Value.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
                         }
                     </select>                
                 </div>

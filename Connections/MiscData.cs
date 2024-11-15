@@ -9,8 +9,8 @@ namespace CPTest.Connections
     }
     public class MiscData : IMiscData
     {
-        private readonly DataContext _context;
-        public MiscData(DataContext context)
+        private readonly CPXContext _context;
+        public MiscData(CPXContext context)
         {
             _context = context;
         }

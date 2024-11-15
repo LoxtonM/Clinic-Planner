@@ -1,27 +1,32 @@
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Data;
+
 
 namespace CPTest.Pages
 {
     public class AdHocClinicModifyModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAdHocClinicData _adHocClinicData;
         private readonly IAdHocClinicSqlServices _ss;
 
-        public AdHocClinicModifyModel(DataContext context, IConfiguration config)
+        public AdHocClinicModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _adHocClinicData = new AdHocClinicData(_context);
-            _ss = new AdHocClinicSqlServices(_context, _config);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _adHocClinicData = new AdHocClinicData(_cpxContext);
+            _ss = new AdHocClinicSqlServices(_context, _cpxContext, _config);
         }
 
         public ClinicsAdded adhocclinic {  get; set; }

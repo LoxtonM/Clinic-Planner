@@ -10,9 +10,9 @@ namespace CPTest.Pages
 {
     public class FinishedModel : PageModel
     {        
-        private readonly DataContext _context;
+        private readonly CPXContext _context;
 
-        public FinishedModel(DataContext context)
+        public FinishedModel(CPXContext context)
         {
             _context = context;
         }

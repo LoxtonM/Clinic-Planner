@@ -1,14 +1,18 @@
 using CPTest.Connections;
 using CPTest.Data;
-using CPTest.Models;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ClinicalXPDataConnections.Meta;
+using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages
 {
     public class ClinicianDayViewModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
@@ -17,12 +21,13 @@ namespace CPTest.Pages
         private readonly ICliniciansClinicData _cliniciansClinicData;
         private readonly IAuditSqlServices _audit;
 
-        public ClinicianDayViewModel(DataContext context, IConfiguration config)
+        public ClinicianDayViewModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
             _appointmentData = new AppointmentData(_context);
             _slotData = new ClinicSlotData(_context);
             _audit = new AuditSqlServices(_config);

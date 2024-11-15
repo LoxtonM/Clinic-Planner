@@ -9,8 +9,8 @@ namespace CPTest.Connections
     }
     public class AppTypeData : IAppTypeData
     {
-        private readonly DataContext _context;
-        public AppTypeData(DataContext context)
+        private readonly CPXContext _context;
+        public AppTypeData(CPXContext context)
         {
             _context = context;
         }

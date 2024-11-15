@@ -8,13 +8,13 @@
     {                               @*So I have to give it Freddie as a default patient, and not render the rest of the website in this case.*@        
         
         <div class="row" class="text-center">
-            <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.ToString("dd/MM/yyyy") (@Model.patient.CGU_No)</h1>
+            <h1 class="text-center">Appointment for @Model.patient.FIRSTNAME @Model.patient.LASTNAME, DOB: @Model.patient.DOB.Value.ToString("dd/MM/yyyy") (@Model.patient.CGU_No)</h1>
         </div>
         @if(Model.patientsList.Count > 0)
         {
             @foreach (var p in Model.patientsList)
             {
-                <h1 class="text-center">@p.FIRSTNAME @p.LASTNAME, DOB: @p.DOB.ToString("dd/MM/yyyy") (@p.CGU_No)</h1>
+                <h1 class="text-center">@p.FIRSTNAME @p.LASTNAME, DOB: @p.DOB.Value.ToString("dd/MM/yyyy") (@p.CGU_No)</h1>
             }
         }
         <br />

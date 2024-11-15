@@ -9,8 +9,8 @@ namespace CPTest.Connections
     }
     public class CliniciansClinicData : ICliniciansClinicData
     {
-        private readonly DataContext _context;
-        public CliniciansClinicData(DataContext context)
+        private readonly CPXContext _context;
+        public CliniciansClinicData(CPXContext context)
         {
             _context = context;
         }

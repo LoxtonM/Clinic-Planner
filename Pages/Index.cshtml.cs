@@ -1,16 +1,20 @@
 ﻿using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
+using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Meta;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.IdentityModel.Tokens;
+using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Data;
 
 
 namespace CPTest.Pages
 {
     public class IndexModel : PageModel
     {        
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IClinicVenueData _clinicVenueData;
@@ -22,18 +26,19 @@ namespace CPTest.Pages
         private readonly IAuditSqlServices _audit;
         private readonly INationalHolidayData _hols;
 
-        public IndexModel(DataContext context, IConfiguration config)
+        public IndexModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
             _appointmentData = new AppointmentData(_context);
             _waitingListData = new WaitingListData(_context);
             _slotData = new ClinicSlotData(_context);
-            _cliniciansClinicData = new CliniciansClinicData(_context);
+            _cliniciansClinicData = new CliniciansClinicData(_cpxContext);
             _note = new NotificationData(_context);            
-            _hols = new NationalHolidayData(_context);
+            _hols = new NationalHolidayData(_cpxContext);
             _audit = new AuditSqlServices(config);
         }
         public List<Outcome> outcomes { get; set; }
@@ -48,6 +53,7 @@ namespace CPTest.Pages
         public List<Appointment?> appointmentList { get; set; }
         public List<NationalHolidays> holidays { get; set; }
 
+        public string appVersion { get; set; }
         public string notificationMessage { get; set; }
         public bool isLive { get; set; }
 
@@ -77,6 +83,7 @@ namespace CPTest.Pages
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
                     _audit.CreateAudit(userStaffCode, "Main Form", "");
+                    appVersion = _config.GetValue("AppVersion", "");
                 }
             }
             catch (Exception ex)
@@ -97,6 +104,7 @@ namespace CPTest.Pages
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
                 userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
+                appVersion = _config.GetValue("AppVersion", "");
 
                 if (wcDt.ToString() != "01/01/0001 00:00:00")
                 {

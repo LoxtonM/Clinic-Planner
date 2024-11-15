@@ -1,3 +1,4 @@
+using ClinicalXPDataConnections.Data;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
@@ -8,17 +9,21 @@ namespace CPTest.Pages
 {
     public class ClinicLetterPrintModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        private readonly DocumentContext _documentContext;
         private readonly IDocumentController _doc;        
         private readonly IConfiguration _config;
         private readonly IClinicLetterSqlServices _letter;
         private readonly IStaffData _staffData;
         private readonly IAuditSqlServices _audit;
-        public ClinicLetterPrintModel(DataContext context, IConfiguration config)
+        public ClinicLetterPrintModel(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
+            _documentContext = documentContext;
             _config = config;
-            _doc = new DocumentController(_context);
+            _doc = new DocumentController(_context, _cpxContext, _documentContext);
             _staffData = new StaffData(_context);
             _letter = new ClinicLetterSqlServices(_config);
             _audit = new AuditSqlServices(_config);

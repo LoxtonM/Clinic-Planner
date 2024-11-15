@@ -1,28 +1,33 @@
+using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Data;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
-using CPTest.Models;
-using Microsoft.AspNetCore.Mvc;
+using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
 {
     public class ClinicListSelectModel : PageModel
     {
-        private readonly DataContext _context;
+        private readonly ClinicalContext _context;
+        private readonly CPXContext _cpxContext;
+        private readonly DocumentContext _documentContext;
         private readonly IConfiguration _config;
         private readonly IStaffData _staffData;
         private readonly IAuditSqlServices _audit;
         private readonly IAppointmentData _appt;
         private readonly IDocumentController _doc;
 
-        public ClinicListSelectModel(DataContext context, IConfiguration config)
+        public ClinicListSelectModel(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext, IConfiguration config)
         {
             _context = context;
+            _cpxContext = cpxContext;
+            _documentContext = documentContext;
             _config = config;
             _staffData = new StaffData(_context);
             _appt = new AppointmentData(_context);
-            _doc = new DocumentController(_context);
+            _doc = new DocumentController(_context, _cpxContext, _documentContext);
             _audit = new AuditSqlServices(_config);
         }
 
