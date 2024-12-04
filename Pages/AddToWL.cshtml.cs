@@ -23,7 +23,7 @@ namespace CPTest.Pages
         public IEnumerable<StaffMember> staffMemberList { get; set; }
         public IEnumerable<Priority> priorityList { get; set; }
         public IEnumerable<Referral> referralList { get; set; }
-        public Patient Patient { get; set; }
+        public Patient patient { get; set; }
 
         public AddToWLModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
@@ -50,13 +50,18 @@ namespace CPTest.Pages
                 clinicVenueList = _clinicalVenueData.GetVenueList();       
                 staffMemberList = _staffData.GetStaffMemberList();
                 priorityList = _priorityData.GetPriorityList();
+                
 
                 if (cgu != null)
                 {                    
-                    Patient = _patientData.GetPatientDetailsByCGUNo(cgu);
-                    if (Patient == null)
+                    patient = _patientData.GetPatientDetailsByCGUNo(cgu);
+                    if (patient == null)
                     {                        
                         Response.Redirect("CGUNumberNotFound");
+                    }
+                    else
+                    {
+                        referralList = _referralData.GetActiveReferralsListForPatient(patient.MPI);
                     }
                 }
             }

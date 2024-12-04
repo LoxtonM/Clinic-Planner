@@ -141,7 +141,7 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row waitinglistitem w-100" id=@item.IntID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
+                        <div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
                         @*<div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">*@
                             @if(@item.Priority == "Urgent")
                             {

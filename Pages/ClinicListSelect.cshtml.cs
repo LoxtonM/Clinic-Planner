@@ -1,4 +1,4 @@
-using ClinicalXPDataConnections.Connections;
+using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Data;
 using CPTest.Connections;
 using CPTest.Data;

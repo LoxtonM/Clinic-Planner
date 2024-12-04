@@ -3,7 +3,6 @@ using CPTest.Data;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Meta;
-using ClinicalXPDataConnections.Connections;
 using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Pages

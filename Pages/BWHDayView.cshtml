@@ -71,16 +71,17 @@
         
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
     
-    function OnDoubleClickAP(id) {
-        if (document.getElementById(id).innerHTML.includes("Booked")) {
+    function OnDoubleClickAP(id)
+    {
+        if (document.getElementById(id).innerHTML.includes("Booked"))
+        {
             const str = document.getElementById(id).innerHTML;
-            const sRID = str.slice(str.indexOf('R:') + 2);
-            window.location.replace("AppModify?refID=" + sRID);
+            const sRID = str.slice(str.indexOf('R:') + 2, str.length - 7);
+            //window.location.replace("AppModify?refID=" + sRID);
+            window.location.replace("AppDetailOptions?sRefID=" + sRID);
         }
-        else if (document.getElementById(id).innerHTML.includes("Free")) {
-            window.open("WIP");
-        }
-        else if (document.getElementById(id).innerHTML.includes("PAST")) {
+        else if (document.getElementById(id).innerHTML.includes("PAST"))
+        {
             window.alert("This is in the past, you cannot edit this.");
         }
     }
@@ -98,11 +99,18 @@
         var apptDateArray = [];
         var apptTimeArray = [];
         var apptDurationArray = [];
+        var apptDurationArray = [];
         var apptClinicArray = [];
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
-        var CGUNoArray = [];
+        var pedNoArray = [];
+        var ClinicLetterDateArray = [];
+        var pedNameArray = [];
+        var pednumArray = [];
+        var alertArray = [];
+        var nationalHolidayArray = [];
+        var commentArray = [];
 
         const today = new Date();
         const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -129,7 +137,7 @@
                 @:apptDateArray.push("@item.BOOKED_DATE");
                 @:apptTimeArray.push("@item.BOOKED_TIME");
                 @:apptDurationArray.push("@item.Duration");
-                @:apptClinicArray.push("@item.Clinic");
+                @:apptClinicArray.push("@item.FACILITY");
                 @:apptClinicianArray.push("@item.Clinician");
                 @:pedNoArray.push("@item.FamilyNumber");
                 @:apptOutcomeArray.push("@item.Attendance");
@@ -184,8 +192,8 @@
                                                     strApptDetail = "Booked - " + apptDurationArray[k].toString() + " mins</br> " +
                                                         apptClinicianArray[k] + "</br> " +
                                                         apptClinicArray[k] + "</br>" +                                                        
-                                                        CGUNoArray[k] + "</br>R:" +
-                                                        apptRefIDArray[k].toString();                                                
+                                                        pedNoArray[k] + " (" + pedNameArray[k] + ")" + "</br><span hidden='true'>R:" +
+                                                        apptRefIDArray[k].toString() + "</span>";                                                          
                                                 document.getElementById(col.id).innerHTML = strApptDetail;
                                             }
                                         }

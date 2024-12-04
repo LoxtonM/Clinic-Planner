@@ -84,12 +84,18 @@
         var apptDateArray = [];
         var apptTimeArray = [];
         var apptDurationArray = [];
+        var apptDurationArray = [];
         var apptClinicArray = [];
         var apptClinicianArray = [];
         var apptOutcomeArray = [];
         var apptRefIDArray = [];
         var pedNoArray = [];
+        var ClinicLetterDateArray = [];
         var pedNameArray = [];
+        var pednumArray = [];
+        var alertArray = [];
+        var nationalHolidayArray = [];
+        var commentArray = [];
 
         const today = new Date();
         const rightnow = today.getHours() + ":" + today.getMinutes();
@@ -104,7 +110,7 @@
                 @:apptTimeArray.push("@item.BOOKED_TIME");
                 @:apptDurationArray.push("@item.Duration");
                 @:apptClinicArray.push("@item.Clinic");
-                @:apptClinicianArray.push("@item.Clinician");
+                @:apptClinicianArray.push("@item.STAFF_CODE_1");
                 @:pedNoArray.push("@item.FamilyNumber");
                 @:apptOutcomeArray.push("@item.Attendance");
                 @:apptRefIDArray.push("@item.RefID");

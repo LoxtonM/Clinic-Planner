@@ -12,6 +12,7 @@ var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional
     .AddJsonFile("secrets.json", optional: false)
     .Build();
 builder.Services.AddDbContext<ClinicalContext>(options => options.UseSqlServer(config.GetConnectionString("ConString")));
+builder.Services.AddDbContext<DocumentContext>(options => options.UseSqlServer(config.GetConnectionString("ConString")));
 builder.Services.AddDbContext<CPXContext>(options => options.UseSqlServer(config.GetConnectionString("ConString")));
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

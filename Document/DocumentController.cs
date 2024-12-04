@@ -5,7 +5,6 @@ using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Meta;
-using ClinicalXPDataConnections.Connections;
 
 
 namespace CPTest.Document

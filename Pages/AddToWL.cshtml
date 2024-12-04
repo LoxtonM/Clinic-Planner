@@ -14,9 +14,9 @@
                 <label class="w-100">CGU Number (including point):</label>
             </div>
             <div class="col-md-2 text-right">
-                <input type="text" class="w-100" id="txtCGUNo" name="cgu" asp-for=@Model.Patient.CGU_No />
+                <input type="text" class="w-100" id="txtCGUNo" name="cgu" asp-for=@Model.patient.CGU_No />
             </div>
-            @if(Model.Patient != null)
+            @if(Model.patient != null)
             {
                <div class="col-md-2">
                     <label class="w-100">Linked Referral:</label>
@@ -28,7 +28,7 @@
                         {
                             @foreach (var item in Model.referralList)
                             {
-                                <option value=@item.refid>@item.RefType - @item.RefDate, @item.ReferringClinician, @item.ReferringFacility</option>
+                                <option value=@item.refid>@item.RefType - @item.RefDate.Value.ToString("dd/MM/yyyy"), @item.ReferringClinician, @item.ReferringFacility</option>
                             }
                         }
                     </select>
@@ -83,17 +83,17 @@
         </div>
 
 
-        @if(@Model.Patient != null)
+        @if(@Model.patient != null)
         {
             <div class="row mb-5 g-5">
                 <div class="col-md-2">
-                    <p>@Model.Patient.FIRSTNAME @Model.Patient.LASTNAME</p>
+                    <p>@Model.patient.FIRSTNAME @Model.patient.LASTNAME</p>
                 </div>
                 <div class="col-md-2">
-                    <p>@Model.Patient.CGU_No</p>
+                    <p>@Model.patient.CGU_No</p>
                 </div>
                 <div class="col-md-2" hidden="true">
-                    <input name="mpi" value=@Model.Patient.MPI />
+                    <input name="mpi" value=@Model.patient.MPI />
                 </div>
             </div>
         }

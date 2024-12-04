@@ -4,7 +4,6 @@ using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Web;
 using ClinicalXPDataConnections.Meta;
-using ClinicalXPDataConnections.Connections;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Models;
 

@@ -5,7 +5,6 @@ using ClinicalXPDataConnections.Models;
 using ClinicalXPDataConnections.Meta;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
-using ClinicalXPDataConnections.Connections;
 using ClinicalXPDataConnections.Data;
 
 
