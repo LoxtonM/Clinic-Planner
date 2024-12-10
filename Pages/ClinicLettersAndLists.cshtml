@@ -8,15 +8,30 @@
         <h1>Clinic Letters and Lists</h1>
     </div>
 
+    @if(Model.message != null)
+    {
+        if (Model.success)
+        {
+            <div class="alert alert-success d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+    }
+
     <div class="row mb-5 g-5">
         <div class="col-md-6">
             @foreach (var item in Model.appointmentListForFamily)
             {
-                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Create Letter to @item.CGU_No</a>(Create letter for manual printing)</p>
-                @if(!item.ActiveAlerts)
+                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID asp-route-isEmailOnly=true>Create Letter to @item.CGU_No</a>(Create letter for manual printing)</p>
+                @if(!item.ActiveAlerts && Model.synertecPrinterActive)
                 {
-                    <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Print Letter to @item.CGU_No</a>(Print directly via Synertec)</p>
-                    @*TODO: test printing via Synertec, and make it actually print when confirmed*@
+                    <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Print Letter to @item.CGU_No</a>(Print directly via Synertec)</p>                    
                 }
             }
         </div>

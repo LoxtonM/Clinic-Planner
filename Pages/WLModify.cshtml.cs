@@ -15,7 +15,7 @@ namespace CPTest.Pages
         private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
         private readonly IPatientData _patientData;
-        private readonly IStaffData _staffData;
+        private readonly IStaffUserData _staffData;
         private readonly IClinicVenueData _clinicalVenueData;
         private readonly IWaitingListData _waitingListData;        
         private readonly IWaitingListSqlServices _ss;        
@@ -29,7 +29,7 @@ namespace CPTest.Pages
             _config = config;
             _ss = new WaitingListSqlServices(_config);
             _patientData = new PatientData(_context);
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserData(_context);
             _clinicalVenueData = new ClinicVenueData(_context, _cpxContext);
             _waitingListData = new WaitingListData(_context);
             _priority = new PriorityData(_context);
@@ -41,7 +41,7 @@ namespace CPTest.Pages
         public List<StaffMember> staffMemberList { get; set; }
         public ClinicVenue clinicVenue { get; set; }
         public List<ClinicVenue> clinicVenueList { get; set; }     
-        public WaitingList waitingList { get; set; }
+        public WaitingList? waitingList { get; set; }
         public List<Priority> priorityList { get; set; }
         
         public string? wcDateStr;
@@ -49,7 +49,7 @@ namespace CPTest.Pages
         public string? clinicSel;
 
 
-        public void OnGet(int intID, string clinicID, string clinicianID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public void OnGet(int id, string clinicID, string clinicianID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -61,14 +61,19 @@ namespace CPTest.Pages
                 wcDateStr = wcDateString;
                 clinicianSel = clinicianSelected;
                 clinicSel = clinicSelected;
-
-                waitingList = _waitingListData.GetWaitingListEntry(intID, clinicianID, clinicID);
+                int intID=0;
+                
+                if (id != 0)
+                {
+                    waitingList = _waitingListData.GetWaitingListEntryByID(id);
+                    intID = waitingList.IntID;
+                }
 
                 priorityList = _priority.GetPriorityList();
 
                 if (clinicianID != null)
                 {
-                    staffMember = _staffData.GetStaffDetails(clinicianID);
+                    staffMember = _staffData.GetStaffMemberDetailsByStaffCode(clinicianID);                    
                 }
 
                 if (clinicID != null)
@@ -76,7 +81,7 @@ namespace CPTest.Pages
                     clinicVenue = _clinicalVenueData.GetVenueDetails(clinicID);
                 }
 
-                if (intID != null)
+                if (intID != 0)
                 {
                     patient = _patientData.GetPatientDetailsByIntID(intID);
                 }
@@ -90,7 +95,7 @@ namespace CPTest.Pages
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Waiting List Modify", "IntID=" + intID.ToString());
+                _audit.CreateAudit(_staffData.GetStaffMemberDetails(User.Identity.Name).STAFF_CODE, "Waiting List Modify", "IntID=" + intID.ToString());
             }
             catch (Exception ex)
             {
@@ -98,14 +103,13 @@ namespace CPTest.Pages
             }
         }    
         
-        public void OnPost(int mpi, string clinicianID, string clinicID, string oldClinicianID, string oldClinicID, int priorityLevel, int oldPriorityLevel, 
-            bool isRemoval, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public void OnPost(int id, string clinicianID, string clinicID, int priorityLevel, bool isRemoval, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
                 if (clinicianID != null)
                 {
-                    staffMember = _staffData.GetStaffDetails(clinicianID);
+                    staffMember = _staffData.GetStaffMemberDetailsByStaffCode(clinicianID);
                 }
 
                 if (clinicID != null)
@@ -113,13 +117,18 @@ namespace CPTest.Pages
                     clinicVenue = _clinicalVenueData.GetVenueDetails(clinicID);
                 }
 
-                if (mpi != null)
-                {
-                    patient = _patientData.GetPatientDetails(mpi);
-                }                
+                waitingList = _waitingListData.GetWaitingListEntryByID(id);
 
-                string sStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
-                int intID = patient.INTID;                
+                if (waitingList != null)
+                {
+                    patient = _patientData.GetPatientDetails(waitingList.MPI);
+                }
+
+                string sStaffCode = _staffData.GetStaffMemberDetails(User.Identity.Name).STAFF_CODE;
+                int intID = patient.INTID;
+                string oldClinicianID = waitingList.ClinicianID; //for auditing
+                string oldClinicID = waitingList.ClinicID;
+                int oldPriorityLevel = waitingList.PriorityLevel;
 
                 priorityList = _priority.GetPriorityList();
 
@@ -127,10 +136,9 @@ namespace CPTest.Pages
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
-                _ss.ModifyWaitingListEntry(intID, clinicianID, clinicID, priorityLevel, oldClinicianID, oldClinicID, oldPriorityLevel, sStaffCode, isRemoval);
+                _ss.ModifyWaitingListEntry(id, clinicianID, clinicID, priorityLevel, oldClinicianID, oldClinicID, oldPriorityLevel, sStaffCode, isRemoval);
 
-                waitingList = _waitingListData.GetWaitingListEntry(intID, clinicianID, clinicID);
-
+ 
                 wcDateStr = HttpUtility.UrlEncode(wcDateString);
                 clinicianSel = HttpUtility.UrlEncode(clinicianSelected);
                 clinicSel = HttpUtility.UrlEncode(clinicSelected);

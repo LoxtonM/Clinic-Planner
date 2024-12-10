@@ -2,7 +2,6 @@ using ClinicalXPDataConnections.Data;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CPTest.Pages
@@ -32,11 +31,20 @@ namespace CPTest.Pages
         {
             try
             {
-                if (_doc.ClinicLetter(refID, User.Identity.Name) == 1)
+                if (_doc.ClinicLetter(refID, User.Identity.Name, isEmailOnly) == 1)
                 {
                     _letter.UpdateClinicLetter(refID, User.Identity.Name);
                     _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString());
-                    Response.Redirect(@Url.Content($"~/letter-{User.Identity.Name}.pdf"));
+
+                    if (isEmailOnly)
+                    {
+                        Response.Redirect(@Url.Content($"~/letter-{User.Identity.Name}.pdf"));
+                    }
+                    else
+                    {
+                        string message = "Letter successfully sent to Synertec";
+                        Response.Redirect("ClinicLettersAndLists?refID=" + refID + "&sMessage=" + message + "&isSuccess=true");
+                    }
                 }
                 else
                 {

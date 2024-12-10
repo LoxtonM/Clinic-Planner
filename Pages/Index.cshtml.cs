@@ -24,6 +24,7 @@ namespace CPTest.Pages
         private readonly INotificationData _note;
         private readonly IAuditSqlServices _audit;
         private readonly INationalHolidayData _hols;
+        private readonly IVersionData _versionData;
 
         public IndexModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
@@ -36,6 +37,7 @@ namespace CPTest.Pages
             _waitingListData = new WaitingListData(_context);
             _slotData = new ClinicSlotData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_cpxContext);
+            _versionData = new VersionData();
             _note = new NotificationData(_context);            
             _hols = new NationalHolidayData(_cpxContext);
             _audit = new AuditSqlServices(config);
@@ -53,6 +55,7 @@ namespace CPTest.Pages
         public List<NationalHolidays> holidays { get; set; }
 
         public string appVersion { get; set; }
+        public string dllVersion { get; set; }
         public string notificationMessage { get; set; }
         public bool isLive { get; set; }
 
@@ -78,11 +81,12 @@ namespace CPTest.Pages
                 {
                     //userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
                     holidays = _hols.GetNationalHolidays();
-                    notificationMessage = _note.GetMessage();
+                    notificationMessage = _note.GetMessage("ClinicPlannerOutage");
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
                     _audit.CreateAudit(userStaffCode, "Main Form", "");
                     appVersion = _config.GetValue("AppVersion", "");
+                    dllVersion = _versionData.GetDLLVersion();
                 }
             }
             catch (Exception ex)

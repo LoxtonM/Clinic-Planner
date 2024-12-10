@@ -30,14 +30,14 @@
 
     <div class="row mb-5 g-5">
         <div class="col-md-2">
-            <button type="button" class="btn btn-success" onclick="AddClinicSlot()">Add Clinic Slot</button>
+            <button type="button" class="btn-success" onclick="AddClinicSlot()">Add Clinic Slot</button>
         </div>
 
         <div class="col-md-8">
         </div>
 
         <div class="col-md-2">
-            <button type="button" class="btn btn-success" onclick="PrintClinicList()">Print Clinic List</button>
+            <button type="button" class="btn-success" onclick="PrintClinicList()">Print Clinic List</button>
         </div>
     </div>
 
@@ -98,11 +98,9 @@
                 </select>
             </div>
             <div class="col-md-3"></div>
-            <div class="col-md-1" align="right">
-                @*<input class="btn-success" type="submit" value="Select" />*@
-            </div>
-            <div class="col-md-1" align="right">
-                <input class="btn-success" type="button" id="btnClear" value="Clear" onclick="Clear()" />
+            
+            <div class="col-md-2">
+                <input class="btn-success" type="button" id="btnClear" value="Clear Filters" onclick="Clear()" />
             </div>
         </div>
     </form>
@@ -141,13 +139,12 @@
                 {
                     @foreach (var item in Model.waitingList)
                     {                
-                        <div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">
-                        @*<div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.IntID, '@item.ClinicID', '@item.ClinicianID')">*@
+                        <div class="row waitinglistitem w-100" id=@item.ID draggable="true" ondragstart="OnDragStart(event)" ondragend="OnDragEnd(@item.MPI, event)" ondblclick="OnDoubleClickWL(@item.ID)">
                             @if(@item.Priority == "Urgent")
                             {
                                 <div class="redalert">@item.Priority</div>
                             }
-                            <div>@item.CGU_No - @item.FIRSTNAME @item.LASTNAME</div>                            
+                            <div>@item.CGU_No - @item.FIRSTNAME @item.LASTNAME</div>
                             <div>@item.ClinicianName</div>
                             <div>@item.ClinicName (@item.ClinicID)</div>
                             @if (item.Duration != null)
@@ -196,10 +193,10 @@
         <div class="col-md-10"></div>
         <div class="col-md-2"><label>Application version: @Model.appVersion</label></div>
     </div>
-    @*<div class="row">
+    <div class="row">
         <div class="col-md-10"></div>
         <div class="col-md-2"><label>Data library version: @Model.dllVersion</label></div>
-    </div>*@
+    </div>
 </div>
 
 <script>
@@ -343,13 +340,14 @@
     }
 
     //Double click functions (called by double-clicking on slots/appointments/waiting list entries)
-    function OnDoubleClickWL(intID, clinicID, clinicianID)
+    function OnDoubleClickWL(id)
     {
         const wcDateString = document.getElementById("wcDate").value;
         const clinicianSelected = document.getElementById("ddlClinician").value;
         const clinicSelected = document.getElementById("ddlClinic").value;
         //window.open("WLModify?mpi=" + MPI + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID);
-        window.location.replace("WLModify?intid=" + intID + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
+        //window.location.replace("WLModify?intid=" + intID + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
+        window.location.replace("WLModify?id=" + id + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
     }
 
     function OnDoubleClickAP(id)
@@ -453,7 +451,7 @@
 
         if (clinicianSelected == "" || clinicSelected == "")
         {
-            window.alert("Please choose a clinician/clinic to generate a clinicArray list.");
+            window.alert("Please choose a clinician/clinic to generate a clinic list for.");
         }
         else
         {
@@ -778,10 +776,10 @@
                 {
                     if (j > 0)
                     {
-                        if (col.innerHTML == "")
+                        if (col.innerHTML == "" || col.innerHTML == "National Holiday<br>")
                         {
                             colcount++;
-                        }
+                        }                        
                     }
                 }
                 if (colcount >= 5)

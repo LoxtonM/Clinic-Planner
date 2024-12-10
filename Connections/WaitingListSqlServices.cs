@@ -32,17 +32,16 @@ namespace CPTest.Connections
             cmd.ExecuteNonQuery();
             con.Close();
         }
-        public void ModifyWaitingListEntry(int intID, string clinicianID, string clinicID, int priorityLevel, string oldClinicianID, string oldClinicID,
+        public void ModifyWaitingListEntry(int id, string clinicianID, string clinicID, int priorityLevel, string oldClinicianID, string oldClinicID,
             int oldPriorityLevel, string staffCode, bool isRemoval)
-        {
-            //since there is no primary key on the Waiting List table, we need the old values to be able to update!
+        {            
             if(oldClinicianID == null) { oldClinicianID = ""; }
             if (oldClinicID == null) { oldClinicID = ""; }
             SqlConnection con = new SqlConnection(_config.GetConnectionString("ConString"));
             con.Open();
             SqlCommand cmd = new SqlCommand("dbo.[sp_ClinicPlannerModifyWaitingListEntry]", con);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@IntID", SqlDbType.Int).Value = intID;
+            cmd.Parameters.Add("@ID", SqlDbType.Int).Value = id;
             cmd.Parameters.Add("@ClinicianID", SqlDbType.VarChar).Value = clinicianID;
             cmd.Parameters.Add("@ClinicID", SqlDbType.VarChar).Value = clinicID;
             cmd.Parameters.Add("@PriorityLevel", SqlDbType.Int).Value = priorityLevel;

@@ -4,41 +4,39 @@
 }
 
 <div class="container">
-    
-    <div class="row">
-        @if(Model.patient != null)
-        {
-            <h1 class="text-center">Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
-        }
-    </div>
-    <div class="row">
-        <div class="text-center">
-            <h2>DOB: @Model.patient.DOB.Value.ToString("dd/MM/yyyy")</h2>
+    @if(Model.patient != null)
+    {
+        <div class="row">        
+            <h1 class="text-center">Waiting List Entry for @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>        
         </div>
-    </div>
-    <div class="row">
-        <div class="text-center">
-            <h3>GP: @Model.patient.GP</h3>
+        <div class="row">
+            <div class="text-center">
+                <h2>DOB: @Model.patient.DOB.Value.ToString("dd/MM/yyyy")</h2>
+            </div>
         </div>
-    </div>
-
-    <div class="row">
-        @if (Model.patient.PtAKA != null)
-        {
+        <div class="row">
             <div class="text-center">
-                <h3>Preferred Name: @Model.patient.PtAKA</h3>
+                <h3>GP: @Model.patient.GP</h3>
             </div>
-        }
-    </div>
-    <div class="row">
-        @if (Model.patient.IsInterpreterReqd == "Yes")
-        {
-            <div class="text-center">
-                <h3>@Model.patient.PrimaryLanguage interpreder required</h3>
-            </div>
-        }
-    </div>
+        </div>
     
+        <div class="row">
+            @if (Model.patient.PtAKA != null)
+            {
+                <div class="text-center">
+                    <h3>Preferred Name: @Model.patient.PtAKA</h3>
+                </div>
+            }
+        </div>
+        <div class="row">
+            @if (Model.patient.IsInterpreterReqd == "Yes")
+            {
+                <div class="text-center">
+                    <h3>@Model.patient.PrimaryLanguage interpreter required</h3>
+                </div>
+            }
+        </div>
+    }
     <div class="row">
         <div class="text-center">
             <h4>@Model.waitingList.Comment</h4>
@@ -105,6 +103,7 @@
             </div>
             <div class="col-md-6" hidden="true">
                 <input type="text" id="txtIsWLRemoval" name="isRemoval" />
+                <input type="text" name="id" asp-for=@Model.waitingList.ID />
                 <input type="text" name="mpi" asp-for=@Model.patient.MPI />
                 <input type="text" name="oldClinicianID" asp-for=@Model.staffMember.STAFF_CODE />
                 <input type="text" name="oldClinicID" asp-for=@Model.clinicVenue.FACILITY />

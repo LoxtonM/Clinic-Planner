@@ -5,13 +5,15 @@ using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Meta;
+using Spire.Pdf;
+
 
 
 namespace CPTest.Document
 {
     interface IDocumentController
     {
-        public int ClinicLetter(int refID, string username);
+        public int ClinicLetter(int refID, string username, bool isEmailOnly);
         public int ClinicList(int refID, string username);
     }
     public class DocumentController : IDocumentController
@@ -45,7 +47,7 @@ namespace CPTest.Document
             _docContent = new DocumentsContentData(_documentContext);
             _clinicDetails = new ClinicDetailsData(_cpxContext);
         }
-        public int ClinicLetter(int refID, string username)
+        public int ClinicLetter(int refID, string username, bool isEmailOnly)
         {
             try
             {
@@ -184,10 +186,20 @@ namespace CPTest.Document
                 {
                     File.Delete($"wwwroot/letter-{username}.pdf");
                 }
-
                 document.Save($"wwwroot/letter-{username}.pdf");
+
+                if (!isEmailOnly)
+                {
+                    string printerName = _constant.GetConstant("SynertecPrinterName", 1).Trim();
+                    
+                    using (Spire.Pdf.PdfDocument pdf = new Spire.Pdf.PdfDocument())
+                    {
+                        pdf.LoadFromFile($"wwwroot/letter-{username}.pdf");
+                        pdf.PrintSettings.PrinterName = printerName;
+                        pdf.Print();
+                    }
+                }
                                 
-                //we can't print, it will only print to the server (and fail). We can't print it to a local printer. :(
                 return 1;
             }
             catch (Exception ex)
