@@ -29,8 +29,8 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    @if(Model.patient.DOB.Value.ToString("yyyy-MM-dd") != "0001-01-01")
-                    {
+                    @if(Model.patient.DOB != null)
+                    {                        
                         <label class="w-100">@Model.patient.DOB.Value.ToString("dd/MM/yyyy")</label>
                     }
                 </div>
