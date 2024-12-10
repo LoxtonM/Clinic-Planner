@@ -364,3 +364,5 @@ FodyWeavers.xsd
 \secrets.json
 \wwwroot\letters.pdf
 \wwwroot\cliniclist.pdf
+/wwwroot/cliniclist-mnln.pdf
+/wwwroot/letter-mnln.pdf
