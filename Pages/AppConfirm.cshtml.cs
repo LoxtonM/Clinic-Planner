@@ -54,6 +54,7 @@ namespace CPTest.Pages
         public string? clinicianSel;
         public string? clinicSel;
         public int wlID;
+        public int slID;
         
         //public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
         public void OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
@@ -102,6 +103,7 @@ namespace CPTest.Pages
                 appTime = slot.SlotTime;
                 appDur = slot.duration;
                 wlID = WLID;
+                slID = slotID;
 
                 if (staffMember.CLINIC_SCHEDULER_GROUPS == "GC")
                 {
@@ -118,7 +120,8 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int wlID, int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public void OnPost(int wlID, int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, int slotID,
+            string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -134,7 +137,7 @@ namespace CPTest.Pages
 
                 linkedRefList = _referralData.GetReferralsList(mpi);
 
-                int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions, wlID);
+                int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions, wlID, slotID);
                 if (success == 0)
                 {
                     Response.Redirect("Error?sError=Update failed");

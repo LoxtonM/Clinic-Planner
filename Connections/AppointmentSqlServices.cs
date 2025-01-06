@@ -7,7 +7,7 @@ namespace CPTest.Connections
     interface IAppointmentSqlServices
     { 
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
-            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid);
+            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid, int slotID);
         public void ModifyAppointment(int refID, DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation,
             string appType, int duration, string sStaffCode, string sInstructions, string sCancellation, int famMPI, bool isReturnToWL, string? cancelReason);
         public int CreatePastAppointment(DateTime appDate, string appTime, string appWith1, string appLocation, int iLinkedRef, int mpi,
@@ -21,7 +21,7 @@ namespace CPTest.Connections
             _config = config;
         }        
         public int CreateAppointment(DateTime appDate, string appTime, string appWith1, string appWith2, string appWith3, string appLocation, 
-            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid)
+            int iLinkedRef, int mpi, string appType, int duration, string sStaffCode, string sInstructions, int wlid, int slotID)
         {
             DateTime dTim = DateTime.Parse("1899-12-30 " + appTime);
 
@@ -45,6 +45,7 @@ namespace CPTest.Connections
             cmd.Parameters.Add("@Duration", SqlDbType.Int).Value = duration;
             cmd.Parameters.Add("@UserStaffCode", SqlDbType.VarChar).Value = sStaffCode;            
             cmd.Parameters.Add("@instructions", SqlDbType.VarChar).Value = sInstructions;
+            cmd.Parameters.Add("@slotID", SqlDbType.Int).Value = slotID;
             cmd.Parameters.Add("@WLID", SqlDbType.Int).Value = wlid;
             var returnValue = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int); //return success or not
             returnValue.Direction = ParameterDirection.ReturnValue;
