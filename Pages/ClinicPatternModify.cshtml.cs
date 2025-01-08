@@ -4,6 +4,7 @@ using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Models;
 using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 
 namespace CPTest.Pages
 {
@@ -16,6 +17,7 @@ namespace CPTest.Pages
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IPatternData _patternData;
         private readonly IClinicPatternSqlServices _ss;
+        private readonly IAuditSqlServices _audit;
 
         public ClinicPatternModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
@@ -23,9 +25,10 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _patternData = new PatternData(_cpxContext);
             _ss = new ClinicPatternSqlServices(_context, _cpxContext, _config);
+            _audit = new AuditSqlServices(_config);
         }
 
         public ClinicPattern pattern { get; set; }
@@ -48,6 +51,9 @@ namespace CPTest.Pages
                 venue = _clinicVenueData.GetVenueDetails(pattern.Clinic);
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
+
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Pattern Modify", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

@@ -26,7 +26,7 @@ namespace CPTest.Pages
             _staffData = new StaffData(_context);
             _patientData = new PatientData(_context);
             _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _constantsData = new ConstantsData(_docContext);
         }
 

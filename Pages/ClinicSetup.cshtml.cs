@@ -3,6 +3,7 @@ using CPTest.Data;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 
 namespace CPTest.Pages
 {
@@ -26,7 +27,7 @@ namespace CPTest.Pages
             _ssPat = new ClinicPatternSqlServices(_context, _cpxContext, _config);
             _ssAdHoc = new AdHocClinicSqlServices(_context, _cpxContext, _config);
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _audit = new AuditSqlServices(_config);
         }
         public List<StaffMember> staffMemberList { get; set; }
@@ -45,7 +46,8 @@ namespace CPTest.Pages
                 }                
                 staffMemberList = _staffData.GetStaffMemberList();
                 clinicVenueList = _clinicVenueData.GetVenueList();
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Setup", "");
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Setup", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

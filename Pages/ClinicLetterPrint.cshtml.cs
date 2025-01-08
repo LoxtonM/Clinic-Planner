@@ -1,4 +1,5 @@
 using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
@@ -34,7 +35,8 @@ namespace CPTest.Pages
                 if (_doc.ClinicLetter(refID, User.Identity.Name, isEmailOnly) == 1)
                 {
                     _letter.UpdateClinicLetter(refID, User.Identity.Name);
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString());
+                    IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
 
                     if (isEmailOnly)
                     {

@@ -31,7 +31,7 @@ namespace CPTest.Pages
             _ss = new AppointmentSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _referralData = new ReferralData(_context);
             _appTypeData = new AppTypeData(_cpxContext);
             _waitingListData = new WaitingListData(_context);

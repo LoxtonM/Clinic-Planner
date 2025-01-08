@@ -1,4 +1,5 @@
 using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
@@ -35,7 +36,8 @@ namespace CPTest.Pages
                 if (_doc.ClinicList(refID, User.Identity.Name) == 1)
                 {
                     Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refID.ToString());
+                    IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
                 }
                 else
                 {

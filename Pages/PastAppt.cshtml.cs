@@ -30,7 +30,7 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _slotData = new ClinicSlotData(_context);
             _referralData = new ReferralData(_context);
             _appTypeData = new AppTypeData(_cpxContext);
@@ -65,8 +65,9 @@ namespace CPTest.Pages
                 appTypeList = _appTypeData.GetAppTypeList();
                 referralList = _referralData.GetReferralsList(mpi);
                 outcomeList = _outcomeData.GetOutcomeList();
-                
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Create Past Appointment", "MPI=" + mpi);
+
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Create Past Appointment", "MPI=" + mpi, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

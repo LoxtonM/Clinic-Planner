@@ -25,7 +25,7 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
             _slotData = new ClinicSlotData(_context);
             _audit = new AuditSqlServices(_config);
@@ -92,7 +92,8 @@ namespace CPTest.Pages
                 clinicianList = clinicianList.Distinct().ToList();
                 ClinicianArray = clinicianList.ToArray();
 
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinician Day View", "");
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinician Day View", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

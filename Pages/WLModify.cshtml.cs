@@ -30,7 +30,7 @@ namespace CPTest.Pages
             _ss = new WaitingListSqlServices(_config);
             _patientData = new PatientData(_context);
             _staffData = new StaffUserData(_context);
-            _clinicalVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicalVenueData = new ClinicVenueData(_context);
             _waitingListData = new WaitingListData(_context);
             _priority = new PriorityData(_context);
             _audit = new AuditSqlServices(_config);
@@ -95,7 +95,8 @@ namespace CPTest.Pages
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
-                _audit.CreateAudit(_staffData.GetStaffMemberDetails(User.Identity.Name).STAFF_CODE, "Waiting List Modify", "IntID=" + intID.ToString());
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffMemberDetails(User.Identity.Name).STAFF_CODE, "Waiting List Modify", "IntID=" + intID.ToString(), _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

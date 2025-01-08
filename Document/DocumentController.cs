@@ -40,7 +40,7 @@ namespace CPTest.Document
             _patient = new PatientData(_context);
             _appointment = new AppointmentData(_context);
             _staff = new StaffData(_context);
-            _clinic = new ClinicVenueData(_context, _cpxContext);
+            _clinic = new ClinicVenueData(_context);
             _referral = new ReferralData(_context);
             _constant = new ConstantsData(_documentContext);
             _externalClinician = new ExternalClinicianData(_context);

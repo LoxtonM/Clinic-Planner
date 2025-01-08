@@ -57,7 +57,8 @@ namespace CPTest.Pages
                     if (_doc.ClinicList(refid, User.Identity.Name) == 1)
                     { 
                         Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
-                        _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString());
+                        IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                        _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
                     }
                     else
                     {
@@ -102,7 +103,8 @@ namespace CPTest.Pages
                 if (_doc.ClinicList(refid, User.Identity.Name) == 1)
                 {
                     Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString());
+                    IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
                 }
                 else
                 {

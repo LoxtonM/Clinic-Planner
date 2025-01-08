@@ -2,6 +2,7 @@ using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Models;
 using ClinicalXPDataConnections.Models;
+using ClinicalXPDataConnections.Meta;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Data;
 
@@ -17,6 +18,7 @@ namespace CPTest.Pages
         private readonly IClinicVenueData _clinicVenueData;
         private readonly IAdHocClinicData _adHocClinicData;
         private readonly IAdHocClinicSqlServices _ss;
+        private readonly IAuditSqlServices _audit;
 
         public AdHocClinicModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
@@ -24,9 +26,10 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _adHocClinicData = new AdHocClinicData(_cpxContext);
             _ss = new AdHocClinicSqlServices(_context, _cpxContext, _config);
+            _audit = new AuditSqlServices(_config);
         }
 
         public ClinicsAdded adhocclinic {  get; set; }
@@ -44,6 +47,9 @@ namespace CPTest.Pages
                 adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
                 clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
                 venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
+
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Ad Hoc Clinic Modify", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

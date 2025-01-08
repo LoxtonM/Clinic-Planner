@@ -27,7 +27,7 @@ namespace CPTest.Pages
             _staffData = new StaffData(_context);
             _patientData = new PatientData(_context);            
             _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _alertData = new AlertData(_context);
             _audit = new AuditSqlServices(_config);
         }
@@ -89,7 +89,8 @@ namespace CPTest.Pages
                         }
                     }
                 }
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Appt Details", "RefID=" + sRefID);
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Appt Details", "RefID=" + sRefID, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

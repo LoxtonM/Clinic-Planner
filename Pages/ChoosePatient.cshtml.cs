@@ -42,7 +42,8 @@ namespace CPTest.Pages
                     patient = _patientData.GetPatientDetailsByCGUNo(cguno);
                 }
 
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Choose Patient", "CGU=" + cguno);
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Choose Patient", "CGU=" + cguno, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

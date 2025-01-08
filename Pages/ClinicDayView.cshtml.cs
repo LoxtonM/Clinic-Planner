@@ -24,7 +24,7 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
             _cliniciansClinicData = new CliniciansClinicData(_cpxContext);            
             _audit = new AuditSqlServices(_config);
@@ -87,8 +87,9 @@ namespace CPTest.Pages
 
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                //openSlotList = _dc.GetOpenSlots(clinicSlotList);              
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Day View", "");
+                //openSlotList = _dc.GetOpenSlots(clinicSlotList);
+                IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Day View", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

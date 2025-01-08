@@ -31,7 +31,7 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicalVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicalVenueData = new ClinicVenueData(_context);
             _priorityData = new PriorityData(_context);
             _patientData = new PatientData(_context);
             _referralData = new ReferralData(_context);

@@ -32,7 +32,7 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;
             _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context, _cpxContext);
+            _clinicVenueData = new ClinicVenueData(_context);
             _appointmentData = new AppointmentData(_context);
             _waitingListData = new WaitingListData(_context);
             _slotData = new ClinicSlotData(_context);
@@ -84,7 +84,8 @@ namespace CPTest.Pages
                     notificationMessage = _note.GetMessage("ClinicPlannerOutage");
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
                     ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
-                    _audit.CreateAudit(userStaffCode, "Main Form", "");
+                    IPAddressFinder _ip = new IPAddressFinder(HttpContext);
+                    _audit.CreateAudit(userStaffCode, "Main Form", "", _ip.GetIPAddress());
                     appVersion = _config.GetValue("AppVersion", "");
                     dllVersion = _versionData.GetDLLVersion();
                 }
