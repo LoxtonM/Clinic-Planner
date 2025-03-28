@@ -3,9 +3,12 @@ using CPTest.Data;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Meta;
 using Spire.Pdf;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 
 
@@ -47,6 +50,7 @@ namespace CPTest.Document
             _docContent = new DocumentsContentData(_documentContext);
             _clinicDetails = new ClinicDetailsData(_cpxContext);
         }
+
         public int ClinicLetter(int refID, string username, bool isEmailOnly)
         {
             try
@@ -62,43 +66,45 @@ namespace CPTest.Document
                     extClinician = _externalClinician.GetClinicianDetails("Unknown"); //because of course there are nulls.
                 }
                 var docContent = _docContent.GetDocumentContent(164);
-                int totalLength = 50;
 
-                PdfSharpCore.Pdf.PdfDocument document = new PdfSharpCore.Pdf.PdfDocument();
-                PdfPage page = document.AddPage();
+                MigraDoc.DocumentObjectModel.Document document = new MigraDoc.DocumentObjectModel.Document();
+                                
+                Section section = document.AddSection();
+                section.PageSetup.LeftMargin = "1.5cm";
+                section.PageSetup.RightMargin = "1.5cm";
+                section.PageSetup.TopMargin = "1cm";
+                section.PageSetup.BottomMargin = "1cm";
 
-                XGraphics gfx = XGraphics.FromPdfPage(page);
-                var tf = new XTextFormatter(gfx);
-                //set the fonts used for the letters
-                XFont font = new XFont("Arial", 12, XFontStyle.Regular);
-                XFont fontSmall = new XFont("Arial", 10, XFontStyle.Regular);
-                XFont fontBold = new XFont("Arial", 12, XFontStyle.Bold);
-                XFont fontBoldUnderlined = new XFont("Arial", 12, XFontStyle.Underline | XFontStyle.Bold);
-                //Load the image for the letter head            
-                XImage image = XImage.FromFile(@"wwwroot\Images\Letterhead.jpg");
-                gfx.DrawImage(image, 350, 20, image.PixelWidth / 2, image.PixelHeight / 2);
-                tf.DrawString("Consultant: " + referral.LeadClinician, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString("GC: " + referral.GC, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString("NHS No: " + pat.SOCIAL_SECURITY, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString("Please quote our reference number on all correspondence: " + pat.CGU_No, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
-                tf.DrawString(DateTime.Today.ToString("dd MMMM yyyy"), font, XBrushes.Black, new XRect(50, totalLength, 500, 10)); //today's date
-                totalLength = totalLength + 30;
 
-                tf.Alignment = XParagraphAlignment.Right;
-                //Our address and contact details
-                tf.DrawString("Clinical Genetics Unit", font, XBrushes.Black, new XRect(-20, 150, page.Width, 200));
-                tf.DrawString("Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim(), fontBold, XBrushes.Black, new XRect(-20, 165, page.Width, 10));
-                tf.DrawString("Email: " + _constant.GetConstant("MainCGUEmail", 1).Trim(), font, XBrushes.Black, new XRect(-20, 180, page.Width, 10));
+                MigraDoc.DocumentObjectModel.Tables.Table table = section.AddTable();
+                MigraDoc.DocumentObjectModel.Tables.Column contactInfo = table.AddColumn();
+                contactInfo.Format.Alignment = ParagraphAlignment.Left;
+                MigraDoc.DocumentObjectModel.Tables.Column ourAddressInfo = table.AddColumn();
+                ourAddressInfo.Format.Alignment = ParagraphAlignment.Right;
 
-                //patient's address
-                tf.Alignment = XParagraphAlignment.Left;
-                tf.DrawString(pat.PtLetterAddressee, font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-                totalLength = totalLength + 15;
+                table.Rows.Height = 20;
+                table.Columns.Width = 250;
+                table.Format.Font.Size = 12;
+                MigraDoc.DocumentObjectModel.Tables.Row row1 = table.AddRow();
+                row1.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Top;
+                MigraDoc.DocumentObjectModel.Tables.Row row2 = table.AddRow();
+                row2.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Top;
+                MigraDoc.DocumentObjectModel.Tables.Row row3 = table.AddRow();
+                
+                string details = "" + Environment.NewLine;
+                details = details + "Consultant: " + referral.LeadClinician + Environment.NewLine;
+                details = details + "Genetic Counsellor: " + referral.GC + Environment.NewLine;
+                details = details + "NHS number: " + pat.SOCIAL_SECURITY + Environment.NewLine;
 
+                string quoteRef = "Please quote this reference on all correspondence: " + pat.CGU_No + Environment.NewLine + Environment.NewLine;
+                quoteRef = quoteRef + (DateTime.Today.ToString("dd MMMM yyyy")) + Environment.NewLine + Environment.NewLine;
+
+                row1.Cells[0].AddParagraph(details + Environment.NewLine + quoteRef);
+
+                MigraDoc.DocumentObjectModel.Shapes.Image imgLogo = row1.Cells[1].AddImage(@"wwwroot\Images\Letterhead.jpg");
+                imgLogo.ScaleWidth = new Unit(0.75, UnitType.Point);
+                imgLogo.ScaleHeight = new Unit(0.75, UnitType.Point);
+                             
                 string salutation = "";
                 string openingBlurb = "";
                 if (pat.DOB.GetValueOrDefault().AddYears(16) > DateTime.Now)
@@ -112,7 +118,8 @@ namespace CPTest.Document
                     openingBlurb = docContent.Para2 + " " + extClinician.TITLE + " " + extClinician.FIRST_NAME + " " + extClinician.NAME + ", " + docContent.Para12;
                 }
 
-                string address = pat.ADDRESS1 + Environment.NewLine;
+                string address = salutation + Environment.NewLine;
+                address = address + pat.ADDRESS1 + Environment.NewLine;
                 if (pat.ADDRESS2 != null) //this is sometimes null
                 {
                     address = address + pat.ADDRESS2 + Environment.NewLine;
@@ -121,72 +128,86 @@ namespace CPTest.Document
                 address = address + pat.ADDRESS4 + Environment.NewLine;
                 address = address + pat.POSTCODE;
 
-                tf.DrawString(address, font, XBrushes.Black, new XRect(50, totalLength, 250, address.Length * 2));
-                totalLength = totalLength + address.Length;
+                row2.Cells[0].AddParagraph(address);
 
-                totalLength = totalLength + 20; //because we can't get the address to work just by its length
+                string contactData = "Clinical Genetics Unit" + Environment.NewLine;
+                contactData = contactData + "Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim() + Environment.NewLine;
+                contactData = contactData + "Email: " + _constant.GetConstant("MainCGUEmail", 1).Trim() + Environment.NewLine;
 
-                //Date letter created
+                row2.Cells[1].AddParagraph(contactData);
 
-                tf.DrawString("Dear " + salutation, font, XBrushes.Black, new XRect(50, totalLength, 500, 10)); //salutation
-                totalLength = totalLength + 15;
+                Paragraph pSalutation = section.AddParagraph("Dear " + salutation);
+                pSalutation.Format.Font.Size = 12;
 
-                tf.DrawString(openingBlurb + " " + clinician.NAME + ", " + clinician.POSITION + " at:", font, XBrushes.Black, new XRect(50, totalLength, 500, 50)); //Following the referral, etc...
+                openingBlurb = openingBlurb + " " + clinician.NAME + ", " + clinician.POSITION + " at:";
 
-                totalLength = totalLength + 50;
+                Paragraph opening = section.AddParagraph(openingBlurb);
+                opening.Format.Font.Size = 12;
 
-                tf.Alignment = XParagraphAlignment.Center;
+                Paragraph spacer = section.AddParagraph();
 
-                tf.DrawString(clinic.LOCATION.Replace("  ", System.Environment.NewLine), fontBold, XBrushes.Black, new XRect(225, totalLength, 150, clinic.LOCATION.Length));
-                totalLength = totalLength + clinic.LOCATION.Length; //Clinic venue location
+                Paragraph venueDetails = section.AddParagraph();
+                venueDetails.AddFormattedText(clinic.LOCATION.Replace("  ", Environment.NewLine), TextFormat.Bold);
+                venueDetails.Format.Font.Size = 12;
+                venueDetails.Format.Alignment = ParagraphAlignment.Center;
 
-                tf.DrawString("on", font, XBrushes.Black, new XRect(50, totalLength, 500, 20));
-
-                totalLength = totalLength + 20;
-
-                tf.DrawString(appt.BOOKED_DATE.Value.ToString("dddd, dd MMMM yyyy") + " at " + appt.BOOKED_TIME.Value.ToString("HH:mm"),
-                    fontBold, XBrushes.Black, new XRect(50, totalLength, 500, 20)); //date and time
-
-                totalLength = totalLength + 20;
-
-                tf.DrawString("The appointment usually lasts about " + appt.Duration + " minutes.", font, XBrushes.Black, new XRect(50, totalLength, 500, 10));
-
-                totalLength = totalLength + 20;
-
-                tf.Alignment = XParagraphAlignment.Left;
-
+                spacer = section.AddParagraph();
+                Paragraph on = section.AddParagraph("on");
+                on.Format.Font.Size = 12;
+                on.Format.Alignment = ParagraphAlignment.Center;
+                spacer = section.AddParagraph();
+                Paragraph dateAndTime = section.AddParagraph();
+                dateAndTime.AddFormattedText(appt.BOOKED_DATE.Value.ToString("dddd, dd MMMM yyyy") + " at " + appt.BOOKED_TIME.Value.ToString("HH:mm"), TextFormat.Bold);
+                dateAndTime.Format.Font.Size = 12;
+                dateAndTime.Format.Alignment = ParagraphAlignment.Center;
+                spacer = section.AddParagraph();
+                Paragraph duration = section.AddParagraph("The appointment usually lasts about " + appt.Duration + " minutes.");
+                duration.Format.Font.Size = 12;
+                duration.Format.Alignment = ParagraphAlignment.Center;
+                spacer = section.AddParagraph();
                 if (clinic.NOTES != null && clinic.NOTES != "") //special instructions that may or mat not be present
                 {
-                    tf.DrawString(clinic.NOTES, font, XBrushes.Black, new XRect(50, totalLength, 500, clinic.NOTES.Length / 2));
-                    totalLength = totalLength + clinic.NOTES.Length / 2;
+                    Paragraph notes = section.AddParagraph(clinic.NOTES);
+                    notes.Format.Font.Size = 12;
                 }
 
-                tf.DrawString(docContent.Para3, fontBold, XBrushes.Black, new XRect(50, totalLength, 500, 10)); //"What if I can't attend?"
-                totalLength = totalLength + 20;
+                spacer = section.AddParagraph();
 
-                tf.DrawString(docContent.Para8, font, XBrushes.Black, new XRect(50, totalLength, 500, 75)); //"If you can't attend, please tell someone... etc"
+                Paragraph para3 = section.AddParagraph(); //"What if I can't attend?"
+                para3.AddFormattedText(docContent.Para3, TextFormat.Bold);
+                para3.Format.Font.Size = 12;
+                para3.Format.Alignment = ParagraphAlignment.Center;
 
-                totalLength = totalLength + 75;
+                spacer = section.AddParagraph();
+                
+                Paragraph para8 = section.AddParagraph(docContent.Para8); //"If you can't attend, please tell someone... etc"
+                para8.Format.Font.Size = 12;
 
-                tf.Alignment = XParagraphAlignment.Center;
-                tf.DrawString(docContent.Para9, fontBold, XBrushes.Black, new XRect(50, totalLength, 500, 40)); //"It is our policy not to offer another..."
+                spacer = section.AddParagraph();
 
-                totalLength = totalLength + 40;
-                totalLength = totalLength + 15;
+                Paragraph para9 = section.AddParagraph();
+                para9.AddFormattedText(docContent.Para9, TextFormat.Bold);
+                para9.Format.Font.Size = 12;
+                para9.Format.Alignment = ParagraphAlignment.Center;
 
-                tf.Alignment = XParagraphAlignment.Left;
-                tf.DrawString("Yours sincerely,", font, XBrushes.Black, new XRect(50, totalLength, 500, 20));
-                totalLength = totalLength + 50;
+                spacer = section.AddParagraph();
 
-                tf.DrawString("Clinical Genetics Booking Centre", font, XBrushes.Black, new XRect(50, totalLength, 500, 20));
-                //totalLength = totalLength + 50;
-                //tf.DrawString(docContent.DocCode, font, XBrushes.Black, new XRect(500, totalLength, 500, 20));
+                Paragraph signOff = section.AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
+                    "Clinical Genetics Booking Centre");
+                signOff.Format.Font.Size = 12;
+                
 
                 if (File.Exists($"wwwroot/letter-{username}.pdf"))
                 {
                     File.Delete($"wwwroot/letter-{username}.pdf");
                 }
-                document.Save($"wwwroot/letter-{username}.pdf");
+
+                PdfDocumentRenderer pdf = new PdfDocumentRenderer();
+                pdf.Document = document;
+                pdf.RenderDocument();
+
+                pdf.PdfDocument.Save(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/letter-{username}.pdf"));
+
 
                 if (!isEmailOnly)
                 {
@@ -212,11 +233,11 @@ namespace CPTest.Document
                         pdf.Print();
                     }*/
                 }
-                                
+
                 return 1;
             }
             catch (Exception ex)
-            {                
+            {
                 return 0;
             }
         }
