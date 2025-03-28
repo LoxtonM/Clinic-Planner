@@ -16,6 +16,23 @@
         <h1 class="text-center redtext">@Model.notificationMessage</h1>
     }
 
+    @if(Model.message != "")
+    {
+        if(!Model.success)
+        {
+            <div class="alert alert-danger d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+    }
+
+
     <div class="row mb-5 g-5"> @*Header - only appears if clinician and/or clinic selected*@
         <div class="col-md-2" id="holding"></div>
         @if (Model.clinicVenue != null)
@@ -211,7 +228,7 @@
     //Handles Next and Back buttons for the date selector
     function GoBack() //called by wcBack
     {
-        var date = new Date(document.getElementById("wcDate").value);
+        var date = new Date(document.getElementById("wcDate").value);        
         if (date.getDay() == 1)
         {
             date.setDate(date.getDate() - 7);
@@ -219,15 +236,16 @@
         else
         {
             date.setDate(date.getDate() - (6 - (7 - date.getDay())));
-        }
+        }        
+        date.setHours(date.getHours()+2); //because sometimes it does this dumb thing where it reduces it by a day, if I don't add the extra hour!
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
         RefreshForm()
     }
 
     function GoNext() //called by wcNext
     {
-        var date = new Date(document.getElementById("wcDate").value);
-
+        var date = new Date(document.getElementById("wcDate").value);      
+        
         if (date.getDay() == 1)
         {
             date.setDate(date.getDate() + 7);
@@ -235,7 +253,8 @@
         else
         {
             date.setDate(date.getDate() + 7 - (6 - (7 - date.getDay())));
-        }
+        }        
+        date.setHours(date.getHours()+2); //because sometimes it does this dumb thing where it reduces it by a day, if I don't add the extra hour!
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
         RefreshForm()
     }

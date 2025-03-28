@@ -86,7 +86,8 @@
     
         <div class="row mb-5 g-5">        
             <div class="col-md-4 text-center">
-                <a type="button" id="btnLetters" class="btn btn-success" asp-page="ClinicLettersAndLists" asp-route-refID=@Model.refID>Print Letters/Clinic Lists</a>
+                <a type="button" id="btnLetters" class="btn btn-success" asp-page="ClinicLettersAndLists" asp-route-refID=@Model.refID asp-route-wcDateString=@Model.wcDateStr 
+                asp-route-clinicianSelected=@Model.clinicianSel asp-route-clinicSelected=@Model.clinicSel>Print Letters/Clinic Lists</a>
             </div>            
             @if (Model.appointment.BOOKED_DATE > DateTime.Today || (Model.appointment.BOOKED_DATE == DateTime.Today && 
                     DateTime.Now.TimeOfDay <= Model.appointment.BOOKED_TIME.Value.TimeOfDay))

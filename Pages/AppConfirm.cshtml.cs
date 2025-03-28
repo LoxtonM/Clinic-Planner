@@ -136,11 +136,18 @@ namespace CPTest.Pages
                 clinicVenue = _clinicVenueData.GetVenueDetails(ven);
 
                 linkedRefList = _referralData.GetReferralsList(mpi);
-
+                string message="";
+                bool isSuccess = false;
                 int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions, wlID, slotID);
                 if (success == 0)
                 {
-                    Response.Redirect("Error?sError=Update failed");
+                    message = "Update failed.";                    
+                    //Response.Redirect("Index?message='Update failed'&isSuccess=false");
+                }
+                else
+                {
+                    message = "Appointment booked.";
+                    isSuccess = true;
                 }
 
                 wcDateStr = HttpUtility.UrlEncode(wcDateString);
@@ -150,6 +157,8 @@ namespace CPTest.Pages
                 string returnUrl = "Index?wcDt=" + wcDateStr;
                 if (clinicianSel != null) { returnUrl = returnUrl + $"&clinician={clinicianSel}"; }
                 if (clinicSel != null) { returnUrl = returnUrl + $"&clinic={clinicSel}"; }
+                //if(!isSuccess) { 
+                returnUrl = returnUrl + $"&isSuccess={isSuccess}&message={message}"; //}
 
                 Response.Redirect(returnUrl);
             }

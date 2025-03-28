@@ -190,6 +190,19 @@ namespace CPTest.Document
 
                 if (!isEmailOnly)
                 {
+                    //the synertec printer can't handle PDFs, so we have to use the "copy to folder" method instead
+                    string synertecFolderLocation = _constant.GetConstant("SynertecPrintFolder", 1);
+                    synertecFolderLocation = synertecFolderLocation.Replace("\\", "/").Trim() + $"/AptLetter-{refID.ToString()}.pdf";
+
+                    if (File.Exists(synertecFolderLocation))
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        File.Copy($"wwwroot/letter-{username}.pdf", synertecFolderLocation);
+                    }
+                    /*
                     string printerName = _constant.GetConstant("SynertecPrinterName", 1).Trim();
                     
                     using (Spire.Pdf.PdfDocument pdf = new Spire.Pdf.PdfDocument())
@@ -197,7 +210,7 @@ namespace CPTest.Document
                         pdf.LoadFromFile($"wwwroot/letter-{username}.pdf");
                         pdf.PrintSettings.PrinterName = printerName;
                         pdf.Print();
-                    }
+                    }*/
                 }
                                 
                 return 1;

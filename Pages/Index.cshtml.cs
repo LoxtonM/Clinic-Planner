@@ -58,6 +58,8 @@ namespace CPTest.Pages
         public string dllVersion { get; set; }
         public string notificationMessage { get; set; }
         public bool isLive { get; set; }
+        public string message { get; set; }
+        public bool success { get; set; }
 
         public DateTime[] DateArray = new DateTime[5];
         public DateTime[] TimeArray = new DateTime[120];
@@ -69,7 +71,7 @@ namespace CPTest.Pages
         public string userStaffCode { get; set; }
 
 
-        public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm)
+        public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm, string? message = "", bool? isSuccess = false)
         {
             try
             {
@@ -88,6 +90,12 @@ namespace CPTest.Pages
                     _audit.CreateAudit(userStaffCode, "Main Form", "", _ip.GetIPAddress());
                     appVersion = _config.GetValue("AppVersion", "");
                     dllVersion = _versionData.GetDLLVersion();
+
+                    if(message != "")
+                    {
+                        this.message = message;
+                        this.success = isSuccess.GetValueOrDefault();
+                    }
                 }
             }
             catch (Exception ex)

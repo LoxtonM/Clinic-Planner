@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Data;
 using CPTest.Data;
+using System.Web;
 
 namespace CPTest.Pages
 {
@@ -36,11 +37,14 @@ namespace CPTest.Pages
         public List<Appointment> appointmentList { get; set; }
         public List<Appointment> appointmentListForFamily { get; set; }
         public ClinicVenue clinicVenue { get; set; }
+        public string clinicianSel { get; set; }
+        public string clinicSel { get; set; }
+        public string wcDateStr { get; set; }
         public string message { get; set; }
         public bool success { get; set; }
         public bool synertecPrinterActive { get; set; }
 
-        public void OnGet(int refID, string? sMessage, bool? isSuccess)
+        public void OnGet(int refID, string? sMessage, bool? isSuccess, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -70,6 +74,10 @@ namespace CPTest.Pages
 
                 message = sMessage;
                 success = isSuccess.GetValueOrDefault();
+
+                wcDateStr = wcDateString;
+                clinicianSel = clinicianSelected;
+                clinicSel = clinicSelected;
 
                 appointmentListForFamily = appointmentListForFamily.Distinct().ToList();
 

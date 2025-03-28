@@ -28,6 +28,7 @@
         <div class="col-md-6">
             @foreach (var item in Model.appointmentListForFamily)
             {
+                <h3>@item.FIRSTNAME @item.LASTNAME</h3>
                 <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID asp-route-isEmailOnly=true>Create Letter to @item.CGU_No</a>(Create letter for manual printing)</p>
                 @if(!item.ActiveAlerts && Model.synertecPrinterActive)
                 {
@@ -71,7 +72,21 @@
     function GoBack() 
     {
         //window.close();
-        window.location.replace("Index");
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+
+        //window.location.replace("Index");
     }
 
     function HideMenu() 
