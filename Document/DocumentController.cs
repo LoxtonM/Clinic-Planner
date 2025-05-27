@@ -7,10 +7,6 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Meta;
-using Spire.Pdf;
-using System.Data.Entity.ModelConfiguration.Conventions;
-
-
 
 namespace CPTest.Document
 {
@@ -33,7 +29,6 @@ namespace CPTest.Document
         private readonly IExternalClinicianData _externalClinician;
         private readonly IDocumentsContentData _docContent;
         private readonly IClinicDetailsData _clinicDetails;
-
 
         public DocumentController(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext)
         {
@@ -67,6 +62,12 @@ namespace CPTest.Document
                 }
                 var docContent = _docContent.GetDocumentContent(164);
 
+                
+
+                //string contactData = "Clinical Genetics Unit" + Environment.NewLine;
+                //contactData = contactData + "Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim() + Environment.NewLine;
+                //contactData = contactData + "Email: " + _constant.GetConstant("MainCGUEmail", 1).Trim() + Environment.NewLine;
+
                 MigraDoc.DocumentObjectModel.Document document = new MigraDoc.DocumentObjectModel.Document();
                                 
                 Section section = document.AddSection();
@@ -75,8 +76,17 @@ namespace CPTest.Document
                 section.PageSetup.TopMargin = "1cm";
                 section.PageSetup.BottomMargin = "1cm";
 
+                Paragraph logo = section.AddParagraph();
 
-                MigraDoc.DocumentObjectModel.Tables.Table table = section.AddTable();
+                MigraDoc.DocumentObjectModel.Shapes.Image imgLogo = logo.AddImage(@"wwwroot\Images\Letterhead.jpg"); //add the logo
+                imgLogo.ScaleWidth = new Unit(0.5, UnitType.Point);
+                imgLogo.ScaleHeight = new Unit(0.5, UnitType.Point);
+                logo.Format.Alignment = ParagraphAlignment.Right;
+
+                Paragraph spacer = section.AddParagraph();
+                spacer = section.AddParagraph();
+
+                MigraDoc.DocumentObjectModel.Tables.Table table = section.AddTable(); //tables are used to get stuff to appear side by side
                 MigraDoc.DocumentObjectModel.Tables.Column contactInfo = table.AddColumn();
                 contactInfo.Format.Alignment = ParagraphAlignment.Left;
                 MigraDoc.DocumentObjectModel.Tables.Column ourAddressInfo = table.AddColumn();
@@ -84,27 +94,26 @@ namespace CPTest.Document
 
                 table.Rows.Height = 20;
                 table.Columns.Width = 250;
-                table.Format.Font.Size = 12;
                 MigraDoc.DocumentObjectModel.Tables.Row row1 = table.AddRow();
                 row1.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Top;
-                MigraDoc.DocumentObjectModel.Tables.Row row2 = table.AddRow();
-                row2.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Top;
-                MigraDoc.DocumentObjectModel.Tables.Row row3 = table.AddRow();
                 
-                string details = "" + Environment.NewLine;
+                string details = ""; //contactData + Environment.NewLine;
                 details = details + "Consultant: " + referral.LeadClinician + Environment.NewLine;
                 details = details + "Genetic Counsellor: " + referral.GC + Environment.NewLine;
                 details = details + "NHS number: " + pat.SOCIAL_SECURITY + Environment.NewLine;
 
-                string quoteRef = "Please quote this reference on all correspondence: " + pat.CGU_No + Environment.NewLine + Environment.NewLine;
-                quoteRef = quoteRef + (DateTime.Today.ToString("dd MMMM yyyy")) + Environment.NewLine + Environment.NewLine;
+                string quoteRef = "Please quote our reference on all correspondence: " + pat.CGU_No + Environment.NewLine;
 
-                row1.Cells[0].AddParagraph(details + Environment.NewLine + quoteRef);
+                row1.Cells[0].AddParagraph(details);
 
-                MigraDoc.DocumentObjectModel.Shapes.Image imgLogo = row1.Cells[1].AddImage(@"wwwroot\Images\Letterhead.jpg");
-                imgLogo.ScaleWidth = new Unit(0.75, UnitType.Point);
-                imgLogo.ScaleHeight = new Unit(0.75, UnitType.Point);
-                             
+                row1.Cells[1].AddParagraph("Clinical Genetics Unit" + Environment.NewLine + "Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1) + Environment.NewLine + "Email: " + _constant.GetConstant("MainCGUEmail", 1));
+
+                Paragraph referenceNo = section.AddParagraph();
+                referenceNo.AddFormattedText(quoteRef, TextFormat.Italic);
+                
+                Paragraph todaysDate = section.AddParagraph(DateTime.Today.ToString("dd MMMM yyyy"));
+                
+
                 string salutation = "";
                 string openingBlurb = "";
                 if (pat.DOB.GetValueOrDefault().AddYears(16) > DateTime.Now)
@@ -128,74 +137,132 @@ namespace CPTest.Document
                 address = address + pat.ADDRESS4 + Environment.NewLine;
                 address = address + pat.POSTCODE;
 
-                row2.Cells[0].AddParagraph(address);
+                //row2.Cells[0].AddParagraph(address);
 
-                string contactData = "Clinical Genetics Unit" + Environment.NewLine;
-                contactData = contactData + "Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim() + Environment.NewLine;
-                contactData = contactData + "Email: " + _constant.GetConstant("MainCGUEmail", 1).Trim() + Environment.NewLine;
+                spacer = section.AddParagraph();
+                spacer = section.AddParagraph();
 
-                row2.Cells[1].AddParagraph(contactData);
+                Paragraph patAddress = section.AddParagraph(address);
+                //patAddress.Format.Font.Size = 12;
+
+                spacer = section.AddParagraph();
+                spacer = section.AddParagraph();
+
+                //row2.Cells[1].AddParagraph(contactData);
 
                 Paragraph pSalutation = section.AddParagraph("Dear " + salutation);
-                pSalutation.Format.Font.Size = 12;
+                //pSalutation.Format.Font.Size = 12;
 
-                openingBlurb = openingBlurb + " " + clinician.NAME + ", " + clinician.POSITION + " at:";
+                openingBlurb = openingBlurb + " " + clinician.NAME + ", ";
+                if (clinician.POSITION.Contains(Environment.NewLine))
+                {
+                    openingBlurb = openingBlurb + clinician.POSITION.Remove(clinician.POSITION.IndexOf(Environment.NewLine));
+                }
+                else
+                {
+                    openingBlurb = openingBlurb + clinician.POSITION;
+                }
+
+                openingBlurb = openingBlurb + " at:";
 
                 Paragraph opening = section.AddParagraph(openingBlurb);
-                opening.Format.Font.Size = 12;
+                //opening.Format.Font.Size = 12;
 
-                Paragraph spacer = section.AddParagraph();
+                spacer = section.AddParagraph();
 
                 Paragraph venueDetails = section.AddParagraph();
                 venueDetails.AddFormattedText(clinic.LOCATION.Replace("  ", Environment.NewLine), TextFormat.Bold);
-                venueDetails.Format.Font.Size = 12;
+                //venueDetails.Format.Font.Size = 12;
                 venueDetails.Format.Alignment = ParagraphAlignment.Center;
 
                 spacer = section.AddParagraph();
                 Paragraph on = section.AddParagraph("on");
-                on.Format.Font.Size = 12;
+                //on.Format.Font.Size = 12;
                 on.Format.Alignment = ParagraphAlignment.Center;
                 spacer = section.AddParagraph();
                 Paragraph dateAndTime = section.AddParagraph();
                 dateAndTime.AddFormattedText(appt.BOOKED_DATE.Value.ToString("dddd, dd MMMM yyyy") + " at " + appt.BOOKED_TIME.Value.ToString("HH:mm"), TextFormat.Bold);
-                dateAndTime.Format.Font.Size = 12;
+                //dateAndTime.Format.Font.Size = 12;
                 dateAndTime.Format.Alignment = ParagraphAlignment.Center;
                 spacer = section.AddParagraph();
                 Paragraph duration = section.AddParagraph("The appointment usually lasts about " + appt.Duration + " minutes.");
-                duration.Format.Font.Size = 12;
+                //duration.Format.Font.Size = 12;
                 duration.Format.Alignment = ParagraphAlignment.Center;
                 spacer = section.AddParagraph();
                 if (clinic.NOTES != null && clinic.NOTES != "") //special instructions that may or mat not be present
                 {
                     Paragraph notes = section.AddParagraph(clinic.NOTES);
-                    notes.Format.Font.Size = 12;
+                    //notes.Format.Font.Size = 12;
                 }
 
                 spacer = section.AddParagraph();
 
                 Paragraph para3 = section.AddParagraph(); //"What if I can't attend?"
                 para3.AddFormattedText(docContent.Para3, TextFormat.Bold);
-                para3.Format.Font.Size = 12;
+                //para3.Format.Font.Size = 12;
                 para3.Format.Alignment = ParagraphAlignment.Center;
 
                 spacer = section.AddParagraph();
                 
                 Paragraph para8 = section.AddParagraph(docContent.Para8); //"If you can't attend, please tell someone... etc"
-                para8.Format.Font.Size = 12;
+                //para8.Format.Font.Size = 12;
 
                 spacer = section.AddParagraph();
 
                 Paragraph para9 = section.AddParagraph();
                 para9.AddFormattedText(docContent.Para9, TextFormat.Bold);
-                para9.Format.Font.Size = 12;
+                //para9.Format.Font.Size = 12;
                 para9.Format.Alignment = ParagraphAlignment.Center;
 
                 spacer = section.AddParagraph();
 
-                Paragraph signOff = section.AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
+                //Paragraph signOff = section.AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
+                //    "Clinical Genetics Booking Centre");
+                //signOff.Format.Font.Size = 12;
+
+                MigraDoc.DocumentObjectModel.Tables.Table table2 = section.AddTable(); //tables are used to get stuff to appear side by side
+                MigraDoc.DocumentObjectModel.Tables.Column signOff = table2.AddColumn();
+                signOff.Format.Alignment = ParagraphAlignment.Left;
+                MigraDoc.DocumentObjectModel.Tables.Column qrCode = table2.AddColumn();
+                qrCode.Format.Alignment = ParagraphAlignment.Right;
+
+                table2.Rows.Height = 20;
+                table2.Columns.Width = 400;
+                MigraDoc.DocumentObjectModel.Tables.Row row1_2 = table2.AddRow();
+                row1_2.VerticalAlignment = MigraDoc.DocumentObjectModel.Tables.VerticalAlignment.Top;
+
+                row1_2.Cells[0].AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
                     "Clinical Genetics Booking Centre");
-                signOff.Format.Font.Size = 12;
-                
+
+                if(clinic.HasQRCode)
+                {
+                    if (File.Exists($@"wwwroot\Images\QRCodes\QRCode{clinic.FACILITY}.png"))
+                    {
+                        MigraDoc.DocumentObjectModel.Shapes.Image imgQR = row1_2.Cells[1].AddImage($@"wwwroot\Images\QRCodes\QRCode{clinic.FACILITY}.png");
+                        imgQR.ScaleWidth = new Unit(0.18, UnitType.Point);
+                        imgQR.ScaleHeight = new Unit(0.18, UnitType.Point);                        
+                    }                    
+                }
+
+
+                spacer = section.AddParagraph();
+                spacer = section.AddParagraph();
+
+                Paragraph otherStuff = section.AddParagraph();
+                otherStuff.AddFormattedText("All personal information contained in your medical notes is held in accordance with the Data Protection Act 1998 and managed " +
+                    "securely. We may share this information with service providers outside of this Trust but we would do so only as part of your care. " +
+                    "You have a right to object to the disclosure of your personal information. If you do wish to object at any time, or if you would simply like more " +
+                    "information, you can contact the department on 0121 335 8024.", TextFormat.Italic);
+                otherStuff.Format.Font.Size = 8;
+
+                Border newBorder = new Border { Style = BorderStyle.Single };
+                otherStuff.Format.Borders.Top = newBorder;
+
+
+                Paragraph docCode = section.AddParagraph("AppLetterCTB"); //because of course it's hard-coded, the actual DocCode is "CLINIC" for some reason.
+                docCode.Format.Alignment = ParagraphAlignment.Right;
+                docCode.Format.Font.Size = 8;
+
 
                 if (File.Exists($"wwwroot/letter-{username}.pdf"))
                 {
@@ -215,7 +282,7 @@ namespace CPTest.Document
                     string synertecFolderLocation = _constant.GetConstant("SynertecPrintFolder", 1);
                     synertecFolderLocation = synertecFolderLocation.Replace("\\", "/").Trim() + $"/AptLetter-{refID.ToString()}.pdf";
 
-                    if (File.Exists(synertecFolderLocation))
+                    if (!File.Exists(synertecFolderLocation))
                     {
                         return 0;
                     }
