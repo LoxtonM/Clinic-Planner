@@ -81,7 +81,7 @@ namespace CPTest.Pages
                 }
                 else
                 {
-                    //userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
+                    userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
                     holidays = _hols.GetNationalHolidays();
                     notificationMessage = _note.GetMessage("ClinicPlannerOutage");
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));

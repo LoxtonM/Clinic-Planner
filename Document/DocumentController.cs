@@ -1,12 +1,14 @@
-﻿using CPTest.Connections;
+﻿using ClinicalXPDataConnections.Data;
+using ClinicalXPDataConnections.Meta;
+using CPTest.Connections;
 using CPTest.Data;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.Rendering;
-using ClinicalXPDataConnections.Data;
-using ClinicalXPDataConnections.Meta;
+using System.Drawing;
+using QRCoder;
 
 namespace CPTest.Document
 {
@@ -29,6 +31,7 @@ namespace CPTest.Document
         private readonly IExternalClinicianData _externalClinician;
         private readonly IDocumentsContentData _docContent;
         private readonly IClinicDetailsData _clinicDetails;
+        private readonly LetterController _lc;
 
         public DocumentController(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext)
         {
@@ -44,6 +47,7 @@ namespace CPTest.Document
             _externalClinician = new ExternalClinicianData(_context);
             _docContent = new DocumentsContentData(_documentContext);
             _clinicDetails = new ClinicDetailsData(_cpxContext);
+            _lc = new LetterController(_context, _documentContext);
         }
 
         public int ClinicLetter(int refID, string username, bool isEmailOnly)
@@ -223,8 +227,8 @@ namespace CPTest.Document
                 MigraDoc.DocumentObjectModel.Tables.Table table2 = section.AddTable(); //tables are used to get stuff to appear side by side
                 MigraDoc.DocumentObjectModel.Tables.Column signOff = table2.AddColumn();
                 signOff.Format.Alignment = ParagraphAlignment.Left;
-                MigraDoc.DocumentObjectModel.Tables.Column qrCode = table2.AddColumn();
-                qrCode.Format.Alignment = ParagraphAlignment.Right;
+                MigraDoc.DocumentObjectModel.Tables.Column qrCodeContent = table2.AddColumn();
+                qrCodeContent.Format.Alignment = ParagraphAlignment.Right;
 
                 table2.Rows.Height = 20;
                 table2.Columns.Width = 400;
@@ -234,15 +238,25 @@ namespace CPTest.Document
                 row1_2.Cells[0].AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
                     "Clinical Genetics Booking Centre");
 
-                if(clinic.HasQRCode)
+
+                if (clinic.HasQRCode)
                 {
+                    CreateQRCodeFromURL(clinic.QRCodeURL, $"QRCode{clinic.FACILITY}");
+
+
                     if (File.Exists($@"wwwroot\Images\QRCodes\QRCode{clinic.FACILITY}.png"))
                     {
                         MigraDoc.DocumentObjectModel.Shapes.Image imgQR = row1_2.Cells[1].AddImage($@"wwwroot\Images\QRCodes\QRCode{clinic.FACILITY}.png");
-                        imgQR.ScaleWidth = new Unit(0.18, UnitType.Point);
-                        imgQR.ScaleHeight = new Unit(0.18, UnitType.Point);                        
+                        imgQR.ScaleWidth = new Unit(0.25, UnitType.Point);
+                        imgQR.ScaleHeight = new Unit(0.25, UnitType.Point);
                     }                    
                 }
+                
+
+                //string qrCodeString = CreateQRStringFromURL("www.google.com");
+
+                //CreateQRImageFile(qrCodeString, username);
+
 
 
                 spacer = section.AddParagraph();
@@ -480,5 +494,23 @@ namespace CPTest.Document
                 return 0;
             }
         }
+
+        public void CreateQRCodeFromURL(string url, string fileName)
+        {
+            QRCoder.QRCodeGenerator qr = new QRCodeGenerator();
+
+            QRCodeData qrData = qr.CreateQrCode(url, QRCodeGenerator.ECCLevel.H);
+
+            using (BitmapByteQRCode qrCode = new BitmapByteQRCode(qrData))
+            {
+                byte[] qrCodeImage = qrCode.GetGraphic(10);
+                using (MemoryStream ms = new MemoryStream(qrCodeImage))
+                {
+                    Bitmap image = new Bitmap(ms);
+                    image.Save($"wwwroot\\Images\\QRCodes\\{fileName}.png");
+                }
+            }
+        }
+        
     }
 }
