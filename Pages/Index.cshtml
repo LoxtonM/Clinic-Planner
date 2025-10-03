@@ -66,6 +66,8 @@
             </div>
             <div class="col-md-4">
                 <input type="button" value="&laquo;" id="wcBack" onclick="GoBack()"/><input id="wcDate" name="wcDt" type="date" asp-for=@Model.wcDate /><input type="button" id="wcNext" value="&raquo;" onclick="GoNext()" />
+            
+                <input type="button" value="Go to date" icon="wcSearch" onclick="WCSearchDate()" />
             </div>
         </div>
         
@@ -254,6 +256,23 @@
         {
             date.setDate(date.getDate() + 7 - (6 - (7 - date.getDay())));
         }        
+        date.setHours(date.getHours()+2); //because sometimes it does this dumb thing where it reduces it by a day, if I don't add the extra hour!
+        document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
+        RefreshForm()
+    }
+
+    function WCSearchDate()
+    {
+        var date = new Date(document.getElementById("wcDate").value);
+
+        if (date.getDay() == 1)
+        {
+            date.setDate(date.getDate());
+        }
+        else
+        {
+            date.setDate(date.getDate() - (6 - (7 - date.getDay())));
+        }
         date.setHours(date.getHours()+2); //because sometimes it does this dumb thing where it reduces it by a day, if I don't add the extra hour!
         document.getElementById("wcDate").value = date.toISOString().slice(0, 10);
         RefreshForm()

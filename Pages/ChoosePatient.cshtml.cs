@@ -25,6 +25,9 @@ namespace CPTest.Pages
         }
 
         public Patient patient { get; set; }
+        public string? wcDateStr;
+        public string? clinicianSel;
+        public string? clinicSel;
 
         public void OnGet(string? cguno)
         {

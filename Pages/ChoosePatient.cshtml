@@ -83,8 +83,13 @@
 
     function GoBack() 
     {
+        /*
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
         
-        //var returnUrl = "Index?wcDt=" + wcDateString;
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        
         if (clinicianSelected != null)
         {
             returnUrl = returnUrl + "&clinician=" + clinicianSelected;
@@ -93,6 +98,7 @@
         {
             returnUrl = returnUrl + "&clinic=" + clinicSelected;
         }
+        */
         window.location.replace("Index");
     }
 
