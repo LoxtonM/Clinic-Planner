@@ -64,9 +64,7 @@ namespace CPTest.Document
                 {
                     extClinician = _externalClinician.GetClinicianDetails("Unknown"); //because of course there are nulls.
                 }
-                var docContent = _docContent.GetDocumentContent(164);
-
-                
+                var docContent = _docContent.GetDocumentContent(164);                
 
                 //string contactData = "Clinical Genetics Unit" + Environment.NewLine;
                 //contactData = contactData + "Tel: " + _constant.GetConstant("MainCGUPhoneNumber", 1).Trim() + Environment.NewLine;
@@ -117,7 +115,6 @@ namespace CPTest.Document
                 
                 Paragraph todaysDate = section.AddParagraph(DateTime.Today.ToString("dd MMMM yyyy"));
                 
-
                 string salutation = "";
                 string openingBlurb = "";
                 if (pat.DOB.GetValueOrDefault().AddYears(16) > DateTime.Now)
@@ -129,6 +126,11 @@ namespace CPTest.Document
                 {
                     salutation = pat.SALUTATION;
                     openingBlurb = docContent.Para2 + " " + extClinician.TITLE + " " + extClinician.FIRST_NAME + " " + extClinician.NAME + ", " + docContent.Para12;
+                }
+
+                if(salutation == null || salutation == "") //in case the salutation field is empty
+                {
+                    salutation = pat.Title + " " + pat.FIRSTNAME + " " + pat.LASTNAME;
                 }
 
                 string address = salutation + Environment.NewLine;
@@ -238,11 +240,9 @@ namespace CPTest.Document
                 row1_2.Cells[0].AddParagraph("Yours sincerely," + Environment.NewLine + Environment.NewLine + Environment.NewLine + Environment.NewLine +
                     "Clinical Genetics Booking Centre");
 
-
                 if (clinic.HasQRCode)
                 {
                     CreateQRCodeFromURL(clinic.QRCodeURL, $"QRCode{clinic.FACILITY}");
-
 
                     if (File.Exists($@"wwwroot\Images\QRCodes\QRCode{clinic.FACILITY}.png"))
                     {
@@ -251,13 +251,10 @@ namespace CPTest.Document
                         imgQR.ScaleHeight = new Unit(0.25, UnitType.Point);
                     }                    
                 }
-                
 
                 //string qrCodeString = CreateQRStringFromURL("www.google.com");
 
                 //CreateQRImageFile(qrCodeString, username);
-
-
 
                 spacer = section.AddParagraph();
                 spacer = section.AddParagraph();
@@ -288,7 +285,6 @@ namespace CPTest.Document
                 pdf.RenderDocument();
 
                 pdf.PdfDocument.Save(Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/letter-{username}.pdf"));
-
 
                 if (!isEmailOnly)
                 {

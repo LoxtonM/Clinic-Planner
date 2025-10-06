@@ -1,0 +1,32 @@
+﻿@page
+@model CPTest.Pages.HelpModel
+@{
+}
+
+<div class="container">
+    <h1 class="text-center">Clinic Planner X User Guide</h1>
+
+    <div class="row mb-2 g-2">
+        <p>To book an appointment, drag-drop patients from the waiting list into a green appointment slot.</p>
+        <p>To modify or cancel an appointment, or to print the letter, double-click on an appointment to go to the "modify" screen.</p>
+    </div>
+
+    <div class="row mb-5 g-5">
+        <img src="~/Images/UserGuide.png" />
+    </div>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-4">
+            <button type="button" class="btn btn-outline-danger" id="btnClose">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("btnClose").addEventListener("click", CloseWindow);
+
+    function CloseWindow()
+    {        
+        window.close();
+    }
+</script>
