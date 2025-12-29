@@ -13,8 +13,8 @@ namespace CPTest.Pages
         private readonly ClinicalContext _context;
         private CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
         private readonly IClinicPatternSqlServices _ssPat;
         private readonly IAdHocClinicSqlServices _ssAdHoc;
         private readonly IAuditSqlServices _audit;
@@ -26,8 +26,8 @@ namespace CPTest.Pages
             _config = config;
             _ssPat = new ClinicPatternSqlServices(_context, _cpxContext, _config);
             _ssAdHoc = new AdHocClinicSqlServices(_context, _cpxContext, _config);
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
             _audit = new AuditSqlServices(_config);
         }
         public List<StaffMember> staffMemberList { get; set; }
@@ -36,7 +36,7 @@ namespace CPTest.Pages
         public string Message;
         public bool isSuccess;
         
-        public void OnGet()
+        public async Task OnGet()
         {
             try
             {
@@ -44,10 +44,10 @@ namespace CPTest.Pages
                 {
                     Response.Redirect("Login");
                 }                
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Setup", "", _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic Setup", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {
@@ -55,16 +55,16 @@ namespace CPTest.Pages
             }
         }
         
-        public void OnPost(DateTime dStartDate, DateTime dEndDate, int startHr, int startMin, string clinicianID, string clinicID, 
+        public async Task OnPost(DateTime dStartDate, DateTime dEndDate, int startHr, int startMin, string clinicianID, string clinicID, 
             int dayNum, int weekNum, int duration, int numSlots,
             string monthstring, bool? isNewStandard, bool? isModifyStandard, bool? isNewAdHoc, bool? isModifyAdHoc)
         {
             try
             {
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
                 string username = User.Identity.Name;
-                string sStaffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
+                string sStaffCode = await _staffData.GetStaffCode(username);
 
                 if (dStartDate == DateTime.Parse("0001-01-01"))
                 {

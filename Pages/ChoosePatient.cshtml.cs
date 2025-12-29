@@ -11,16 +11,16 @@ namespace CPTest.Pages
     {
         private readonly ClinicalContext _context;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IPatientData _patientData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IPatientDataAsync _patientData;
         private readonly IAuditSqlServices _audit;
 
         public ChoosePatientModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
-            _staffData = new StaffData(_context);
-            _patientData = new PatientData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _patientData = new PatientDataAsync(_context);
             _audit = new AuditSqlServices(_config);
         }
 
@@ -29,7 +29,7 @@ namespace CPTest.Pages
         public string? clinicianSel;
         public string? clinicSel;
 
-        public void OnGet(string? cguno)
+        public async Task OnGet(string? cguno)
         {
             try
             {
@@ -42,11 +42,11 @@ namespace CPTest.Pages
 
                 if(cguno != null)
                 {
-                    patient = _patientData.GetPatientDetailsByCGUNo(cguno);
+                    patient = await _patientData.GetPatientDetailsByCGUNo(cguno);
                 }
 
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Choose Patient", "CGU=" + cguno, _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Choose Patient", "CGU=" + cguno, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

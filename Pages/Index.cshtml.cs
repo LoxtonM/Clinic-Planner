@@ -14,16 +14,16 @@ namespace CPTest.Pages
     {        
         private readonly ClinicalContext _context;
         private readonly CPXContext _cpxContext;
-        private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAppointmentData _appointmentData;
-        private readonly IWaitingListData _waitingListData;
-        private readonly IClinicSlotData _slotData;
-        private readonly ICliniciansClinicData _cliniciansClinicData;
-        private readonly INotificationData _note;
+        private readonly IConfiguration _config;        
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IAppointmentDataAsync _appointmentData;
+        private readonly IWaitingListDataAsync _waitingListData;
+        private readonly IClinicSlotDataAsync _slotData;
+        private readonly ICliniciansClinicDataAsync _cliniciansClinicData;
+        private readonly INotificationDataAsync _note;
         private readonly IAuditSqlServices _audit;
-        private readonly INationalHolidayData _hols;
+        private readonly INationalHolidayDataAsync _hols;
         private readonly IVersionData _versionData;
 
         public IndexModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
@@ -31,15 +31,15 @@ namespace CPTest.Pages
             _context = context;
             _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _appointmentData = new AppointmentData(_context);
-            _waitingListData = new WaitingListData(_context);
-            _slotData = new ClinicSlotData(_context);
-            _cliniciansClinicData = new CliniciansClinicData(_cpxContext);
+            _staffData = new StaffUserDataAsync(_context);            
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _appointmentData = new AppointmentDataAsync(_context);
+            _waitingListData = new WaitingListDataAsync(_context);
+            _slotData = new ClinicSlotDataAsync(_context);
+            _cliniciansClinicData = new CliniciansClinicDataAsync(_cpxContext);
             _versionData = new VersionData();
-            _note = new NotificationData(_context);            
-            _hols = new NationalHolidayData(_cpxContext);
+            _note = new NotificationDataAsync(_context);            
+            _hols = new NationalHolidayDataAsync(_cpxContext);
             _audit = new AuditSqlServices(config);
         }
         public List<Outcome> outcomes { get; set; }
@@ -71,7 +71,7 @@ namespace CPTest.Pages
         public string userStaffCode { get; set; }
 
 
-        public void OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm, string? message = "", bool? isSuccess = false)
+        public async Task OnGet(DateTime wcDt, string clinician, string clinic, string searchTerm, string? message = "", bool? isSuccess = false)
         {
             try
             {
@@ -81,11 +81,12 @@ namespace CPTest.Pages
                 }
                 else
                 {
-                    userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
-                    holidays = _hols.GetNationalHolidays();
-                    notificationMessage = _note.GetMessage("ClinicPlannerOutage");
+                    //userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
+                    userStaffCode = await _staffData.GetStaffCode(User.Identity.Name);
+                    holidays = await _hols.GetNationalHolidays();
+                    notificationMessage = await _note.GetMessage("ClinicPlannerOutage");
                     isLive = bool.Parse(_config.GetValue("IsLive", ""));
-                    ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
+                    await ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
                     IPAddressFinder _ip = new IPAddressFinder(HttpContext);
                     _audit.CreateAudit(userStaffCode, "Main Form", "", _ip.GetIPAddress());
                     appVersion = _config.GetValue("AppVersion", "");
@@ -104,18 +105,18 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(DateTime wcDt, string clinician, string clinic, string searchTerm)
+        public async Task OnPost(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
-            ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
+            await ClinicFormSetup(wcDt, clinician, clinic, searchTerm);
         }
 
-        private void ClinicFormSetup(DateTime wcDt, string clinician, string clinic, string searchTerm)
+        private async Task ClinicFormSetup(DateTime wcDt, string clinician, string clinic, string searchTerm)
         {
             try
             {                
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
-                userStaffCode = _staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE;
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
+                userStaffCode = await _staffData.GetStaffCode(User.Identity.Name);
                 appVersion = _config.GetValue("AppVersion", "");
 
                 if (wcDt.ToString() != "01/01/0001 00:00:00")
@@ -126,7 +127,7 @@ namespace CPTest.Pages
                 {
                     wcDate = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
                 }
-
+                
                 string TheDay = wcDate.DayOfWeek.ToString();
                 clinician = clinician;
                 clinic = clinic;
@@ -143,35 +144,35 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
                                 
-                appointmentList = _appointmentData.GetAppointments(DateArray[0], DateArray[4], clinician, clinic);
+                appointmentList = await _appointmentData.GetAppointments(DateArray[0], DateArray[4], clinician, clinic);
                 
-                clinicSlotList = _slotData.GetClinicSlots(DateArray[0], DateArray[4], clinician, clinic);
+                clinicSlotList = await _slotData.GetClinicSlots(DateArray[0], DateArray[4], clinician, clinic);
 
                 if (searchTerm != null) //to search the waiting list for a CGU number
                 {                    
-                    waitingList = _waitingListData.GetWaitingListByCGUNo(searchTerm);
+                    waitingList = await _waitingListData.GetWaitingListByCGUNo(searchTerm);
                 }
                 else
                 {
-                    waitingList = _waitingListData.GetWaitingList(clinician, clinic);
+                    waitingList = await _waitingListData.GetWaitingList(clinician, clinic);
                 }
 
                 if (!clinic.IsNullOrEmpty())
                 {
-                    clinicVenue = _clinicVenueData.GetVenueDetails(clinic);
+                    clinicVenue = await _clinicVenueData.GetVenueDetails(clinic);
                 }
 
                 if (!clinician.IsNullOrEmpty()) //if a clinician is selected as well
                 {
-                    staffMember = _staffData.GetStaffDetails(clinician);
-                    var Clinics = new List<CliniciansClinics>();
-                    Clinics = _cliniciansClinicData.GetCliniciansClinics(clinician);
+                    staffMember = await _staffData.GetStaffMemberDetails(clinician);
+                    var Clinics = new List<CliniciansClinics>(); //because there are nulls
+                    Clinics = await _cliniciansClinicData.GetCliniciansClinics(clinician);
 
                     clinicVenueList = clinicVenueList.Where(v => Clinics.Any(c => v.FACILITY == c.FACILITY)).ToList();
                 }
 
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
-                openSlotList = _slotData.GetOpenSlots(clinicSlotList);
+                openSlotList = _slotData.GetOpenSlots(clinicSlotList); //won't go async
             }
             catch (Exception ex) 
             {

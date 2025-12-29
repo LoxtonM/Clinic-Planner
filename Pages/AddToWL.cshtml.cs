@@ -10,14 +10,13 @@ namespace CPTest.Pages
     public class AddToWLModel : PageModel
     {
         private readonly ClinicalContext _context;
-        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;        
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicalVenueData;
-        private readonly IPatientData _patientData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicalVenueData;
+        private readonly IPatientDataAsync _patientData;
         private readonly IWaitingListSqlServices _ss;
-        private readonly IPriorityData _priorityData;
-        private readonly IReferralData _referralData;
+        private readonly IPriorityDataAsync _priorityData;
+        private readonly IReferralDataAsync _referralData;
         
         public IEnumerable<ClinicVenue> clinicVenueList { get; set; }        
         public IEnumerable<StaffMember> staffMemberList { get; set; }
@@ -25,20 +24,19 @@ namespace CPTest.Pages
         public IEnumerable<Referral> referralList { get; set; }
         public Patient patient { get; set; }
 
-        public AddToWLModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
+        public AddToWLModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
-            _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicalVenueData = new ClinicVenueData(_context);
-            _priorityData = new PriorityData(_context);
-            _patientData = new PatientData(_context);
-            _referralData = new ReferralData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicalVenueData = new ClinicVenueDataAsync(_context);
+            _priorityData = new PriorityDataAsync(_context);
+            _patientData = new PatientDataAsync(_context);
+            _referralData = new ReferralDataAsync(_context);
             _ss = new WaitingListSqlServices(_config);
         }
         
-        public void OnGet(string cgu)
+        public async Task OnGet(string cgu)
         {
             try
             {
@@ -47,21 +45,21 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                clinicVenueList = _clinicalVenueData.GetVenueList();       
-                staffMemberList = _staffData.GetStaffMemberList();
-                priorityList = _priorityData.GetPriorityList();
+                clinicVenueList = await _clinicalVenueData.GetVenueList();       
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                priorityList = await _priorityData.GetPriorityList();
                 
 
                 if (cgu != null)
                 {                    
-                    patient = _patientData.GetPatientDetailsByCGUNo(cgu);
+                    patient = await _patientData.GetPatientDetailsByCGUNo(cgu);
                     if (patient == null)
                     {                        
                         Response.Redirect("CGUNumberNotFound");
                     }
                     else
                     {
-                        referralList = _referralData.GetActiveReferralsListForPatient(patient.MPI);
+                        referralList = await _referralData.GetActiveReferralsListForPatient(patient.MPI);
                     }
                 }
             }
@@ -71,15 +69,14 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int mpi, string clin, string ven, int priorityLevel, int linkedRef)
+        public async Task OnPost(int mpi, string clin, string ven, int priorityLevel, int linkedRef)
         {
             try
             {
-                clinicVenueList = _clinicalVenueData.GetVenueList();
-                staffMemberList = _staffData.GetStaffMemberList();
-                priorityList = _priorityData.GetPriorityList();
-                string username = User.Identity.Name;
-                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
+                clinicVenueList = await _clinicalVenueData.GetVenueList();
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                priorityList = await _priorityData.GetPriorityList();                
+                string staffCode = await _staffData.GetStaffCode(User.Identity.Name);
 
                 _ss.CreateWaitingListEntry(mpi, clin, ven, staffCode, priorityLevel, linkedRef);
 

@@ -1,0 +1,244 @@
+﻿@page
+@model CPTest.Pages.AppModifyModel
+@{
+}
+<div class="container">
+    <div class="row mb-5 g-5">
+        <h1 class="text-center">Modify appt for @Model.patient.FIRSTNAME @Model.patient.LASTNAME (@Model.patient.CGU_No)</h1>
+        @if(Model.patientsList.Count > 0)
+        {
+            @foreach(var p in Model.patientsList)
+            {
+                <h1 class="text-center">@p.FIRSTNAME @p.LASTNAME (@p.CGU_No)</h1>
+            }
+        }
+    </div>
+    
+    <div class="row mb-5 g-5">
+        <h2 class="text-center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h2>
+        <h2 class="text-center">On @Model.appointment.BOOKED_DATE.Value.ToString("dd/MM/yyyy") at @Model.appointment.BOOKED_TIME.Value.ToString("HH:mm")</h2>
+    </div>
+    @if (Model.patientsList.Count > 0)
+    {
+        <div class="row mb-5 g-5">
+            <h3 class="text-center redtext">Note: this will change the appointment for all family members booked into this slot.</h3>        
+        </div>
+    }
+    
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Modify appointment location/clinician:</label>
+            </div>
+            <div class="col-md-3">
+                <select name="AppWith1" id="ddlClinician" asp-for=@Model.staffMember.STAFF_CODE class="w-100">
+                   @*<option selected value=@Model.StaffMember.STAFF_CODE>@Model.StaffMember.NAME</option>*@
+                    @foreach (var item in Model.staffMemberList)
+                    {
+                        <option value=@item.STAFF_CODE>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-3">
+                <select name="AppLocation" id="ddlClinic" asp-for=@Model.clinicVenue.FACILITY class="w-100">
+                    @*<option selected value=@Model.ClinicVenue.FACILITY>@Model.ClinicVenue.NAME</option>*@
+                    @foreach (var item in Model.clinicVenueList)
+                    {
+                        <option value=@item.FACILITY>@item.NAME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2"><label class="w-100">Additional Clinicians:</label></div>
+            <div class="col-md-2">
+                <div class="row">
+                    <select name="appWith2" asp-for=@Model.appointment.STAFF_CODE_2 class="w-100">
+                        <option selected value=""></option>
+                        @foreach (var s in Model.staffMemberList)
+                        {
+                            <option value=@s.STAFF_CODE>@s.NAME</option>
+                        }
+                    </select>
+                </div>
+                <div class="row">
+                    <select name="appWith3" asp-for=@Model.appointment.STAFF_CODE_3 class="w-100">
+                        <option selected value=""></option>
+                        @foreach (var s in Model.staffMemberList)
+                        {
+                            <option value=@s.STAFF_CODE>@s.NAME</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @if(Model.familyMembersList.Count > 0)
+            {
+                <div class="col-md-2">
+                    <label class="w-100">Additional Family Members:</label>
+                </div>
+                <div class="col-md-2">
+                    <select name="famMPI" class="w-100">
+                        <option value="">Select...</option>
+                        @foreach(var f in Model.familyMembersList)
+                        {
+                            <option value=@f.MPI>@f.CGU_No - @f.FIRSTNAME @f.LASTNAME</option>
+                        }
+                    </select>                
+                </div>
+            }
+            else
+            {
+                <div class="col-md-4"></div>
+            }
+            <div class="col-md-2">Type:</div>
+            <div class="col-md-2">
+                <select name="appType" asp-for=@Model.appointment.AppType class="w-100">
+                    @foreach (var t in Model.appTypeList)
+                    {
+                        <option value=@t.APP_TYPE>@t.APP_TYPE</option>
+                    }
+                </select>
+            </div>           
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Change date/time/duration:</label>
+            </div>
+            <div class="col-md-4">
+                <input type="date" name="dNewDate" asp-for=@Model.appointment.BOOKED_DATE />
+            </div>
+            <div class="col-md-4">
+                <input type="time" name="dNewTime" asp-for=@Model.appointment.BOOKED_TIME />
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="w-50" name="duration" asp-for=@Model.appointment.Duration/>
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Instructions to Patient:</label>
+            </div>
+            <div class="col-md-4">
+                <textarea name="sInstructions" asp-for=@Model.appointment.PatientInstructions></textarea>
+            </div>
+        </div>
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Cancel appointment:</label>
+            </div>
+            <div class="col-md-1">
+                <input type="checkbox" class="form-check-input" id="chkCancelAppt" onclick="ShowCancelMenu()" />
+            </div>
+            <div class="col-md-2">
+                <select id="ddlCancelAppt" name="sCancel" hidden=true onchange="ShowCancelReasonMenu()">
+                    <option selected value=""></option>
+                    @foreach (var o in Model.outcomeList)
+                    {
+                        <option value=@o.CLINIC_OUTCOME>@o.CLINIC_OUTCOME</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlCancelReason" name="sCancelReason" hidden=true>
+                    <option selected value=""></option>
+                    @foreach (var r in Model.cancellationReasonsList)
+                    {
+                        <option value=@r.Reason>@r.Reason</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label id="lblReturnToWL" hidden="true">Return to Waiting List:</label>
+            </div>
+            <div class="col-md-3">
+                <input type="checkbox" class="form-check-input" id="chkReturnWL" onclick="ReturnToWLTick()" hidden="true" />
+                <input type="text" id="txtReturnToWL" name="isReturnToWL" hidden="true" />
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button type="submit" id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm()
+    {
+        
+    }
+
+    function GoBack()
+    {
+        //window.close();
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+    function ShowCancelMenu() 
+    { 
+
+        if (document.getElementById("chkCancelAppt").checked) 
+        {
+            document.getElementById("ddlCancelAppt").hidden = false;
+            document.getElementById("lblReturnToWL").hidden = false;
+            document.getElementById("chkReturnWL").hidden = false;
+        }
+        else 
+        {
+            document.getElementById("ddlCancelAppt").hidden = true;
+            document.getElementById("lblReturnToWL").hidden = true;
+            document.getElementById("chkReturnWL").hidden = true;
+        }
+    }
+
+    function ShowCancelReasonMenu()
+    {
+        if (document.getElementById("ddlCancelAppt").value == "Cancelled by professional")
+        {              
+            document.getElementById("ddlCancelReason").hidden = false;        
+        }
+        else
+        {
+            document.getElementById("ddlCancelReason").hidden = true;            
+        }
+    }
+
+    function ReturnToWLTick()
+    {
+        document.getElementById("txtReturnToWL").value = document.getElementById("chkReturnWL").checked;
+    }
+ 
+</script>

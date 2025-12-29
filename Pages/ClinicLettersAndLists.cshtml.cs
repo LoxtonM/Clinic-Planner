@@ -1,34 +1,30 @@
-using CPTest.Connections;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Meta;
 using ClinicalXPDataConnections.Data;
 using CPTest.Data;
-using System.Web;
 
 namespace CPTest.Pages
 {
     public class ClinicLettersAndListsModel : PageModel
     {
         private readonly ClinicalContext _context;        
-        private readonly CPXContext _cpxContext;
         private readonly DocumentContext _docContext;
-        private readonly IStaffData _staffData;
-        private readonly IPatientData _patientData;
-        private readonly IAppointmentData _appointmentData;        
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IConstantsData _constantsData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IPatientDataAsync _patientData;
+        private readonly IAppointmentDataAsync _appointmentData;        
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IConstantsDataAsync _constantsData;
 
         public ClinicLettersAndListsModel(ClinicalContext context, CPXContext cpxContext, DocumentContext docContext, IConfiguration config)
         {
             _context = context;
-            _cpxContext = cpxContext;
             _docContext = docContext;
-            _staffData = new StaffData(_context);
-            _patientData = new PatientData(_context);
-            _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _constantsData = new ConstantsData(_docContext);
+            _staffData = new StaffUserDataAsync(_context);
+            _patientData = new PatientDataAsync(_context);
+            _appointmentData = new AppointmentDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _constantsData = new ConstantsDataAsync(_docContext);
         }
 
         public Patient patient { get; set; }        
@@ -44,7 +40,7 @@ namespace CPTest.Pages
         public bool success { get; set; }
         public bool synertecPrinterActive { get; set; }
 
-        public void OnGet(int refID, string? sMessage, bool? isSuccess, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public async Task OnGet(int refID, string? sMessage, bool? isSuccess, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -53,13 +49,15 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                appointment = _appointmentData.GetAppointmentDetails(refID);
-                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
-                patient = _patientData.GetPatientDetails(appointment.MPI);
-                appointmentList = _appointmentData.GetAppointmentsForADay(appointment.BOOKED_DATE.GetValueOrDefault(), appointment.STAFF_CODE_1, appointment.FACILITY);
+                appointment = await _appointmentData.GetAppointmentDetails(refID);
+                staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(appointment.STAFF_CODE_1);
+                patient = await _patientData.GetPatientDetails(appointment.MPI);
+                appointmentList = await _appointmentData.GetAppointmentsForADay(appointment.BOOKED_DATE.GetValueOrDefault(), appointment.STAFF_CODE_1, appointment.FACILITY);
                 appointmentListForFamily = new List<Appointment>();
 
-                if(!_constantsData.GetConstant("SynertecPrinterName", 2).Contains("0")) //we need to be able to disable it in case something isn't working right
+                string cs = await _constantsData.GetConstant("SynertecPrinterName", 2);
+
+                if (!cs.Contains("0")) //we need to be able to disable it in case something isn't working right
                 {
                     synertecPrinterActive = true;
                 }
@@ -81,7 +79,7 @@ namespace CPTest.Pages
 
                 appointmentListForFamily = appointmentListForFamily.Distinct().ToList();
 
-                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                clinicVenue = await _clinicVenueData.GetVenueDetails(appointment.FACILITY);
             }
             catch (Exception ex)
             {

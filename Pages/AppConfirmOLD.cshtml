@@ -1,0 +1,157 @@
+﻿@page
+@model CPTest.Pages.AppConfirmModel
+@{
+}
+
+<div class="container">
+
+    @if (Model.patient != null)
+    {
+        <h1 class="text-center">Confirm appt for @Model.patient.CGU_No - @Model.patient.FIRSTNAME @Model.patient.LASTNAME</h1>
+    }
+    else
+    {
+        <h1 class="text-center">This patient does not exist.</h1>
+    }
+
+    @*<div id="metaData" hidden="true">
+        <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateStr />
+        <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSel />
+        <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSel />
+    </div>*@
+
+    <form id="ApptForm" method="post">
+        <div class="row mb-5 g-5">
+            @if(@Model.staffMember != null)
+            {
+                <h2 class="text-center">To see @Model.staffMember.NAME at @Model.clinicVenue.NAME</h2>
+                <h2 class="text-center">on the @Model.appDate.ToString("dd/MM/yyyy") at @Model.appTime.ToString("HH:mm")</h2>
+                <h2 class="text-center">for @Model.appDur minutes</h2>
+            }
+        </div>
+        <div class="row mb-5 g-5">
+            @if (Model.linkedRefList.Count > 0)
+            {
+                <div class="col-md-2">
+                    <label>Linked Referral:</label>
+                </div>
+                <div class="col-md-8">                
+                    <select name="refID">
+                        @foreach (var r in Model.linkedRefList)
+                        {
+                            <option value=@r.refid>@r.RefType - @r.RefDate.Value.ToString("dd/MM/yyyy"), referred by: @r.ReferringClinician at @r.ReferringFacility</option>
+                        }
+                    </select>                
+                </div>
+            }
+            else
+            {
+                <h3>There are no active referrals. Please create one, or re-activate an old one, before continuing.</h3>
+            }
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Appointment Type:</label>
+            </div>
+            <div class="col-md-4">
+                <select name="type" asp-for=@Model.appTypeDef>
+                    @foreach(var t in Model.appTypeList)
+                    {
+                        <option value=@t.APP_TYPE>@t.APP_TYPE</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>Duration: (minutes)</label>
+            </div>
+            <div class="col-md-1">
+                <input type="text" class="w-50" name="dur" asp-for=@Model.appDur />
+            </div>
+            <div class="col-md-3">
+                
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Special Instructions:</label>
+            </div>
+            <div class="col-md-10">
+                <textarea rows="10" cols="100" name="instructions"></textarea>
+            </div>
+        </div>
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <div id="metadata">
+            @if(@Model.staffMember != null && Model.patient != null)
+            {
+                <input id="txtMPI" name="mpi" value=@Model.patient.MPI />
+                <input id="txtClin" name="clin" value=@Model.staffMember.STAFF_CODE />
+                <input id="txtVen" name="ven" value=@Model.clinicVenue.FACILITY />
+                <input id="txtDat" name="dat" value=@Model.appDate.ToString("yyyy-MM-dd") />
+                <input id="txtTim" name="tim" value=@Model.appTime.ToString("HH:mm:ss") />
+                <input id="txtDur" name="dur" value=@Model.appDur />
+                <input id="txtWLID" name="wlid" value=@Model.wlID />
+                <input id="txtSlotID" name="slotID" value=@Model.slID />
+            }
+        </div>
+    </form>
+
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm()
+    {        
+       // document.getElementById("ApptForm").submit();
+    }
+
+    function GoBack()
+    {        
+        //window.close();
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if(clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+        document.getElementById("metadata").hidden = true;
+        if (@Model.linkedRefList.Count == 0) 
+        {
+            HideConfirmButton();
+        }
+    }
+
+    function HideConfirmButton()
+    {
+        document.getElementById("btnConfirm").hidden = true;
+    }
+ 
+</script>

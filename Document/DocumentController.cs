@@ -24,7 +24,7 @@ namespace CPTest.Document
         private readonly DocumentContext _documentContext;
         private readonly IPatientData _patient;
         private readonly IAppointmentData _appointment;
-        private readonly IStaffData _staff;
+        private readonly IStaffDataOLD _staff;
         private readonly IClinicVenueData _clinic;
         private readonly IReferralData _referral;
         private readonly IConstantsData _constant;

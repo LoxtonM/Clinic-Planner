@@ -5,6 +5,7 @@ using CPTest.Data;
 using CPTest.Document;
 using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Threading.Tasks;
 
 namespace CPTest.Pages
 {
@@ -14,9 +15,9 @@ namespace CPTest.Pages
         private readonly CPXContext _cpxContext;
         private readonly DocumentContext _documentContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
+        private readonly IStaffUserDataAsync _staffData;
         private readonly IAuditSqlServices _audit;
-        private readonly IAppointmentData _appt;
+        private readonly IAppointmentDataAsync _appt;
         private readonly IDocumentController _doc;
 
         public ClinicListSelectModel(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext, IConfiguration config)
@@ -25,8 +26,8 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _documentContext = documentContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _appt = new AppointmentData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _appt = new AppointmentDataAsync(_context);
             _doc = new DocumentController(_context, _cpxContext, _documentContext);
             _audit = new AuditSqlServices(_config);
         }
@@ -37,7 +38,7 @@ namespace CPTest.Pages
         public string? clinicianSel;
         public string? clinicSel;
 
-        public void OnGet(string? wcDateString, string? clinicianid, string? clinicid, string? clinicDateString)
+        public async Task OnGet(string? wcDateString, string? clinicianid, string? clinicid, string? clinicDateString)
         {
             try
             {
@@ -46,7 +47,8 @@ namespace CPTest.Pages
                 clinicSel = clinicid;
 
                 List<Appointment> appts = new List<Appointment>();
-                appts = _appt.GetAppointments(DateTime.Parse(wcDateString), DateTime.Parse(wcDateString).AddDays(7), clinicianid, clinicid).Distinct().ToList();
+                appts = await _appt.GetAppointments(DateTime.Parse(wcDateString), DateTime.Parse(wcDateString).AddDays(7), clinicianid, clinicid);
+                appts = appts.Distinct().ToList();
                 apptList = new List<Appointment>();
 
                 if (clinicDateString != null)
@@ -58,7 +60,7 @@ namespace CPTest.Pages
                     { 
                         Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
                         IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                        _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
+                        _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
                     }
                     else
                     {
@@ -85,16 +87,16 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int refid)
+        public async Task OnPost(int refid)
         {
             try
             {
-                Appointment appt = _appt.GetAppointmentDetails(refid);
+                Appointment appt = await _appt.GetAppointmentDetails(refid);
 
                 string clinicianid = appt.STAFF_CODE_1;
                 string clinicid = appt.FACILITY;
 
-                apptList = _appt.GetAppointments(DateTime.Now, DateTime.Now.AddDays(365), clinicianid, clinicid);
+                apptList = await _appt.GetAppointments(DateTime.Now, DateTime.Now.AddDays(365), clinicianid, clinicid);
 
                 string returnUrl = "Index?wcDt=" + wcDateStr;
                 if (clinicianSel != null) { returnUrl = returnUrl + $"&clinician={clinicianSel}"; }
@@ -104,7 +106,7 @@ namespace CPTest.Pages
                 {
                     Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
                     IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
+                    _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic List Print", "RefID=" + refid.ToString(), _ip.GetIPAddress());
                 }
                 else
                 {

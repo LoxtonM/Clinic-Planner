@@ -15,13 +15,13 @@ namespace CPTest.Pages
         private readonly ClinicalContext _context;
         private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IPatientData _patientData;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAppTypeData _appTypeData;
-        private readonly IOutcomeData _outcomeData;
-        private readonly ICancellationReasonData _cancelReasonData;
-        private readonly IAppointmentData _appointmentData;        
+        private readonly IPatientDataAsync _patientData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IActivityTypeDataAsync _appTypeData;
+        private readonly IOutcomeDataAsync _outcomeData;
+        private readonly ICancellationReasonDataAsync _cancelReasonData;
+        private readonly IAppointmentDataAsync _appointmentData;        
         private readonly IAppointmentSqlServices _ss;
 
         public AppModifyModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
@@ -30,13 +30,13 @@ namespace CPTest.Pages
             _cpxContext = cpxContext;
             _config = config;            
             _ss = new AppointmentSqlServices(_config);
-            _patientData = new PatientData(_context);
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _appTypeData = new AppTypeData(_cpxContext);
-            _outcomeData = new OutcomeData(_context);
-            _cancelReasonData = new CancellationReasonData(_cpxContext);
-            _appointmentData = new AppointmentData(_context);
+            _patientData = new PatientDataAsync(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _appTypeData = new ActivityTypeDataAsync(_context);
+            _outcomeData = new OutcomeDataAsync(_context);
+            _cancelReasonData = new CancellationReasonDataAsync(_cpxContext);
+            _appointmentData = new AppointmentDataAsync(_context);
         }
 
         public Patient patient { get; set; }
@@ -49,14 +49,14 @@ namespace CPTest.Pages
         public List<ClinicVenue> clinicVenueList { get; set; }
         public List<Outcome> outcomeList { get; set; }
         public List<CancellationReason> cancellationReasonsList { get; set; }
-        public List<AppType> appTypeList { get; set; }
+        public List<ActivityType> appTypeList { get; set; }
         public Appointment appointment { get; set; }
         public List<Appointment> appointmentsList { get; set; }
         public string? wcDateStr;
         public string? clinicianSel;
         public string? clinicSel;
 
-        public void OnGet(int refID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public async Task OnGet(int refID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -65,20 +65,21 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                appointment = _appointmentData.GetAppointmentDetails(refID);
+                appointment = await _appointmentData.GetAppointmentDetails(refID);
                 int mpi = appointment.MPI;
-                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
-                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
-                patient = _patientData.GetPatientDetails(mpi);
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
-                outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
-                cancellationReasonsList = _cancelReasonData.GetCancellationReasonsList();
-                appTypeList = _appTypeData.GetAppTypeList();
+                staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(appointment.STAFF_CODE_1);
+                clinicVenue = await _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                patient = await _patientData.GetPatientDetails(mpi);
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
+                outcomeList = await _outcomeData.GetOutcomeList();
+                outcomeList = outcomeList.Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                cancellationReasonsList = await _cancelReasonData.GetCancellationReasonsList();
+                appTypeList = await _appTypeData.GetApptTypes();
                 
-                appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                appointmentsList = await _appointmentData.GetAppointmentsForWholeFamily(refID);
                 patientsList = new List<Patient>();
-                familyMembers = _patientData.GetFamilyMembers(mpi);
+                familyMembers = await _patientData.GetFamilyMembers(mpi);
                 familyMembersList = new List<Patient>(); //we have to build the list first and add to it, we can't remove from an existing list
 
                 wcDateStr = wcDateString;
@@ -89,7 +90,7 @@ namespace CPTest.Pages
                 {
                     foreach (Appointment a in appointmentsList)
                     {
-                        Patient p = _patientData.GetPatientDetails(a.MPI);
+                        Patient p = await _patientData.GetPatientDetails(a.MPI);
                         if (p.MPI != patient.MPI)
                         {
                             patientsList.Add(p);
@@ -112,29 +113,30 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int refID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
+        public async Task OnPost(int refID, DateTime dNewDate, DateTime dNewTime, string appWith1, string appWith2, string appWith3, string appLocation,
             string appType, int duration, string sInstructions, string sCancel, string? sCancelReason, string? wcDateString, string? clinicianSelected, string? clinicSelected, int? famMPI = 0, bool? isReturnToWL = false)
         {
             try
             {                
                 string username = User.Identity.Name;
-                appointment = _appointmentData.GetAppointmentDetails(refID);
+                appointment = await _appointmentData.GetAppointmentDetails(refID);
                 int mpi = appointment.MPI;
-                staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
-                clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
-                patient = _patientData.GetPatientDetails(mpi);
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
-                outcomeList = _outcomeData.GetOutcomeList().Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
-                cancellationReasonsList = _cancelReasonData.GetCancellationReasonsList();
-                appTypeList = _appTypeData.GetAppTypeList();
+                staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(appointment.STAFF_CODE_1);
+                clinicVenue = await _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                patient = await _patientData.GetPatientDetails(mpi);
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
+                outcomeList = await _outcomeData.GetOutcomeList();
+                outcomeList = outcomeList.Where(o => o.CLINIC_OUTCOME.Contains("Cancelled")).ToList();
+                cancellationReasonsList = await _cancelReasonData.GetCancellationReasonsList();
+                appTypeList = await _appTypeData.GetApptTypes();
 
                 //appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
                 patientsList = new List<Patient>();      //and we have to create the lists, even if we're not using them, or it'll throw a fit.          
                 familyMembersList = new List<Patient>();
 
                 string sNewTime = dNewTime.Hour.ToString() + ":" + dNewTime.Minute.ToString(); //for some reason, I can't just convert the time to a string!!!
-                string sUser = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
+                string sUser = await _staffData.GetStaffCode(username);
 
                 _ss.ModifyAppointment(refID, dNewDate, sNewTime, appWith1, appWith2, appWith3, appLocation,
                 appType, duration, sUser, sInstructions, sCancel, famMPI.GetValueOrDefault(), isReturnToWL.GetValueOrDefault(), sCancelReason);

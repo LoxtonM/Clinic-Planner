@@ -10,23 +10,19 @@ namespace CPTest.Pages
     public class ClinicDayViewModel : PageModel
     {
         private readonly ClinicalContext _context;
-        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAppointmentData _appointmentData;
-        private readonly ICliniciansClinicData _cliniciansClinicData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IAppointmentDataAsync _appointmentData;
         private readonly IAuditSqlServices _audit;
 
         public ClinicDayViewModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
-            _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _appointmentData = new AppointmentData(_context);
-            _cliniciansClinicData = new CliniciansClinicData(_cpxContext);            
+            _staffData = new StaffUserDataAsync(_context);
+            //_clinicVenueData = new ClinicVenueDataAsync(_context);
+            _appointmentData = new AppointmentDataAsync(_context);
+            //_cliniciansClinicData = new CliniciansClinicDataAsync(_cpxContext);            
             _audit = new AuditSqlServices(_config);
         }
 
@@ -46,7 +42,7 @@ namespace CPTest.Pages
         public DateTime dDate;
         
 
-        public void OnGet(DateTime dClinicDate)
+        public async Task OnGet(DateTime dClinicDate)
         {
             try
             {
@@ -70,7 +66,7 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = _appointmentData.GetAppointmentsForADay(dClinicDate);
+                appointmentList = await _appointmentData.GetAppointmentsForADay(dClinicDate);
 
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicList = new List<string>();
@@ -89,7 +85,7 @@ namespace CPTest.Pages
                 //openSlots = clinicSlots.Where(l => l.SlotStatus == "Open" || l.SlotStatus == "Unavailable" || l.SlotStatus == "Reserved");
                 //openSlotList = _dc.GetOpenSlots(clinicSlotList);
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Day View", "", _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic Day View", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

@@ -1,0 +1,98 @@
+﻿@page
+@model CPTest.Pages.ClinicLettersAndListsModel
+@{
+}
+
+<div class="container">
+    <div class="row mb-5 g-5">
+        <h1>Clinic Letters and Lists</h1>
+    </div>
+
+    @if(Model.message != null)
+    {
+        if (Model.success)
+        {
+            <div class="alert alert-success d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+    }
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            @foreach (var item in Model.appointmentListForFamily)
+            {
+                <h3>@item.FIRSTNAME @item.LASTNAME</h3>
+                <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID asp-route-isEmailOnly=true>Create Letter to @item.CGU_No</a>(Create letter for manual printing)</p>
+                @if(!item.ActiveAlerts && Model.synertecPrinterActive)
+                {
+                    <p><a type="button" class="btn btn-success" asp-page="ClinicLetterPrint" asp-route-refID=@item.RefID>Print Letter to @item.CGU_No</a>(Print directly via Synertec)</p>                    
+                }
+            }
+        </div>
+        @*<div class="col-md-6">
+            <a type="button" class="btn btn-success" asp-page="WIP">Email Letter to Patient (WIP)</a>
+        </div>*@
+    </div>
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            <a type="button" class="btn btn-success" asp-page="ClinicListPrint" asp-route-refID=@Model.appointment.RefID>Create Clinic List</a>
+        </div>
+        @*<div class="col-md-6">
+            <a type="button" class="btn btn-success" asp-page="WIP">Email Clinic List (WIP)</a> 
+        </div>*@
+    </div>
+
+
+    <div class="row mb-5 g-5">
+        <div class="col-md-6">
+            <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        //window.close();
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+
+        //window.location.replace("Index");
+    }
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>

@@ -14,12 +14,12 @@ namespace CPTest.Pages
         private readonly ClinicalContext _context;
         private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicSlotData _slotData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IReferralData _referralData;
-        private readonly IAppTypeData _appTypeData;
-        private readonly IOutcomeData _outcomeData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicSlotDataAsync _slotData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IReferralDataAsync _referralData;
+        private readonly IActivityTypeDataAsync _appTypeData;
+        private readonly IOutcomeDataAsync _outcomeData;
         private readonly IClinicSlotSqlServices _ssSlot;
         private readonly IAppointmentSqlServices _ssAppt;
         private readonly IAuditSqlServices _audit;
@@ -29,12 +29,12 @@ namespace CPTest.Pages
             _context = context;
             _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _slotData = new ClinicSlotData(_context);
-            _referralData = new ReferralData(_context);
-            _appTypeData = new AppTypeData(_cpxContext);
-            _outcomeData = new OutcomeData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _slotData = new ClinicSlotDataAsync(_context);
+            _referralData = new ReferralDataAsync(_context);
+            _appTypeData = new ActivityTypeDataAsync(_context);
+            _outcomeData = new OutcomeDataAsync(_context);
             _ssSlot = new ClinicSlotSqlServices(_config);
             _ssAppt = new AppointmentSqlServices(_config);
             _audit = new AuditSqlServices(_config);
@@ -44,14 +44,11 @@ namespace CPTest.Pages
         public List<StaffMember> clinicianList { get; set; }
         public List<ClinicVenue> clinicList { get; set; }
         public List<Referral> referralList { get; set; }
-        public List<AppType> appTypeList { get; set; }
+        public List<ActivityType> appTypeList { get; set; }
         public List<Outcome> outcomeList { get; set; }
+               
 
-        //public string? wcDateStr;
-        //public string? clinicianSel;
-        //public string? clinicSel;
-
-        public void OnGet(int mpi)
+        public async Task OnGet(int mpi)
         {
             try
             {
@@ -60,14 +57,14 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                clinicianList = _staffData.GetStaffMemberList();
-                clinicList = _clinicVenueData.GetVenueList();
-                appTypeList = _appTypeData.GetAppTypeList();
-                referralList = _referralData.GetReferralsList(mpi);
-                outcomeList = _outcomeData.GetOutcomeList();
+                clinicianList = await _staffData.GetClinicalStaffList();
+                clinicList = await _clinicVenueData.GetVenueList();
+                appTypeList = await _appTypeData.GetApptTypes();
+                referralList = await _referralData.GetReferralsList(mpi);
+                outcomeList = await _outcomeData.GetOutcomeList();
 
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Create Past Appointment", "MPI=" + mpi, _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Create Past Appointment", "MPI=" + mpi, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {
@@ -75,25 +72,26 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(string sSlotDate, string sSlotTime, string clinician, string clinic, int duration, int refID, string appType, 
+        public async Task OnPost(string sSlotDate, string sSlotTime, string clinician, string clinic, int duration, int refID, string appType, 
             string? instructions, string outcome, string letterRequired, string arrivalTime, int patientsSeen, bool isClockStop)
         {
             try
             {                
                 string username = User.Identity.Name;
-                string staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;
+                string staffCode = await _staffData.GetStaffCode(username);
                 
                 int mpi = 0;
                 DateTime dSlotDate = DateTime.Parse(sSlotDate);
                 DateTime dSlotTime = DateTime.Parse("1899-12-30 " + sSlotTime);
 
-                clinicianList = _staffData.GetStaffMemberList();
-                clinicList = _clinicVenueData.GetVenueList();
-                appTypeList = _appTypeData.GetAppTypeList();
-                referralList = _referralData.GetReferralsList(mpi);
-                outcomeList = _outcomeData.GetOutcomeList();
+                clinicianList = await _staffData.GetClinicalStaffList();
+                clinicList = await _clinicVenueData.GetVenueList();
+                appTypeList = await _appTypeData.GetApptTypes();
+                referralList = await _referralData.GetReferralsList(mpi);
+                outcomeList = await _outcomeData.GetOutcomeList();
 
-                mpi = _referralData.GetReferralDetails(refID).MPI;
+                Referral refer = await _referralData.GetReferralDetails(refID);
+                mpi = refer.MPI;
 
                 int success = _ssAppt.CreatePastAppointment(dSlotDate, sSlotTime, clinician, clinic, refID, mpi, appType, duration, staffCode,
                     outcome, isClockStop, letterRequired, patientsSeen, arrivalTime);

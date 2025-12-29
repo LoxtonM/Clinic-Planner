@@ -1,0 +1,144 @@
+@page
+@model CPTest.Pages.AddToWLModel
+@{
+    ViewData["Title"] = "Add To Waiting List";
+}
+
+<div class="container">
+
+    <h1 class="text-center">Add Patient to Waiting List</h1>
+
+    <form id="ApptForm" method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2 text-right">
+                <label class="w-100">CGU Number (including point):</label>
+            </div>
+            <div class="col-md-2 text-right">
+                <input type="text" class="w-100" id="txtCGUNo" name="cgu" asp-for=@Model.patient.CGU_No />
+            </div>
+            @if(Model.patient != null)
+            {
+               <div class="col-md-2">
+                    <label class="w-100">Linked Referral:</label>
+                </div>
+                <div class="col-md-2">
+                    <select class="w-100" id="ddlRef" name="linkedRef">
+                        <option value="" selected></option>
+                        @if (Model.referralList != null)
+                        {
+                            @foreach (var item in Model.referralList)
+                            {
+                                <option value=@item.refid>@item.RefType - @item.RefDate.Value.ToString("dd/MM/yyyy"), @item.ReferringClinician, @item.ReferringFacility</option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2 text-right">
+                <label class="w-100">Clinician:</label>
+            </div>
+            <div class="col-md-2 text-right">
+                <select class="w-100" id="ddlClin" name="clin" />                
+                    <option value="" selected></option>
+                    @if (Model.staffMemberList != null)
+                    {
+                        @foreach (var item in Model.staffMemberList)
+                        {
+                            <option value=@item.STAFF_CODE>@item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 text-right">
+                <label>Clinic:</label>
+            </div>
+            <div class="col-md-2 text-right">
+                <select id="ddlVen" name="ven" />                
+                    <option value="" selected></option>                
+                    @if (Model.clinicVenueList != null)
+                    {
+                        @foreach (var item in Model.clinicVenueList)
+                        {
+                            <option value=@item.FACILITY>@item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2 text-right">
+                <label>Priority:</label>
+            </div>
+            <div class="col-md-2 text-right">
+                <select id="ddlVen" name="priorityLevel" />
+                    <option value="" selected></option>
+                        @foreach (var item in Model.priorityList)
+                        {
+                            <option value=@item.PriorityLevel>@item.CLASS - @item.DESCRIPTION</option>
+                        }                   
+                </select>
+            </div>
+        </div>
+
+
+        @if(@Model.patient != null)
+        {
+            <div class="row mb-5 g-5">
+                <div class="col-md-2">
+                    <p>@Model.patient.FIRSTNAME @Model.patient.LASTNAME</p>
+                </div>
+                <div class="col-md-2">
+                    <p>@Model.patient.CGU_No</p>
+                </div>
+                <div class="col-md-2" hidden="true">
+                    <input name="mpi" value=@Model.patient.MPI />
+                </div>
+            </div>
+        }
+        
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-4"></div>
+            <div class="col-md-2">
+                <button id="btnConfirm" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+            </div>
+            <div class="col-md-4"></div>
+        </div>    
+    </form>
+</div>
+
+<script>
+
+    document.getElementById("txtCGUNo").addEventListener("change", Refresh);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+
+    document.onload(HideMenu());
+
+    function Confirm()
+    {        
+       // document.getElementById("ApptForm").submit();
+    }
+
+    function Refresh()
+    {        
+        //window.Refresh();
+        window.location.replace("AddToWL?cgu=" + document.getElementById("txtCGUNo").value);
+    }
+
+    function GoBack()
+    {        
+        window.location.replace("Index");
+    }
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+        //document.getElementById("metadata").hidden = true;
+    }
+ 
+</script>

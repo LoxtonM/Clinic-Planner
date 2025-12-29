@@ -15,7 +15,7 @@ namespace CPTest.Pages
         private readonly IDocumentController _doc;        
         private readonly IConfiguration _config;
         private readonly IClinicLetterSqlServices _letter;
-        private readonly IStaffData _staffData;
+        private readonly IStaffUserDataAsync _staffData;
         private readonly IAuditSqlServices _audit;
         public ClinicLetterPrintModel(ClinicalContext context, CPXContext cpxContext, DocumentContext documentContext, IConfiguration config)
         {
@@ -24,11 +24,11 @@ namespace CPTest.Pages
             _documentContext = documentContext;
             _config = config;
             _doc = new DocumentController(_context, _cpxContext, _documentContext);
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserDataAsync(_context);
             _letter = new ClinicLetterSqlServices(_config);
             _audit = new AuditSqlServices(_config);
         }
-        public void OnGet(int refID, bool isEmailOnly)
+        public async Task OnGet(int refID, bool isEmailOnly)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace CPTest.Pages
                 {
                     _letter.UpdateClinicLetter(refID, User.Identity.Name);
                     IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic Letter Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
+                    _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic Letter Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
 
                     if (isEmailOnly)
                     {

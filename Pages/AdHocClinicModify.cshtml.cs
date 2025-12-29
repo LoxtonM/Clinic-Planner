@@ -14,9 +14,9 @@ namespace CPTest.Pages
         private readonly ClinicalContext _context;
         private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAdHocClinicData _adHocClinicData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IAdHocClinicDataAsync _adHocClinicData;
         private readonly IAdHocClinicSqlServices _ss;
         private readonly IAuditSqlServices _audit;
 
@@ -25,9 +25,9 @@ namespace CPTest.Pages
             _context = context;
             _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _adHocClinicData = new AdHocClinicData(_cpxContext);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _adHocClinicData = new AdHocClinicDataAsync(_cpxContext);
             _ss = new AdHocClinicSqlServices(_context, _cpxContext, _config);
             _audit = new AuditSqlServices(_config);
         }
@@ -35,7 +35,7 @@ namespace CPTest.Pages
         public ClinicsAdded adhocclinic {  get; set; }
         public StaffMember clinician { get; set; }
         public ClinicVenue venue { get; set; }
-        public void OnGet(int id)
+        public async Task OnGet(int id)
         {
             try
             {
@@ -44,12 +44,12 @@ namespace CPTest.Pages
                     Response.Redirect("Login");
                 }
 
-                adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
-                clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
-                venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
+                adhocclinic = await _adHocClinicData.GetAdHocClinicDetails(id);
+                clinician = await _staffData.GetStaffMemberDetailsByStaffCode(adhocclinic.ClinicianID);
+                venue = await _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
 
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Ad Hoc Clinic Modify", "", _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Ad Hoc Clinic Modify", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {
@@ -57,13 +57,13 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int id, int duration, int startHr, int startMin, int numSlots, DateTime dClinicDate)
+        public async Task OnPost(int id, int duration, int startHr, int startMin, int numSlots, DateTime dClinicDate)
         {
             try
             {
-                adhocclinic = _adHocClinicData.GetAdHocClinicDetails(id);
-                clinician = _staffData.GetStaffDetails(adhocclinic.ClinicianID);
-                venue = _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
+                adhocclinic = await _adHocClinicData.GetAdHocClinicDetails(id);
+                clinician = await _staffData.GetStaffMemberDetailsByStaffCode(adhocclinic.ClinicianID);
+                venue = await _clinicVenueData.GetVenueDetails(adhocclinic.ClinicID);
                 string username = User.Identity.Name;
 
                 _ss.UpdateAdHocClinic(id, adhocclinic.ClinicianID, adhocclinic.ClinicID, duration, startHr, startMin, numSlots, dClinicDate, username);

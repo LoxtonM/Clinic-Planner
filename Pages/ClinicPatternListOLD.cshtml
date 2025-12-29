@@ -1,0 +1,78 @@
+﻿@page
+@model CPTest.Pages.ClinicPatternListModel
+@{
+}
+
+<div class="container">
+    <h1>Clinic patterns for @Model.clinician.NAME</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Clinic</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Slots</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model.patternList)
+            {
+                <tr>
+                    <td><a asp-page="ClinicPatternModify" asp-route-ID=@item.PatternID>Edit</a></td>
+                    <td>@item.Clinic</td>
+                    <td>@if (@item.startDate.HasValue)
+                        {
+                            @item.startDate.Value.ToString("dd/MM/yyyy")
+                        }
+                    </td>
+                    <td>@if(@item.endDate.HasValue)
+                        {
+                            @item.endDate.Value.ToString("dd/MM/yyyy")
+                        }
+                    </td>
+                    <td>@item.StartHr:@if(@item.StartMin == 0){<span>00</span>}
+                        else{@item.StartMin}
+                    </td>
+                    <td>
+                        @item.EndHr:@if(@item.EndMin == 0){<span>00</span>}
+                        else{@item.EndMin}
+                    </td>
+                    @*Believe it or not, this is the ONLY way I can make it appear 
+                        as a time in HTML!!!*@
+                    <td>@item.NumSlots</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div action="col-md-2">
+            <button type="button" id="btnCancel" class="btn btn-success">Cancel</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+    function GoBack() 
+    {
+        //window.close();
+        window.history.back();
+    }
+
+</script>
+

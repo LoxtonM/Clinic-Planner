@@ -3,9 +3,7 @@ using ClinicalXPDataConnections.Meta;
 using CPTest.Connections;
 using CPTest.Data;
 using CPTest.Document;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CPTest.Pages
 {
@@ -16,7 +14,7 @@ namespace CPTest.Pages
         private readonly CPXContext _cpxContext;
         private readonly DocumentContext _documentContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
+        private readonly IStaffUserDataAsync _staffData;
         private readonly IAuditSqlServices _audit;
 
         public ClinicListPrintModel(ClinicalContext context, CPXContext cPXContext, DocumentContext documentContext, IConfiguration config)
@@ -26,10 +24,10 @@ namespace CPTest.Pages
             _documentContext = documentContext;
             _config = config;
             _doc = new DocumentController(_context, _cpxContext, _documentContext);
-            _staffData = new StaffData(_context);
+            _staffData = new StaffUserDataAsync(_context);
             _audit = new AuditSqlServices(_config);
         }
-        public void OnGet(int refID)
+        public async Task OnGet(int refID)
         {
             try
             {
@@ -37,7 +35,7 @@ namespace CPTest.Pages
                 {
                     Response.Redirect(@Url.Content($"~/cliniclist-{User.Identity.Name}.pdf"));
                     IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                    _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Clinic List Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
+                    _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Clinic List Print", "RefID=" + refID.ToString(), _ip.GetIPAddress());
                 }
                 else
                 {

@@ -10,25 +10,23 @@ namespace CPTest.Pages
     public class AppDetailOptionsModel : PageModel
     {
         private readonly ClinicalContext _context;
-        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IPatientData _patientData;
-        private readonly IAppointmentData _appointmentData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAlertData _alertData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IPatientDataAsync _patientData;
+        private readonly IAppointmentDataAsync _appointmentData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IAlertDataAsync _alertData;
         private readonly IAuditSqlServices _audit;
 
         public AppDetailOptionsModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
         {
             _context = context;
-            _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _patientData = new PatientData(_context);            
-            _appointmentData = new AppointmentData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _alertData = new AlertData(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _patientData = new PatientDataAsync(_context);            
+            _appointmentData = new AppointmentDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _alertData = new AlertDataAsync(_context);
             _audit = new AuditSqlServices(_config);
         }
         public Patient patient { get; set; }
@@ -43,7 +41,7 @@ namespace CPTest.Pages
         public string? clinicianSel;
         public string? clinicSel;
 
-        public void OnGet(string sRefID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public async Task OnGet(string sRefID, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -61,7 +59,7 @@ namespace CPTest.Pages
 
                 if (refID == 0) //to catch those instances where the "booked" slot doesn't match an appointment
                 {
-                    patient = _patientData.GetPatientDetails(67066);    //and obviously it can't just redirect it, it has to resolve the entire page first!!!
+                    patient = await _patientData.GetPatientDetails(67066);    //and obviously it can't just redirect it, it has to resolve the entire page first!!!
                     appointmentsList = new List<Appointment>();         //So we have to give it junk data and use the page to resolve the if condition.
                     alertsList = new List<Alert>();
                     Response.Redirect("Error?sError=Appointment not found - you may have clicked on a slot instead. Appointments should be blue or purple, " +
@@ -69,19 +67,19 @@ namespace CPTest.Pages
                 }
                 else
                 {
-                    appointment = _appointmentData.GetAppointmentDetails(refID);
-                    staffMember = _staffData.GetStaffDetails(appointment.STAFF_CODE_1);
-                    patient = _patientData.GetPatientDetails(appointment.MPI);
-                    clinicVenue = _clinicVenueData.GetVenueDetails(appointment.FACILITY);
-                    appointmentsList = _appointmentData.GetAppointmentsForWholeFamily(refID);
+                    appointment = await _appointmentData.GetAppointmentDetails(refID);
+                    staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(appointment.STAFF_CODE_1);
+                    patient = await _patientData.GetPatientDetails(appointment.MPI);
+                    clinicVenue = await _clinicVenueData.GetVenueDetails(appointment.FACILITY);
+                    appointmentsList = await _appointmentData.GetAppointmentsForWholeFamily(refID);
                     
-                    alertsList = _alertData.GetAlertsList(patient.MPI);
+                    alertsList = await _alertData.GetAlertsList(patient.MPI);
 
                     if (appointmentsList.Count > 1)
                     {
                         foreach (Appointment a in appointmentsList)
                         {
-                            Patient p = _patientData.GetPatientDetails(a.MPI);
+                            Patient p = await _patientData.GetPatientDetails(a.MPI);
                             if (p.MPI != patient.MPI)
                             {
                                 patientsList.Add(p);
@@ -90,7 +88,7 @@ namespace CPTest.Pages
                     }
                 }
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "Appt Details", "RefID=" + sRefID, _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "Appt Details", "RefID=" + sRefID, _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

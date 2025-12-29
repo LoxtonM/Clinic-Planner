@@ -1,6 +1,6 @@
 using CPTest.Connections;
-using CPTest.Data;
-using CPTest.Models;
+//using CPTest.Data;
+//using CPTest.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Web;
 using ClinicalXPDataConnections.Meta;
@@ -12,37 +12,36 @@ namespace CPTest.Pages
     public class AppConfirmModel : PageModel
     {
         private readonly ClinicalContext _context;
-        private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IPatientData _patientData;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IReferralData _referralData;
-        private readonly IAppTypeData _appTypeData;
-        private readonly IClinicSlotData _clinicSlotData;
-        private readonly IWaitingListData _waitingListData;
+        private readonly IPatientDataAsync _patientData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IReferralDataAsync _referralData;
+        private readonly IActivityTypeDataAsync _appTypeData;
+        private readonly IClinicSlotDataAsync _clinicSlotData;
+        private readonly IWaitingListDataAsync _waitingListData;
         private readonly IAppointmentSqlServices _ss;
 
-        public AppConfirmModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
+        public AppConfirmModel(ClinicalContext context, IConfiguration config)
         {
             _context = context;
-            _cpxContext = cpxContext;
             _config = config;            
             _ss = new AppointmentSqlServices(_config);
-            _patientData = new PatientData(_context);
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _referralData = new ReferralData(_context);
-            _appTypeData = new AppTypeData(_cpxContext);
-            _waitingListData = new WaitingListData(_context);
-            _clinicSlotData = new ClinicSlotData(_context);
+            _patientData = new PatientDataAsync(_context);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _referralData = new ReferralDataAsync(_context);
+            _appTypeData = new ActivityTypeDataAsync(_context);
+            _waitingListData = new WaitingListDataAsync(_context);
+            _clinicSlotData = new ClinicSlotDataAsync(_context);
         }
 
         public Patient? patient { get; set; }
         public StaffMember? staffMember { get; set; }
         public ClinicVenue? clinicVenue { get; set; }
         public List<Referral> linkedRefList { get; set; }
-        public List<AppType> appTypeList { get; set; }
+        //public List<AppType> appTypeList { get; set; }
+        public List<ActivityType> appTypeList { get; set; }
 
         public DateTime appDate;
         public DateTime appTime;
@@ -57,7 +56,7 @@ namespace CPTest.Pages
         public int slID;
         
         //public void OnGet(string intIDString, string clin, string ven, string dat, string tim, string dur, string instructions)
-        public void OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
+        public async Task OnGet(string intIDString, string slotIDString, string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
             {
@@ -68,7 +67,8 @@ namespace CPTest.Pages
 
                 //int intID = Int32.Parse(intIDString);
                 int WLID = Int32.Parse(intIDString);
-                int intID = _waitingListData.GetWaitingListEntryByID(WLID).IntID;
+                WaitingList wl = await _waitingListData.GetWaitingListEntryByID(WLID);
+                int intID = wl.IntID;
                 int slotID = Int32.Parse(slotIDString);
                 int mpi = 0;
                 
@@ -76,12 +76,12 @@ namespace CPTest.Pages
                 clinicianSel = clinicianSelected;
                 clinicSel = clinicSelected;
 
-                ClinicSlot slot = _clinicSlotData.GetSlotDetails(slotID);
+                ClinicSlot slot = await _clinicSlotData.GetSlotDetails(slotID);
 
                 string clin = slot.ClinicianID;
                 string ven = slot.ClinicID;
 
-                patient = _patientData.GetPatientDetailsByIntID(intID);
+                patient = await _patientData.GetPatientDetailsByIntID(intID);
 
                 if (patient == null)
                 {
@@ -92,12 +92,12 @@ namespace CPTest.Pages
                     mpi = patient.MPI;
                 }
 
-                appTypeList = _appTypeData.GetAppTypeList();
-                staffMember = _staffData.GetStaffDetails(clin);
+                appTypeList = await _appTypeData.GetApptTypes();
+                staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(clin);
 
-                clinicVenue = _clinicVenueData.GetVenueDetails(ven);
+                clinicVenue = await _clinicVenueData.GetVenueDetails(ven);
 
-                linkedRefList = _referralData.GetReferralsList(mpi);
+                linkedRefList = await _referralData.GetReferralsList(mpi);
                                 
                 appDate = slot.SlotDate;
                 appTime = slot.SlotTime;
@@ -120,7 +120,7 @@ namespace CPTest.Pages
             }
         }
 
-        public void OnPost(int wlID, int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, int slotID,
+        public async Task OnPost(int wlID, int mpi, int refID, string clin, string ven, DateTime dat, string tim, int dur, string instructions, string type, int slotID,
             string? wcDateString, string? clinicianSelected, string? clinicSelected)
         {
             try
@@ -128,14 +128,14 @@ namespace CPTest.Pages
                 string staffCode;
                 string username = User.Identity.Name;
 
-                patient = _patientData.GetPatientDetails(mpi);
-                appTypeList = _appTypeData.GetAppTypeList();
-                staffMember = _staffData.GetStaffDetails(clin);
-                staffCode = _staffData.GetStaffDetailsByUsername(username).STAFF_CODE;                
+                patient = await _patientData.GetPatientDetails(mpi);
+                appTypeList = await _appTypeData.GetApptTypes();
+                staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(clin);
+                staffCode = await _staffData.GetStaffNameFromStaffCode(username);                
                 
-                clinicVenue = _clinicVenueData.GetVenueDetails(ven);
+                clinicVenue = await _clinicVenueData.GetVenueDetails(ven);
 
-                linkedRefList = _referralData.GetReferralsList(mpi);
+                linkedRefList = await _referralData.GetReferralsList(mpi);
                 string message="";
                 bool isSuccess = false;
                 int success = _ss.CreateAppointment(dat, tim, clin, null, null, ven, refID, mpi, type, dur, staffCode, instructions, wlID, slotID);

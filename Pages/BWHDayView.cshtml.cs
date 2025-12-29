@@ -4,6 +4,7 @@ using ClinicalXPDataConnections.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ClinicalXPDataConnections.Data;
 using ClinicalXPDataConnections.Meta;
+using System.Threading.Tasks;
 
 namespace CPTest.Pages
 {
@@ -12,10 +13,10 @@ namespace CPTest.Pages
         private readonly ClinicalContext _context;
         private readonly CPXContext _cpxContext;
         private readonly IConfiguration _config;
-        private readonly IStaffData _staffData;
-        private readonly IClinicVenueData _clinicVenueData;
-        private readonly IAppointmentData _appointmentData;
-        private readonly ICliniciansClinicData _cliniciansClinicData;
+        private readonly IStaffUserDataAsync _staffData;
+        private readonly IClinicVenueDataAsync _clinicVenueData;
+        private readonly IAppointmentDataAsync _appointmentData;
+        private readonly ICliniciansClinicDataAsync _cliniciansClinicData;
         private readonly IAuditSqlServices _audit;
 
         public BWHDayViewModel(ClinicalContext context, CPXContext cpxContext, IConfiguration config)
@@ -23,10 +24,10 @@ namespace CPTest.Pages
             _context = context;
             _cpxContext = cpxContext;
             _config = config;
-            _staffData = new StaffData(_context);
-            _clinicVenueData = new ClinicVenueData(_context);
-            _appointmentData = new AppointmentData(_context);
-            _cliniciansClinicData = new CliniciansClinicData(_cpxContext);
+            _staffData = new StaffUserDataAsync(_context);
+            _clinicVenueData = new ClinicVenueDataAsync(_context);
+            _appointmentData = new AppointmentDataAsync(_context);
+            _cliniciansClinicData = new CliniciansClinicDataAsync(_cpxContext);
             _audit = new AuditSqlServices(_config);
         }
 
@@ -47,7 +48,7 @@ namespace CPTest.Pages
         //public string wcDateString = new string("");
         public DateTime dDate;       
 
-        public void OnGet(DateTime dClinicDate)
+        public async Task OnGet(DateTime dClinicDate)
         {
             try
             {
@@ -61,8 +62,8 @@ namespace CPTest.Pages
                     dClinicDate = DateTime.Today;
                 }
 
-                staffMemberList = _staffData.GetStaffMemberList();
-                clinicVenueList = _clinicVenueData.GetVenueList();
+                staffMemberList = await _staffData.GetClinicalStaffList();
+                clinicVenueList = await _clinicVenueData.GetVenueList();
 
                 dDate = dClinicDate;
                
@@ -73,7 +74,7 @@ namespace CPTest.Pages
                     TimeArray[i] = initTime.AddMinutes(i * 5);
                 }
 
-                appointmentList = _appointmentData.GetAppointmentsForBWH(dClinicDate);
+                appointmentList = await _appointmentData.GetAppointmentsForBWH(dClinicDate);
 
                 //ClinicArray = new string[appointmentList.Count()];
                 List<string> clinicList = new List<string>();
@@ -88,7 +89,7 @@ namespace CPTest.Pages
                 ClinicArray = clinicList.ToArray();
 
                 IPAddressFinder _ip = new IPAddressFinder(HttpContext);
-                _audit.CreateAudit(_staffData.GetStaffDetailsByUsername(User.Identity.Name).STAFF_CODE, "BWH Day View", "", _ip.GetIPAddress());
+                _audit.CreateAudit(await _staffData.GetStaffCode(User.Identity.Name), "BWH Day View", "", _ip.GetIPAddress());
             }
             catch (Exception ex)
             {

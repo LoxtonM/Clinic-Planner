@@ -3,13 +3,13 @@ using ClinicalXPDataConnections.Data;
 
 namespace CPTest.Connections
 {
-    interface IStaffData
+    interface IStaffDataOLD
     {
         public StaffMember GetStaffDetails(string clin);
         public StaffMember GetStaffDetailsByUsername(string username);
         public List<StaffMember> GetStaffMemberList();
     }
-    public class StaffData : IStaffData
+    public class StaffData : IStaffDataOLD
     {
         private readonly ClinicalContext _context;
         public StaffData(ClinicalContext context)

@@ -1,0 +1,153 @@
+﻿@page
+@model CPTest.Pages.ClinicSlotModifyModel
+@{
+}
+
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">Open slot for @Model.staffMember.NAME at @Model.clinicVenue.NAME (@Model.clinicVenue.FACILITY)</h1>
+        <h1 class="text-center">on @Model.slot.SlotDate.ToString("dd/MM/yyyy") at @Model.slot.SlotTime.ToString("HH:mm")</h1>
+    </div>
+    <br />
+    <br />
+    <form method="post">
+        @*<div id="metaData" hidden="true">
+            <input id="txtWcDate" name="wcDateString" asp-for=@Model.wcDateStr />
+            <input id="txtClinicianSelected" name="clinicianSelected" asp-for=@Model.clinicianSel />
+            <input id="txtClinicSelected" name="clinicSelected" asp-for=@Model.clinicSel />
+        </div>*@
+
+        <div class="row mb-5 g-5" hidden="true">
+            <input name="slotID" value=@Model.slotID />
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Set Slot Status:</label>
+            </div>
+            <div class="col-md-4">
+                <select id="ddlSelectAction" name="sAction">
+                    <option value="">Select...</option>
+                    <option value="Open">Mark as free</option>
+                    <option value="Unavail">Mark as unavailable</option>
+                    <option value="Reserve">Mark as reserved</option>
+                    <option value="ForMeOnly">Mark as bookable only by you</option>
+                    <option value="Delete">Delete slot</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label id="lReservedFor" hidden="true">Enter CGU number to reserve slot for:</label>
+            </div>
+            <div class="col-md-2">
+                <input id="sReservedFor" name="detail" hidden="true" />
+            </div>            
+        </div>
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label id="lApplyToWholeClinic" hidden="true">Apply to whole clinic day?</label>
+            </div>
+            <div class="col-md-2">
+                <select id="ddlApplyToWholeClinic" name="isApplyClinic" hidden="true">
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label>Change Start Time:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="checkbox" id="chkChangeStartTime" />
+            </div>
+            <div class="col-md-2">
+                <input id="sStartTime" asp-for=@Model.slot.SlotTime name="sSlotTime" hidden="true"  />
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <textarea name="comments"></textarea>
+        </div>
+
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-6 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+            </div>
+        </div>
+    </form>
+
+    
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.getElementById("ddlSelectAction").addEventListener("change", ShowDetails);
+    document.getElementById("chkChangeStartTime").addEventListener("change", ShowStartTime);
+    document.onload(HideMenu());
+
+    function Confirm() 
+    {
+
+    }
+
+    function GoBack() 
+    {
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+    function ShowDetails() 
+    { 
+        //window.alert(document.getElementById("ddlSelectAction").value);
+        if (document.getElementById("ddlSelectAction").value == "Reserve") 
+        {
+            document.getElementById("sReservedFor").hidden = false;
+            document.getElementById("lReservedFor").hidden = false;
+            document.getElementById("lApplyToWholeClinic").hidden = true;
+            document.getElementById("ddlApplyToWholeClinic").hidden = true;
+        }
+        else if (document.getElementById("ddlSelectAction").value == "Delete") 
+        {
+            document.getElementById("sReservedFor").hidden = true;
+            document.getElementById("lReservedFor").hidden = true;
+            document.getElementById("lApplyToWholeClinic").hidden = true;
+            document.getElementById("ddlApplyToWholeClinic").hidden = true;
+        }
+        else
+        { 
+            document.getElementById("sReservedFor").hidden = true;
+            document.getElementById("lReservedFor").hidden = true;
+            document.getElementById("lApplyToWholeClinic").hidden = false;
+            document.getElementById("ddlApplyToWholeClinic").hidden = false;
+        }
+    }
+
+    function ShowStartTime()
+    {
+        document.getElementById("sStartTime").hidden = !document.getElementById("chkChangeStartTime").checked;
+    }
+
+    function HideMenu() 
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>

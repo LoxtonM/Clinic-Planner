@@ -1,0 +1,66 @@
+﻿@page
+@model CPTest.Pages.ClinicListSelectModel
+@{
+}
+
+<div class="container">
+    <form method="post">
+        <div class="row mb-5 g-5">
+            <div class="col-md-2">
+                <label class="w-100">Clinic:</label>
+            </div>
+            <div class="col-md-8">
+                <select name="refid">
+                    @foreach (var item in Model.apptList)
+                    {
+                        <option value=@item.RefID>@item.BOOKED_DATE.Value.ToString("dd/MM/yyyy") - @item.AppType, @item.Clinic, @item.Clinician</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-5 g-5">
+            <div class="col-md-6 text-center">
+                <button type="submit" class="btn btn-success">Confirm</button>
+            </div>
+            <div class="col-md-6 text-center">
+                <button type="button" id="btnCancel" class="btn btn-success">Go Back</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+
+    //document.getElementById("btnConfirm").addEventListener("click", Confirm);
+    document.getElementById("btnCancel").addEventListener("click", GoBack);
+    document.onload(HideMenu());
+
+
+    function GoBack()
+    {
+        const wcDateString = "@Model.wcDateStr";
+        const clinicianSelected = "@Model.clinicianSel";
+        const clinicSelected = "@Model.clinicSel";
+        var returnUrl = "Index?wcDt=" + wcDateString;
+        if (clinicianSelected != null)
+        {
+            returnUrl = returnUrl + "&clinician=" + clinicianSelected;
+        }
+        if (clinicSelected != null)
+        {
+            returnUrl = returnUrl + "&clinic=" + clinicSelected;
+        }
+        window.location.replace(returnUrl);
+    }
+
+
+
+    function HideMenu()
+    {
+        document.getElementById("TopMenu").hidden = true;
+    }
+
+
+</script>
