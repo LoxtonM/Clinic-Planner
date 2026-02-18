@@ -133,7 +133,7 @@ namespace CPTest.Pages
 
                 priorityList = _priority.GetPriorityList();
 
-                staffMemberList = _staffData.GetStaffMemberList();
+                staffMemberList = _staffData.GetClinicalStaffList();
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 
