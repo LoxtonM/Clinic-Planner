@@ -91,7 +91,7 @@ namespace CPTest.Pages
                     Response.Redirect("PatientNotFound?intID=" + intID.ToString() + "&clinicianID=" + clinicianID + "&clinicID=" + clinicID, true);
                 }
 
-                staffMemberList = _staffData.GetStaffMemberList();
+                staffMemberList = _staffData.GetClinicalStaffList();
 
                 clinicVenueList = _clinicalVenueData.GetVenueList();
 

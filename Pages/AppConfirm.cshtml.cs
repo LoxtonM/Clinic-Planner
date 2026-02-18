@@ -131,7 +131,7 @@ namespace CPTest.Pages
                 patient = await _patientData.GetPatientDetails(mpi);
                 appTypeList = await _appTypeData.GetApptTypes();
                 staffMember = await _staffData.GetStaffMemberDetailsByStaffCode(clin);
-                staffCode = await _staffData.GetStaffNameFromStaffCode(username);                
+                staffCode = await _staffData.GetStaffCode(username);
                 
                 clinicVenue = await _clinicVenueData.GetVenueDetails(ven);
 
