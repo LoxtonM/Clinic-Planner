@@ -142,8 +142,8 @@ namespace CPTest.Pages
                 for (int i = 0; i < 120; i++)
                 {
                     TimeArray[i] = initTime.AddMinutes(i * 5);
-                }
-                                
+                }                            
+                
                 appointmentList = await _appointmentData.GetAppointments(DateArray[0], DateArray[4], clinician, clinic);
                 
                 clinicSlotList = await _slotData.GetClinicSlots(DateArray[0], DateArray[4], clinician, clinic);
