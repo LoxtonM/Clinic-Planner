@@ -525,6 +525,7 @@
         var pedNameArray = [];
         var pednumArray = [];
         var alertArray = [];
+        var interpreterArray = [];
         var nationalHolidayArray = [];
         var commentArray = [];
 
@@ -582,6 +583,14 @@
             else
             {
                 @:alertArray.push(null);
+            }
+            if(@item.IsInterpreterReqd == true)
+            {                
+                @:interpreterArray.push("@item.PrimaryLanguage interpreter required");
+            }
+            else
+            {
+                @:interpreterArray.push(null);
             }
         }        
     }
@@ -755,6 +764,12 @@
                                                         strApptDetail = strApptDetail + "</br>" + alertArray[k];                                                        
                                                         document.getElementById(col.id).classList.add("currentapptwithalert");
                                                     }
+                                                    if(interpreterArray[k] != null)
+                                                    {
+                                                        strApptDetail = strApptDetail + "</br>" + interpreterArray[k];        
+                                                        document.getElementById(col.id).classList.add("currentapptwithalert");
+                                                    }
+
                                                     strApptDetail = strApptDetail + "</br><span hidden='true'>R:" +
                                                         apptRefIDArray[k].toString() + "</span>";
                                                 }
