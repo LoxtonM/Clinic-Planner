@@ -123,6 +123,11 @@
             </div>
         </div>
     </form>
+    <div class="row mb-5 g-5">
+        <div class="col-md-2">
+            <button type="button" class="btn-success" onclick="OpenListView()">Switch to List View</button>
+        </div>
+    </div>
 
 
     <div class="row">
@@ -221,6 +226,16 @@
 <script>
     
     document.onload(LoadClinics());
+
+    function OpenListView()
+    {
+        //window.location.replace("AppConfirm?intIDString=" + WLID + "&slotIDString=" + slotID + "&wcDateString=" + wcDateString + "&clinicianSelected=" + clinicianSelected + "&clinicSelected=" + clinicSelected);
+        const dateString = document.getElementById("wcDate").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
+
+        window.location.replace("ListView?date=" + dateString + "&clinician=" + clinicianSelected + "&clinic=" + clinicSelected);
+    }
 
     function AddToWL()
     {

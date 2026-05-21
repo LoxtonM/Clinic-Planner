@@ -1,0 +1,231 @@
+﻿@page
+@model CPTest.Pages.WeeklyReportViewModel
+@{
+    ViewData["Title"] = "ListView";
+}
+
+<div class="container-fluid">
+
+    @if (!Model.isLive)
+    {
+        <h1 class="text-center redtext">NOTE: This is a test system. Work completed here will not be reflected in production.</h1>
+    }
+
+    @if (Model.notificationMessage != null && Model.notificationMessage != "")
+    {
+        <h1 class="text-center redtext">@Model.notificationMessage</h1>
+    }
+
+    @if(Model.message != "")
+    {
+        if(!Model.success)
+        {
+            <div class="alert alert-danger d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success d-block text-center">
+                <h3>@Model.message</h3>
+            </div>
+        }
+    }
+
+
+    <div class="row mb-5 g-5"> @*Header - only appears if clinician and/or clinic selected*@
+        <div class="col-md-2" id="holding"></div>
+        @if (Model.clinicVenue != null)
+        {
+            <div class="col-md-5"><h1>@Model.clinicVenue.NAME</h1></div>
+        }
+        @if (Model.staffMember != null)
+        {
+            <div class="col-md-5"><h1>@Model.staffMember.NAME</h1></div>
+        }        
+    </div>    
+
+
+    <form id="ClinicSelect">
+        <div class="row mb-5 g-5" >
+            <div class="col-md-2" align="right">
+                <label>Date:</label> @*used to set the week view*@
+            </div>
+            <div class="col-md-4">
+                <input type="button" value="&laquo;" id="wcBack" onclick="GoBack()"/><input id="date" name="date" type="date" asp-for=@Model.theDate onchange="SetDate()" /><input type="button" id="wcNext" value="&raquo;" onclick="GoNext()" />            
+            </div>
+        </div>
+        
+        <div class="row mb-5 g-5">
+            <div class="col-md-1" align="right">
+                <label>Clinician:</label>
+            </div>
+            <div class="col-md-2"> @*Clinician select*@
+                <select class="w-100" id="ddlClinician" name="clinician" asp-for=@Model.clinician onchange="RefreshForm()">
+                    @if (Model.staffMember != null)
+                    {
+                        <option value="@Model.staffMember" selected>@Model.staffMember.NAME</option>
+                    }
+                    else
+                    {
+                        <option value="" selected></option>
+                    }
+                    @if (Model.staffMemberList != null)
+                    {
+                        @foreach (var item in Model.staffMemberList)
+                        {
+                            <option value=@item.STAFF_CODE>@item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2" align="right">
+                <label>Clinic:</label>
+            </div>
+            <div class="col-md-2"> @*Clinic select*@
+                <select class="w-100" id="ddlClinic" name="clinic" asp-for=@Model.clinic onchange="RefreshForm()">
+                    @if (Model.clinicVenue != null)
+                    {
+                        <option value="@Model.clinicVenue" selected>@Model.clinicVenue.NAME</option>
+                    }
+                    else
+                    {
+                        <option value="" selected></option>
+                    }
+                    @if (Model.clinicVenueList != null)
+                    {
+                        @foreach (var item in Model.clinicVenueList)
+                        {
+                            <option value=@item.FACILITY>@item.FACILITY - @item.NAME</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3"></div>
+            
+            <div class="col-md-2">
+                <input class="btn-success" type="button" id="btnClear" value="Clear Filters" onclick="Clear()" />
+            </div>
+        </div>
+    </form>
+    <div class="row mb-5 g-5">
+        <div class="col-md-2">
+            <button type="button" class="btn-success" onclick="OpenCalendarView()">Switch to Calendar View</button>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            
+            <form id="ClinicForm" method="post">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Clinician</th>
+                            <th>Venue</th>
+                            <th>Status</th>
+                            <th>Alerts</th>
+                        </tr>
+                    </thead>
+                    <tbody>                        
+                        @foreach(var item in Model.appointmentList)
+                        {
+                            <tr>
+                                <td class="table-primary">@item.AppType</td>
+                                <td class="table-primary">@item.CGU_No - @item.FIRSTNAME @item.LASTNAME</td>
+                                <td class="table-primary">@item.BOOKED_DATE.Value.ToString("dd/MM/yyyy")</td>
+                                <td class="table-primary">@item.BOOKED_TIME.Value.ToString("HH:mm")</td>
+                                <td class="table-primary">@item.Clinician</td>
+                                <td class="table-primary">@item.Clinic</td>
+                                <td class="table-primary">@item.Attendance</td>
+                                @if (@item.ActiveAlerts)
+                                {
+                                    <td class="table-primary">There are active alerts for this patient</td>
+                                }
+                                else
+                                {
+                                    <td class="table-primary"></td>
+                                }
+
+                            </tr>
+                        }                        
+                    </tbody>
+                </table>
+            </form>       
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-2"><label>Application version: @Model.appVersion</label></div>
+    </div>
+    <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-2"><label>Data library version: @Model.dllVersion</label></div>
+    </div>
+</div>
+
+<script>
+     
+    //document.onload(LoadClinics());
+
+    function OpenCalendarView()
+    {
+        const dateString = document.getElementById("date").value;
+        const clinicianSelected = document.getElementById("ddlClinician").value;
+        const clinicSelected = document.getElementById("ddlClinic").value;
+
+        window.location.replace("Index?wcDate=" + dateString + "&clinician=" + clinicianSelected + "&clinic=" + clinicSelected);
+        //window.location.replace("Index");
+    }
+
+
+    //Handles Next and Back buttons for the date selector
+    function GoBack() //called by wcBack
+    {
+        var date = new Date(document.getElementById("date").value);
+
+        date.setDate(date.getDate() - 1);
+
+        document.getElementById("date").value = date.toISOString().slice(0, 10);
+
+        RefreshForm();
+    }
+
+    function GoNext() //called by wcNext
+    {
+        var date = new Date(document.getElementById("date").value);
+        
+        date.setDate(date.getDate() + 1);
+
+        document.getElementById("date").value = date.toISOString().slice(0, 10);
+       
+        RefreshForm();
+    }
+
+    function SetDate()
+    {
+         RefreshForm();
+    }
+    
+
+    //Clear/reset the select menus
+    function Clear() //called by btnClear
+    {
+        document.getElementById("ddlClinician").value = "";
+        document.getElementById("ddlClinic").value = "";
+        RefreshForm();
+    }
+
+    function RefreshForm()
+    {
+        document.getElementById("ClinicSelect").submit();
+    }
+
+
+</script>

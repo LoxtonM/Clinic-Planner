@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CPTest.Models
 {    
@@ -105,7 +106,29 @@ namespace CPTest.Models
         [Key]
         public int ID { get; set; }
         public DateTime HolidayDate { get; set; }
-    }    
+    }
+
+    [Table("ViewClinicSlotsAndAppointments")]
+    public class ApptsAndSlots
+    {
+        [Key]
+        public int ID { get; set; }
+        public string Type { get; set; }
+        public string? CGU_No { get; set; }
+        public string? Title { get; set; }
+        public string? FIRSTNAME { get; set; }
+        public string? LASTNAME { get; set; }
+        public DateTime? dob { get; set; }
+        public string? NHSNo { get; set; }
+        public DateTime Date { get; set; }
+        public DateTime Time { get; set; }
+        public string? Clinician { get; set; }
+        public string? ClinicianCode { get; set; }
+        public string? Facility { get; set; }
+        public string? FacilityCode { get; set; }
+        public string? Status { get; set; }
+        public string LoginDetails { get; set; }
+    }
 }
 
 
